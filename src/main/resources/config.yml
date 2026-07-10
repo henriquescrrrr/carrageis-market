@@ -1,0 +1,325 @@
+# ============================================
+# Market Plugin Configuration
+# Server Shop + Community Market + Auctions
+# ============================================
+
+# Debug mode — logs detailed economy operations, buy/sell steps, and MultiBank API calls.
+# Set to false in production to reduce log spam.
+debug: false
+
+# Language setting (available: pt_PT, en_US, fr_FR)
+language: pt_PT
+
+# Database Configuration
+database:
+  # Type: sqlite or mysql
+  type: sqlite
+
+  sqlite:
+    file: database.db
+
+  mysql:
+    host: localhost
+    port: 3306
+    database: communitymarket
+    username: root
+    password: ""
+    pool:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+# Economy Settings
+economy:
+  # Currency display format (uses Java DecimalFormat)
+  currency-format: "$#,##0.00"
+  currency-symbol: "$"
+
+  # Provider selection mode:
+  #   "auto"      — try providers in priority order, use first available (default)
+  #   "multibank" — force MultiBank only (fails if MultiBank not installed)
+  #   "vault"     — force Vault only (fails if Vault not installed)
+  mode: "auto"
+
+  # Provider priority order (used in "auto" mode).
+  # MultiBank is preferred — native async API, long cents, no precision loss.
+  # Vault is the fallback — works with EssentialsX, CMI, or any Vault economy.
+  priority:
+    - "MultiBank"
+    - "Vault"
+
+  # MultiBank server shop account ID (only used when MultiBank is the active provider).
+  # All server shop buy/sell transactions transfer funds to/from this account.
+  # Create this account in MultiBank before starting the server.
+  server-account-id: "server-shop"
+
+  taxes:
+    # Tax percentage for fixed-price market sales (seller pays)
+    market-tax: 5.0
+    # Tax percentage for auction sales (seller pays)
+    auction-tax: 7.5
+
+# Fixed-Price Market Settings
+market:
+  # Maximum active listings per player
+  max-listings-per-player: 20
+  # Cooldown between creating listings (seconds, 0 = disabled)
+  listing-cooldown: 0
+  # Default listing duration in hours
+  default-duration-hours: 168
+  # Available durations for players to choose (in hours)
+  available-durations:
+    - 24
+    - 72
+    - 168
+    - 336
+  # Price limits
+  min-price: 1.0
+  max-price: 1000000000.0
+
+# Auction Settings
+auction:
+  # Maximum active auctions per player
+  max-auctions-per-player: 10
+  # Duration limits (hours)
+  min-duration-hours: 1
+  max-duration-hours: 168
+  default-duration-hours: 24
+  # Available durations for players to choose (in hours)
+  available-durations:
+    - 1
+    - 6
+    - 12
+    - 24
+    - 48
+    - 72
+    - 168
+  # Price limits for starting bid
+  min-start-price: 1.0
+  max-start-price: 1000000000.0
+  # Minimum bid increment (percentage of current bid)
+  min-bid-increment-percent: 5.0
+  # Minimum absolute bid increment
+  min-bid-increment-absolute: 1.0
+
+  # Anti-snipe protection
+  anti-snipe:
+    enabled: true
+    # If bid placed within this many seconds of end, extend auction
+    trigger-seconds: 30
+    # How many seconds to extend
+    extension-seconds: 30
+    # Maximum number of extensions (0 = unlimited)
+    max-extensions: 10
+
+# Item Blacklist
+blacklist:
+  # Materials that cannot be listed/auctioned
+  materials:
+    - BARRIER
+    - COMMAND_BLOCK
+    - CHAIN_COMMAND_BLOCK
+    - REPEATING_COMMAND_BLOCK
+    - COMMAND_BLOCK_MINECART
+    - STRUCTURE_BLOCK
+    - STRUCTURE_VOID
+    - JIGSAW
+    - DEBUG_STICK
+    - KNOWLEDGE_BOOK
+    - SPAWNER
+    - BEDROCK
+  # Items with these keywords in their name/lore are blocked
+  keywords:
+    - "admin"
+    - "illegal"
+    - "exploit"
+
+# GUI Settings
+gui:
+  # Items displayed per page in browse views
+  items-per-page: 45
+
+  # Whether to show the Help button in the main menu
+  # Set to false to hide it (slot will be filled with glass)
+  show-help-button: true
+
+  # Quantity selector settings
+  quantity:
+    # Pack (stack) selectors — quick-add/remove full stacks
+    pack-selectors:
+      # Enable/disable pack selector buttons in the quantity GUI.
+      # Pack buttons let players adjust quantity by full stacks
+      # (e.g. +64 for most items, +16 for ender pearls).
+      # Only shown for stackable items (max stack size > 1).
+      enabled: true
+      # Maximum number of pack buttons shown per side (1–4).
+      # e.g. 4 means -4pk..-1pk and +1pk..+4pk are shown.
+      max-packs: 4
+
+  # Sound effects (use Bukkit Sound enum names)
+  sounds:
+    click: UI_BUTTON_CLICK
+    success: ENTITY_PLAYER_LEVELUP
+    error: ENTITY_VILLAGER_NO
+    purchase: ENTITY_EXPERIENCE_ORB_PICKUP
+
+# Notification Settings
+notifications:
+  # Notify seller when their item sells
+  notify-on-sale: true
+  # Notify bidder when they are outbid
+  notify-on-outbid: true
+  # Notify winner when they win an auction
+  notify-on-win: true
+  # Notify seller when their listing expires
+  notify-on-expire: true
+
+# Performance Settings
+performance:
+  # How often to cache listings/auctions (seconds)
+  cache-duration: 30
+  # How often to check for ended auctions (seconds)
+  auction-check-interval: 5
+  # How often to check for expired listings (minutes)
+  expired-check-interval: 5
+
+# ============================================
+# Server Shop Configuration
+# ============================================
+# The server shop is a server-run market where players
+# can buy/sell ALL items at fixed prices. Designed to
+# complement the player-to-player Community Market by
+# having a large spread between buy and sell prices.
+# ============================================
+server-shop:
+  # Global default sell multiplier (0.0 - 1.0)
+  # sell price = buy price * multiplier
+  # 0.25 = server pays 25% of buy price when players sell
+  # This large spread encourages player-to-player trading
+  default-sell-multiplier: 0.25
+  # Tax percentage applied to sell transactions (0.0 = no tax)
+  sell-tax: 0.0
+  # What happens when a player buys items but inventory is full?
+  # "drop" = drop at feet, "cancel" = prevent purchase
+  full-inventory-action: drop
+  # Search input mode for the server shop search button.
+  # "chat" — player types in chat and presses Enter (recommended, intuitive)
+  # "sign" — opens a temporary sign editor (legacy method)
+  search-mode: "chat"
+
+  # Allow selling items from hand via GUI button
+  enable-sell-hand: true
+  # Allow selling all of a material from inventory
+  enable-sell-all: true
+  # Allow selling from a container (chest, barrel, shulker, ender chest)
+  # via the "Sell Chest" button with a 15-second selection timer
+  enable-sell-chest: true
+  # Maximum quantity per transaction
+  max-transaction-quantity: 2304
+  # Include special items (enchanted books, potions, tipped arrows)
+  # If false, these items cannot be SOLD to the server shop (villagers/brewing
+  # make them renewable, so any fixed sell price becomes a money printer).
+  # Buying them from the shop remains allowed if they have a buy-price.
+  include-special-items: false
+  # Enchantment sell bonus: selling an enchanted item adds a percentage of each
+  # enchantment's store buy price (prices.yml enchant-prices) to the sell value.
+  # cap = maximum total bonus per item in currency units (-1 = no cap).
+  enchant-sell-bonus:
+    percent: 5.0
+    cap: 1000.0
+  # Maximum net amount a player can earn from server-shop sells per day
+  # (all sell flows: GUI, sell-all, shulker, sell chest). 0 = disabled.
+  daily-sell-cap: 25000.0
+  # Hide categories that have both buy and sell disabled (e.g., Disabled/OP Items)
+  hide-disabled-categories: true
+  # Require 2-step confirmation for buy/sell actions in the item detail GUI
+  sell-confirmation: true
+  # Show "Auto Quantity" button in item detail GUI (sets qty to max in inventory)
+  auto-quantity-button: true
+
+  # ---- Item Format & Matching ----
+  items:
+    # Match mode for selling items:
+    #   MATERIAL_ONLY (default) - any item of the same material counts.
+    #                             e.g. any firework rocket counts regardless of flight duration.
+    #   EXACT - item must match exactly including all components/meta.
+    #           e.g. only firework rockets with flight_duration:3 match that entry.
+    match-mode: MATERIAL_ONLY
+    # If true, the plugin will log warnings for every invalid item in items.yml.
+    # If false (default), invalid items are silently skipped.
+    parse-strict: false
+
+# ============================================
+# Sell Inventory Settings
+# ============================================
+sell-inventory:
+  # Whether equipped gear (helmet, chestplate, leggings, boots, offhand/shield)
+  # can be sold from the Sell Inventory GUI.
+  # If false (default), clicking equipped items shows a warning.
+  # If true, equipped items can be sold but still require 2-step confirmation.
+  allow-equipped-selling: false
+
+  # "Sell Entire Inventory" button settings
+  sell-all:
+    # Enable the "Sell Entire Inventory" button in the sell inventory GUI.
+    enabled: true
+    # Whether to include hotbar items (slots 0-8) in sell-all.
+    include-hotbar: true
+    # Whether to include armor and shield/offhand in sell-all.
+    # Respects `allow-equipped-selling` — if that is false and this is true,
+    # armor items are still skipped.
+    include-armor-and-shield: false
+
+  # "Multi-Select" selling: toggle a selection mode in the Sell Inventory GUI,
+  # click several items to select them, pick a percentage, and sell that
+  # percentage of the TOTAL amount of each selected item type to the server.
+  multi-select:
+    # Enable the multi-select toggle button in the Sell Inventory GUI.
+    enabled: true
+    # Percentage selected by default when the quantity screen opens (1-100).
+    default-percent: 100
+    # Quick-set percentage presets shown on the TOP row of the percentage GUI
+    # (fills slots 9,10,11,12,14,15,16,17 in order). Values must be 1-100;
+    # out-of-range values are ignored.
+    primary-presets: [10, 20, 25, 40, 50, 60, 75, 90]
+    # Quick-set percentage presets shown on the LOWER row of the percentage GUI
+    # (fills slots 27,28,29,30,32,33,34,35 in order).
+    secondary-presets: [5, 15, 30, 33, 66, 70, 80, 95]
+
+  # When selling a shulker box that contains items, offer a 3-option chooser
+  # (sell box only / box + contents / contents only) instead of selling the box
+  # and destroying its contents.
+  shulker-sell:
+    # Master toggle. When false, shulkers with contents sell like a plain box
+    # via the normal flow (legacy behavior — the contents are lost!).
+    enabled: true
+    # When returned items don't fit and would drop on the ground, show a
+    # red/green confirmation first. If false, fall back to
+    # server-shop.full-inventory-action ("drop" = drop silently, "cancel" = abort).
+    confirm-overflow-drop: true
+
+# ============================================
+# ToolMods Integration
+# ============================================
+# When selling modded items (via ToolMods) to the Server Shop,
+# the sell price includes a bonus for each mod applied to the item.
+# Market reads ToolMods PDC data directly — no ToolMods dependency required.
+# If ToolMods is not installed, this has no effect.
+toolmods:
+  # Enable/disable mod sell bonus in Server Shop
+  enabled: true
+
+  # Override the default sell multiplier for individual mods.
+  # Each mod has a hardcoded tier multiplier (Ultra=55%, Premium=40%,
+  # High=30%, Mid=25%, QoL=20%). Use this map to override specific mods.
+  # Format: mod_key: multiplier (0.0 – 1.0)
+  # Leave empty {} to use all defaults.
+  sell-multiplier-overrides: {}
+  # Example overrides:
+  # sell-multiplier-overrides:
+  #   mod_unbreakable: 0.60    # 60% instead of default 55%
+  #   mod_tree_feller: 0.10    # 10% instead of default 20%
+  #   mod_soulbound: 0.35      # 35% instead of default 40%
+

@@ -1,0 +1,5635 @@
+# ============================================================
+# Market Plugin - Server Shop Prices Configuration
+# ============================================================
+# This file contains default prices and per-item overrides.
+# Categories and item assignments are in items.yml.
+#
+# ---- Item ID formats in overrides ----
+#
+# Format A (simple material):
+#   DIAMOND:
+#     buy-price: 500
+#     sell-price: 150
+#
+# Format B (minecraft item string — must be quoted):
+#   'minecraft:firework_rocket[minecraft:fireworks={flight_duration:3}]':
+#     buy-price: 50
+#     sell-price: 15
+#
+# Spread variavel por tier de dificuldade:
+#   Farmavel (25%):            itens infinitamente farmaveis
+#   Facil nao-farmavel (32.5%): dirt, sand, pedras comuns
+#   Normal nao-farmavel (42.5%): blocos do nether/end, prismarine
+#   Raro (55%):                diamante, emerald, shulker
+#   Ultra-raro (60%):          netherite, nether star, elytra, trident
+#
+# Ancora: Netherite Block = 50,000 (buy)
+# ============================================================
+
+default-prices:
+  disabled_op: 0
+  building_blocks: 0
+  ores_minerals: 0
+  farming_vegetation: 0
+  food: 0
+  mob_drops: 0
+  redstone: 0
+  decoration: 0
+  tools: 0
+  combat: 0
+  brewing: 0
+  dyes_colors: 0
+  wood: 0
+  transportation: 0
+  music_discs: 0
+  pottery_archaeology: 0
+  banner_patterns: 0
+  smithing_templates: 0
+  enchantments: 0
+  spawn_eggs: 0
+  miscellaneous: 0
+
+# ============================================================
+# Enchantment Pricing (for Server Market sell bonus)
+# ============================================================
+# When selling enchanted items to the Server Market, each enchantment
+# adds +25% of its store buy price to the sell value.
+#
+# Format:
+#   ENCHANTMENT_NAME:
+#     perLevelBuyCents:        (price per level, in cents)
+#       1: 100000              (= $1,000.00)
+#       2: 200000
+#     OR
+#     buyCents: 2500000        (flat price for any level, in cents)
+#
+# If an enchantment is not listed here, its bonus is 0.
+# ============================================================
+enchant-prices:
+  SHARPNESS:
+    perLevelBuyCents:
+      1: 100000
+      2: 200000
+      3: 350000
+      4: 600000
+      5: 1000000
+  SMITE:
+    perLevelBuyCents:
+      1: 80000
+      2: 160000
+      3: 280000
+      4: 480000
+      5: 800000
+  BANE_OF_ARTHROPODS:
+    perLevelBuyCents:
+      1: 80000
+      2: 160000
+      3: 280000
+      4: 480000
+      5: 800000
+  KNOCKBACK:
+    perLevelBuyCents:
+      1: 60000
+      2: 120000
+  FIRE_ASPECT:
+    perLevelBuyCents:
+      1: 150000
+      2: 300000
+  LOOTING:
+    perLevelBuyCents:
+      1: 200000
+      2: 400000
+      3: 700000
+  SWEEPING_EDGE:
+    perLevelBuyCents:
+      1: 100000
+      2: 200000
+      3: 350000
+  EFFICIENCY:
+    perLevelBuyCents:
+      1: 80000
+      2: 160000
+      3: 280000
+      4: 480000
+      5: 800000
+  SILK_TOUCH:
+    buyCents: 500000
+  FORTUNE:
+    perLevelBuyCents:
+      1: 200000
+      2: 400000
+      3: 700000
+  UNBREAKING:
+    perLevelBuyCents:
+      1: 80000
+      2: 160000
+      3: 300000
+  MENDING:
+    buyCents: 2500000
+  PROTECTION:
+    perLevelBuyCents:
+      1: 100000
+      2: 200000
+      3: 350000
+      4: 600000
+  FIRE_PROTECTION:
+    perLevelBuyCents:
+      1: 80000
+      2: 160000
+      3: 280000
+      4: 480000
+  BLAST_PROTECTION:
+    perLevelBuyCents:
+      1: 80000
+      2: 160000
+      3: 280000
+      4: 480000
+  PROJECTILE_PROTECTION:
+    perLevelBuyCents:
+      1: 80000
+      2: 160000
+      3: 280000
+      4: 480000
+  THORNS:
+    perLevelBuyCents:
+      1: 150000
+      2: 300000
+      3: 500000
+  RESPIRATION:
+    perLevelBuyCents:
+      1: 100000
+      2: 200000
+      3: 350000
+  AQUA_AFFINITY:
+    buyCents: 200000
+  DEPTH_STRIDER:
+    perLevelBuyCents:
+      1: 100000
+      2: 200000
+      3: 350000
+  FROST_WALKER:
+    perLevelBuyCents:
+      1: 200000
+      2: 400000
+  SOUL_SPEED:
+    perLevelBuyCents:
+      1: 200000
+      2: 400000
+      3: 700000
+  SWIFT_SNEAK:
+    perLevelBuyCents:
+      1: 200000
+      2: 400000
+      3: 700000
+  FEATHER_FALLING:
+    perLevelBuyCents:
+      1: 100000
+      2: 200000
+      3: 350000
+      4: 600000
+  POWER:
+    perLevelBuyCents:
+      1: 100000
+      2: 200000
+      3: 350000
+      4: 600000
+      5: 1000000
+  PUNCH:
+    perLevelBuyCents:
+      1: 80000
+      2: 160000
+  FLAME:
+    buyCents: 200000
+  INFINITY:
+    buyCents: 500000
+  LUCK_OF_THE_SEA:
+    perLevelBuyCents:
+      1: 200000
+      2: 400000
+      3: 700000
+  LURE:
+    perLevelBuyCents:
+      1: 100000
+      2: 200000
+      3: 350000
+  LOYALTY:
+    perLevelBuyCents:
+      1: 150000
+      2: 300000
+      3: 500000
+  IMPALING:
+    perLevelBuyCents:
+      1: 100000
+      2: 200000
+      3: 350000
+      4: 600000
+      5: 1000000
+  RIPTIDE:
+    perLevelBuyCents:
+      1: 200000
+      2: 400000
+      3: 700000
+  CHANNELING:
+    buyCents: 500000
+  MULTISHOT:
+    buyCents: 300000
+  QUICK_CHARGE:
+    perLevelBuyCents:
+      1: 100000
+      2: 200000
+      3: 350000
+  PIERCING:
+    perLevelBuyCents:
+      1: 80000
+      2: 160000
+      3: 280000
+      4: 480000
+
+# ============================================================
+# Per-item price overrides
+# ============================================================
+
+overrides:
+
+  ACACIA_BOAT:
+    buy-price: 4.5
+    sell-price: 1.12
+  ACACIA_BUTTON:
+    buy-price: 1.5
+    sell-price: 0.38
+  ACACIA_CHEST_BOAT:
+    buy-price: 9.5
+    sell-price: 2.38
+  ACACIA_DOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  ACACIA_FENCE:
+    buy-price: 2.5
+    sell-price: 0.62
+  ACACIA_FENCE_GATE:
+    buy-price: 3.5
+    sell-price: 0.88
+  ACACIA_HANGING_SIGN:
+    buy-price: 3.5
+    sell-price: 0.88
+  ACACIA_LEAVES:
+    buy-price: 1.0
+    sell-price: 0.25
+  ACACIA_LOG:
+    buy-price: 5.0
+    sell-price: 1.25
+  ACACIA_PLANKS:
+    buy-price: 1.5
+    sell-price: 0.38
+  ACACIA_PRESSURE_PLATE:
+    buy-price: 1.5
+    sell-price: 0.38
+  ACACIA_SAPLING:
+    buy-price: 3.0
+    sell-price: 0.75
+  ACACIA_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  ACACIA_SIGN:
+    buy-price: 2.5
+    sell-price: 0.62
+  ACACIA_SLAB:
+    buy-price: 0.75
+    sell-price: 0.19
+  ACACIA_STAIRS:
+    buy-price: 1.5
+    sell-price: 0.38
+  ACACIA_TRAPDOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  ACACIA_WOOD:
+    buy-price: 5.0
+    sell-price: 1.25
+  ACTIVATOR_RAIL:
+    buy-price: 22.0
+    sell-price: 5.5
+  ALLAY_SPAWN_EGG:
+    buy-price: 800.0
+    sell-price: 340.0
+  ALLIUM:
+    buy-price: 3.0
+    sell-price: 0.98
+  AMETHYST_BLOCK:
+    buy-price: 100.0
+    sell-price: 42.5
+  AMETHYST_CLUSTER:
+    buy-price: 40.0
+    sell-price: 17.0
+  AMETHYST_SHARD:
+    buy-price: 25.0
+    sell-price: 10.62
+  ANCIENT_DEBRIS:
+    buy-price: 1800.0
+    sell-price: 1080.0
+  ANDESITE:
+    buy-price: 2.5
+    sell-price: 0.81
+  ANDESITE_SLAB:
+    buy-price: 1.25
+    sell-price: 0.41
+  ANDESITE_STAIRS:
+    buy-price: 2.5
+    sell-price: 0.81
+  ANDESITE_WALL:
+    buy-price: 2.5
+    sell-price: 0.81
+  ANGLER_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  ANVIL:
+    buy-price: 150.0
+    sell-price: 37.5
+  APPLE:
+    buy-price: 5.0
+    sell-price: 1.25
+  ARCHER_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  ARMADILLO_SCUTE:
+    buy-price: 12.0
+    sell-price: 3.0
+  ARMADILLO_SPAWN_EGG:
+    buy-price: 400.0
+    sell-price: 170.0
+  ARMOR_STAND:
+    buy-price: 15.0
+    sell-price: 4.88
+  ARMS_UP_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  ARROW:
+    buy-price: 6.0
+    sell-price: 0.5
+  AXOLOTL_BUCKET:
+    buy-price: 85.0
+    sell-price: 36.12
+  AXOLOTL_SPAWN_EGG:
+    buy-price: 600.0
+    sell-price: 255.0
+  AZALEA:
+    buy-price: 8.0
+    sell-price: 2.6
+  AZALEA_LEAVES:
+    buy-price: 2.0
+    sell-price: 0.65
+  AZURE_BLUET:
+    buy-price: 3.0
+    sell-price: 0.98
+  BAKED_POTATO:
+    buy-price: 5.0
+    sell-price: 1.25
+  BAMBOO:
+    buy-price: 1.5
+    sell-price: 0.38
+  BAMBOO_BLOCK:
+    buy-price: 5.0
+    sell-price: 1.25
+  BAMBOO_BUTTON:
+    buy-price: 1.5
+    sell-price: 0.38
+  BAMBOO_CHEST_RAFT:
+    buy-price: 9.5
+    sell-price: 2.38
+  BAMBOO_DOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  BAMBOO_FENCE:
+    buy-price: 2.5
+    sell-price: 0.62
+  BAMBOO_FENCE_GATE:
+    buy-price: 3.5
+    sell-price: 0.88
+  BAMBOO_HANGING_SIGN:
+    buy-price: 3.5
+    sell-price: 0.88
+  BAMBOO_MOSAIC:
+    buy-price: 2.0
+    sell-price: 0.5
+  BAMBOO_MOSAIC_SLAB:
+    buy-price: 1.0
+    sell-price: 0.25
+  BAMBOO_MOSAIC_STAIRS:
+    buy-price: 2.0
+    sell-price: 0.5
+  BAMBOO_PLANKS:
+    buy-price: 1.5
+    sell-price: 0.38
+  BAMBOO_PRESSURE_PLATE:
+    buy-price: 1.5
+    sell-price: 0.38
+  BAMBOO_RAFT:
+    buy-price: 4.5
+    sell-price: 1.12
+  BAMBOO_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  BAMBOO_SIGN:
+    buy-price: 2.5
+    sell-price: 0.62
+  BAMBOO_SLAB:
+    buy-price: 0.75
+    sell-price: 0.19
+  BAMBOO_STAIRS:
+    buy-price: 1.5
+    sell-price: 0.38
+  BAMBOO_TRAPDOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  BARREL:
+    buy-price: 8.0
+    sell-price: 2.0
+  BASALT:
+    buy-price: 3.0
+    sell-price: 1.27
+  BAT_SPAWN_EGG:
+    buy-price: 200.0
+    sell-price: 85.0
+  BEACON:
+    buy-price: 30000.0
+    sell-price: 16500.0
+  BEEF:
+    buy-price: 5.0
+    sell-price: 1.25
+  BEEHIVE:
+    buy-price: 30.0
+    sell-price: 7.5
+  BEETROOT:
+    buy-price: 3.0
+    sell-price: 0.75
+  BEETROOT_SEEDS:
+    buy-price: 0.5
+    sell-price: 0.12
+  BEETROOT_SOUP:
+    buy-price: 8.0
+    sell-price: 2.0
+  BEE_NEST:
+    buy-price: 100.0
+    sell-price: 42.5
+  BEE_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  BELL:
+    buy-price: 220.0
+    sell-price: 93.5
+  BIG_DRIPLEAF:
+    buy-price: 8.0
+    sell-price: 2.6
+  BIRCH_BOAT:
+    buy-price: 4.5
+    sell-price: 1.12
+  BIRCH_BUTTON:
+    buy-price: 1.5
+    sell-price: 0.38
+  BIRCH_CHEST_BOAT:
+    buy-price: 9.5
+    sell-price: 2.38
+  BIRCH_DOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  BIRCH_FENCE:
+    buy-price: 2.5
+    sell-price: 0.62
+  BIRCH_FENCE_GATE:
+    buy-price: 3.5
+    sell-price: 0.88
+  BIRCH_HANGING_SIGN:
+    buy-price: 3.5
+    sell-price: 0.88
+  BIRCH_LEAVES:
+    buy-price: 1.0
+    sell-price: 0.25
+  BIRCH_LOG:
+    buy-price: 5.0
+    sell-price: 1.25
+  BIRCH_PLANKS:
+    buy-price: 1.5
+    sell-price: 0.38
+  BIRCH_PRESSURE_PLATE:
+    buy-price: 1.5
+    sell-price: 0.38
+  BIRCH_SAPLING:
+    buy-price: 3.0
+    sell-price: 0.75
+  BIRCH_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  BIRCH_SIGN:
+    buy-price: 2.5
+    sell-price: 0.62
+  BIRCH_SLAB:
+    buy-price: 0.75
+    sell-price: 0.19
+  BIRCH_STAIRS:
+    buy-price: 1.5
+    sell-price: 0.38
+  BIRCH_TRAPDOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  BIRCH_WOOD:
+    buy-price: 5.0
+    sell-price: 1.25
+  BLACKSTONE:
+    buy-price: 4.0
+    sell-price: 1.7
+  BLACKSTONE_SLAB:
+    buy-price: 2.0
+    sell-price: 0.85
+  BLACKSTONE_STAIRS:
+    buy-price: 4.0
+    sell-price: 1.7
+  BLACKSTONE_WALL:
+    buy-price: 4.0
+    sell-price: 1.7
+  BLACK_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  BLACK_BED:
+    buy-price: 19
+    sell-price: 4.75
+  BLACK_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  BLACK_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  BLACK_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  BLACK_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  BLACK_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  BLACK_DYE:
+    buy-price: 1.5
+    sell-price: 0.38
+  BLACK_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  BLACK_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  BLACK_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  BLACK_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  BLACK_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  BLACK_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  BLACK_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  BLADE_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  BLAST_FURNACE:
+    buy-price: 40.0
+    sell-price: 10.0
+  BLAZE_POWDER:
+    buy-price: 35.0
+    sell-price: 14.88
+  BLAZE_ROD:
+    buy-price: 60.0
+    sell-price: 33.0
+  BLAZE_SPAWN_EGG:
+    buy-price: 900.0
+    sell-price: 382.5
+  BLUE_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  BLUE_BED:
+    buy-price: 19
+    sell-price: 4.75
+  BLUE_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  BLUE_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  BLUE_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  BLUE_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  BLUE_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  BLUE_DYE:
+    buy-price: 1.5
+    sell-price: 0.38
+  BLUE_EGG:
+    buy-price: 350.0
+    sell-price: 148.75
+  BLUE_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  BLUE_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  BLUE_ICE:
+    buy-price: 110.0
+    sell-price: 46.75
+  BLUE_ORCHID:
+    buy-price: 3.0
+    sell-price: 0.98
+  BLUE_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  BLUE_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  BLUE_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  BLUE_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  BLUE_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  BOGGED_SPAWN_EGG:
+    buy-price: 700.0
+    sell-price: 297.5
+  BOLT_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 600.0
+    sell-price: 330.0
+  BONE:
+    buy-price: 3.0
+    sell-price: 0.75
+  BONE_BLOCK:
+    buy-price: 22.0
+    sell-price: 5.5
+  BONE_MEAL:
+    buy-price: 4.0
+    sell-price: 1.0
+  BOOK:
+    buy-price: 8.0
+    sell-price: 2.0
+  BOOKSHELF:
+    buy-price: 30.0
+    sell-price: 7.5
+  BORDURE_INDENTED_BANNER_PATTERN:
+    buy-price: 60.0
+    sell-price: 25.5
+  BOW:
+    buy-price: 30.0
+    sell-price: 7.5
+  BOWL:
+    buy-price: 0.75
+    sell-price: 0.19
+  BRAIN_CORAL:
+    buy-price: 8.0
+    sell-price: 3.4
+  BRAIN_CORAL_BLOCK:
+    buy-price: 12.0
+    sell-price: 5.1
+  BRAIN_CORAL_FAN:
+    buy-price: 8.0
+    sell-price: 3.4
+  BREAD:
+    buy-price: 5.0
+    sell-price: 1.25
+  BREEZE_ROD:
+    buy-price: 120.0
+    sell-price: 66.0
+  BREEZE_SPAWN_EGG:
+    buy-price: 1000.0
+    sell-price: 425.0
+  BREWER_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  BREWING_STAND:
+    buy-price: 150.0
+    sell-price: 63.75
+  BRICK:
+    buy-price: 6.0
+    sell-price: 1.5
+  BRICKS:
+    buy-price: 10.0
+    sell-price: 2.5
+  BRICK_SLAB:
+    buy-price: 5.0
+    sell-price: 1.25
+  BRICK_STAIRS:
+    buy-price: 10.0
+    sell-price: 2.5
+  BRICK_WALL:
+    buy-price: 10.0
+    sell-price: 2.5
+  BROWN_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  BROWN_BED:
+    buy-price: 19
+    sell-price: 4.75
+  BROWN_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  BROWN_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  BROWN_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  BROWN_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  BROWN_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  BROWN_DYE:
+    buy-price: 1.5
+    sell-price: 0.38
+  BROWN_EGG:
+    buy-price: 350.0
+    sell-price: 148.75
+  BROWN_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  BROWN_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  BROWN_MUSHROOM:
+    buy-price: 5.0
+    sell-price: 1.25
+  BROWN_MUSHROOM_BLOCK:
+    buy-price: 10.0
+    sell-price: 2.5
+  BROWN_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  BROWN_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  BROWN_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  BROWN_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  BROWN_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  BRUSH:
+    buy-price: 18.0
+    sell-price: 7.65
+  BUBBLE_CORAL:
+    buy-price: 8.0
+    sell-price: 3.4
+  BUBBLE_CORAL_BLOCK:
+    buy-price: 12.0
+    sell-price: 5.1
+  BUBBLE_CORAL_FAN:
+    buy-price: 8.0
+    sell-price: 3.4
+  BUCKET:
+    buy-price: 60.0
+    sell-price: 15.0
+  BUNDLE:
+    buy-price: 15
+    sell-price: 3.75
+  BURN_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  BUSH:
+    buy-price: 3.0
+    sell-price: 0.98
+  CACTUS:
+    buy-price: 3.0
+    sell-price: 0.75
+  CACTUS_FLOWER:
+    buy-price: 5.0
+    sell-price: 1.62
+  CAKE:
+    buy-price: 22.0
+    sell-price: 5.5
+  CALCITE:
+    buy-price: 5.0
+    sell-price: 1.62
+  CALIBRATED_SCULK_SENSOR:
+    buy-price: 120.0
+    sell-price: 51.0
+  CAMEL_HUSK_SPAWN_EGG:
+    buy-price: 800.0
+    sell-price: 340.0
+  CAMEL_SPAWN_EGG:
+    buy-price: 600.0
+    sell-price: 255.0
+  CAMPFIRE:
+    buy-price: 12.0
+    sell-price: 3.0
+  CANDLE:
+    buy-price: 3
+    sell-price: 0.75
+  CARROT:
+    buy-price: 3.0
+    sell-price: 0.75
+  CARROT_ON_A_STICK:
+    buy-price: 10.0
+    sell-price: 2.5
+  CARTOGRAPHY_TABLE:
+    buy-price: 15.0
+    sell-price: 3.75
+  CARVED_PUMPKIN:
+    buy-price: 8.0
+    sell-price: 2.0
+  CAT_SPAWN_EGG:
+    buy-price: 400.0
+    sell-price: 170.0
+  CAULDRON:
+    buy-price: 60.0
+    sell-price: 25.5
+  CAVE_SPIDER_SPAWN_EGG:
+    buy-price: 600.0
+    sell-price: 255.0
+  CHAIN:
+    buy-price: 12.0
+    sell-price: 3.0
+  CHAINMAIL_BOOTS:
+    buy-price: 75.0
+    sell-price: 31.88
+  CHAINMAIL_CHESTPLATE:
+    buy-price: 150.0
+    sell-price: 63.75
+  CHAINMAIL_HELMET:
+    buy-price: 90.0
+    sell-price: 38.25
+  CHAINMAIL_LEGGINGS:
+    buy-price: 130.0
+    sell-price: 55.25
+  CHARCOAL:
+    buy-price: 6.0
+    sell-price: 1.5
+  CHERRY_BOAT:
+    buy-price: 5.4
+    sell-price: 1.35
+  CHERRY_BUTTON:
+    buy-price: 2.4
+    sell-price: 0.6
+  CHERRY_CHEST_BOAT:
+    buy-price: 10.4
+    sell-price: 2.6
+  CHERRY_DOOR:
+    buy-price: 3.4
+    sell-price: 0.85
+  CHERRY_FENCE:
+    buy-price: 3.4
+    sell-price: 0.85
+  CHERRY_FENCE_GATE:
+    buy-price: 4.4
+    sell-price: 1.1
+  CHERRY_HANGING_SIGN:
+    buy-price: 4.4
+    sell-price: 1.1
+  CHERRY_LEAVES:
+    buy-price: 1.0
+    sell-price: 0.25
+  CHERRY_LOG:
+    buy-price: 8.0
+    sell-price: 2.0
+  CHERRY_PLANKS:
+    buy-price: 2.4
+    sell-price: 0.6
+  CHERRY_PRESSURE_PLATE:
+    buy-price: 2.4
+    sell-price: 0.6
+  CHERRY_SAPLING:
+    buy-price: 3.0
+    sell-price: 0.75
+  CHERRY_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  CHERRY_SIGN:
+    buy-price: 3.4
+    sell-price: 0.85
+  CHERRY_SLAB:
+    buy-price: 1.2
+    sell-price: 0.3
+  CHERRY_STAIRS:
+    buy-price: 2.4
+    sell-price: 0.6
+  CHERRY_TRAPDOOR:
+    buy-price: 3.4
+    sell-price: 0.85
+  CHERRY_WOOD:
+    buy-price: 8.0
+    sell-price: 2.0
+  CHEST:
+    buy-price: 8.0
+    sell-price: 2.0
+  CHEST_MINECART:
+    buy-price: 45.0
+    sell-price: 11.25
+  CHICKEN:
+    buy-price: 3.0
+    sell-price: 0.75
+  CHICKEN_SPAWN_EGG:
+    buy-price: 300.0
+    sell-price: 127.5
+  CHIPPED_ANVIL:
+    buy-price: 100.0
+    sell-price: 25.0
+  CHISELED_BOOKSHELF:
+    buy-price: 35.0
+    sell-price: 8.75
+  CHISELED_COPPER:
+    buy-price: 43.0
+    sell-price: 10.75
+  CHISELED_DEEPSLATE:
+    buy-price: 8.0
+    sell-price: 2.0
+  CHISELED_NETHER_BRICKS:
+    buy-price: 12.0
+    sell-price: 5.1
+  CHISELED_POLISHED_BLACKSTONE:
+    buy-price: 10.0
+    sell-price: 4.25
+  CHISELED_QUARTZ_BLOCK:
+    buy-price: 68.0
+    sell-price: 28.9
+  CHISELED_RED_SANDSTONE:
+    buy-price: 8.0
+    sell-price: 2.6
+  CHISELED_RESIN_BRICKS:
+    buy-price: 12.0
+    sell-price: 3.0
+  CHISELED_SANDSTONE:
+    buy-price: 6.0
+    sell-price: 1.95
+  CHISELED_STONE_BRICKS:
+    buy-price: 6.0
+    sell-price: 1.5
+  CHISELED_TUFF:
+    buy-price: 5.0
+    sell-price: 1.62
+  CHISELED_TUFF_BRICKS:
+    buy-price: 8.0
+    sell-price: 2.6
+  CHORUS_FLOWER:
+    buy-price: 20.0
+    sell-price: 8.5
+  CHORUS_FRUIT:
+    buy-price: 12.0
+    sell-price: 3.0
+  CHORUS_PLANT:
+    buy-price: 8.0
+    sell-price: 3.4
+  CLAY:
+    buy-price: 12.0
+    sell-price: 3.9
+  CLAY_BALL:
+    buy-price: 4.0
+    sell-price: 1.3
+  CLOCK:
+    buy-price: 50.0
+    sell-price: 16.25
+  CLOSED_EYEBLOSSOM:
+    buy-price: 15.0
+    sell-price: 4.88
+  COAL:
+    buy-price: 8.0
+    sell-price: 2.0
+  COAL_BLOCK:
+    buy-price: 72.0
+    sell-price: 18.0
+  COAL_ORE:
+    buy-price: 12.0
+    sell-price: 3.9
+  COARSE_DIRT:
+    buy-price: 1.5
+    sell-price: 0.49
+  COAST_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  COBBLED_DEEPSLATE:
+    buy-price: 1.5
+    sell-price: 0.38
+  COBBLED_DEEPSLATE_SLAB:
+    buy-price: 0.75
+    sell-price: 0.19
+  COBBLED_DEEPSLATE_STAIRS:
+    buy-price: 1.5
+    sell-price: 0.38
+  COBBLED_DEEPSLATE_WALL:
+    buy-price: 1.5
+    sell-price: 0.38
+  COBBLESTONE:
+    buy-price: 1.0
+    sell-price: 0.25
+  COBBLESTONE_SLAB:
+    buy-price: 0.5
+    sell-price: 0.12
+  COBBLESTONE_STAIRS:
+    buy-price: 1.0
+    sell-price: 0.25
+  COBBLESTONE_WALL:
+    buy-price: 1.0
+    sell-price: 0.25
+  COBWEB:
+    buy-price: 8.0
+    sell-price: 2.0
+  COCOA_BEANS:
+    buy-price: 5.0
+    sell-price: 1.25
+  COD:
+    buy-price: 3.0
+    sell-price: 0.75
+  COD_BUCKET:
+    buy-price: 85.0
+    sell-price: 36.12
+  COD_SPAWN_EGG:
+    buy-price: 250.0
+    sell-price: 106.25
+  COMPARATOR:
+    buy-price: 40.0
+    sell-price: 10.0
+  COMPASS:
+    buy-price: 35.0
+    sell-price: 11.38
+  COMPOSTER:
+    buy-price: 6.0
+    sell-price: 1.5
+  CONDUIT:
+    buy-enabled: false
+    sell-enabled: false
+  COOKED_BEEF:
+    buy-price: 10.0
+    sell-price: 2.5
+  COOKED_CHICKEN:
+    buy-price: 6.0
+    sell-price: 1.5
+  COOKED_COD:
+    buy-price: 6.0
+    sell-price: 1.5
+  COOKED_MUTTON:
+    buy-price: 8.0
+    sell-price: 2.0
+  COOKED_PORKCHOP:
+    buy-price: 10.0
+    sell-price: 2.5
+  COOKED_RABBIT:
+    buy-price: 8.0
+    sell-price: 2.0
+  COOKED_SALMON:
+    buy-price: 8.0
+    sell-price: 2.0
+  COOKIE:
+    buy-price: 3.0
+    sell-price: 0.75
+  COPPER_AXE:
+    buy-price: 25.0
+    sell-price: 6.25
+  COPPER_BARS:
+    buy-price: 5.0
+    sell-price: 1.25
+  COPPER_BLOCK:
+    buy-price: 126.0
+    sell-price: 31.5
+  COPPER_BOOTS:
+    buy-price: 32.0
+    sell-price: 8.0
+  COPPER_BULB:
+    buy-price: 48.0
+    sell-price: 12.0
+  COPPER_CHAIN:
+    buy-price: 7.0
+    sell-price: 1.75
+  COPPER_CHEST:
+    buy-price: 18.0
+    sell-price: 4.5
+  COPPER_CHESTPLATE:
+    buy-price: 65.0
+    sell-price: 16.25
+  COPPER_DOOR:
+    buy-price: 57.0
+    sell-price: 14.25
+  COPPER_GOLEM_SPAWN_EGG:
+    buy-price: 1000.0
+    sell-price: 425.0
+  COPPER_GOLEM_STATUE:
+    buy-price: 25.0
+    sell-price: 6.25
+  COPPER_GRATE:
+    buy-price: 43.0
+    sell-price: 10.75
+  COPPER_HELMET:
+    buy-price: 40.0
+    sell-price: 10.0
+  COPPER_HOE:
+    buy-price: 18.0
+    sell-price: 4.5
+  COPPER_HORSE_ARMOR:
+    buy-price: 80.0
+    sell-price: 34.0
+  COPPER_INGOT:
+    buy-price: 14.0
+    sell-price: 3.5
+  COPPER_LANTERN:
+    buy-price: 8.0
+    sell-price: 2.0
+  COPPER_LEGGINGS:
+    buy-price: 55.0
+    sell-price: 13.75
+  COPPER_NAUTILUS_ARMOR:
+    buy-price: 120.0
+    sell-price: 51.0
+  COPPER_NUGGET:
+    buy-price: 2.0
+    sell-price: 0.5
+  COPPER_ORE:
+    buy-price: 18.0
+    sell-price: 5.85
+  COPPER_PICKAXE:
+    buy-price: 25.0
+    sell-price: 6.25
+  COPPER_SHOVEL:
+    buy-price: 15.0
+    sell-price: 3.75
+  COPPER_SPEAR:
+    buy-price: 28.0
+    sell-price: 7.0
+  COPPER_SWORD:
+    buy-price: 22.0
+    sell-price: 5.5
+  COPPER_TORCH:
+    buy-price: 3.0
+    sell-price: 0.75
+  COPPER_TRAPDOOR:
+    buy-price: 46.0
+    sell-price: 11.5
+  CORNFLOWER:
+    buy-price: 3.0
+    sell-price: 0.98
+  COW_SPAWN_EGG:
+    buy-price: 300.0
+    sell-price: 127.5
+  CRACKED_DEEPSLATE_BRICKS:
+    buy-price: 6.0
+    sell-price: 1.5
+  CRACKED_DEEPSLATE_TILES:
+    buy-price: 7.0
+    sell-price: 1.75
+  CRACKED_NETHER_BRICKS:
+    buy-price: 10.0
+    sell-price: 4.25
+  CRACKED_POLISHED_BLACKSTONE_BRICKS:
+    buy-price: 10.0
+    sell-price: 4.25
+  CRACKED_STONE_BRICKS:
+    buy-price: 5.0
+    sell-price: 1.25
+  CRAFTER:
+    buy-price: 60.0
+    sell-price: 25.5
+  CRAFTING_TABLE:
+    buy-price: 3.0
+    sell-price: 0.75
+  CREAKING_HEART:
+    buy-enabled: false
+    sell-enabled: false
+  CREAKING_SPAWN_EGG:
+    buy-price: 1200.0
+    sell-price: 510.0
+  CREEPER_BANNER_PATTERN:
+    buy-price: 120.0
+    sell-price: 51.0
+  CREEPER_HEAD:
+    buy-enabled: false
+    sell-enabled: false
+  CREEPER_SPAWN_EGG:
+    buy-price: 700.0
+    sell-price: 297.5
+  CRIMSON_BUTTON:
+    buy-price: 2.0
+    sell-price: 0.5
+  CRIMSON_DOOR:
+    buy-price: 3.0
+    sell-price: 0.75
+  CRIMSON_FENCE:
+    buy-price: 3.0
+    sell-price: 0.75
+  CRIMSON_FENCE_GATE:
+    buy-price: 4.0
+    sell-price: 1.0
+  CRIMSON_FUNGUS:
+    buy-price: 4.0
+    sell-price: 1.0
+  CRIMSON_HANGING_SIGN:
+    buy-price: 4.0
+    sell-price: 1.0
+  CRIMSON_HYPHAE:
+    buy-price: 6.0
+    sell-price: 1.5
+  CRIMSON_NYLIUM:
+    buy-price: 8.0
+    sell-price: 3.4
+  CRIMSON_PLANKS:
+    buy-price: 2.0
+    sell-price: 0.5
+  CRIMSON_PRESSURE_PLATE:
+    buy-price: 2.0
+    sell-price: 0.5
+  CRIMSON_ROOTS:
+    buy-price: 2.0
+    sell-price: 0.5
+  CRIMSON_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  CRIMSON_SIGN:
+    buy-price: 3.0
+    sell-price: 0.75
+  CRIMSON_SLAB:
+    buy-price: 1.0
+    sell-price: 0.25
+  CRIMSON_STAIRS:
+    buy-price: 2.0
+    sell-price: 0.5
+  CRIMSON_STEM:
+    buy-price: 6.0
+    sell-price: 1.5
+  CRIMSON_TRAPDOOR:
+    buy-price: 3.0
+    sell-price: 0.75
+  CROSSBOW:
+    buy-price: 50.0
+    sell-price: 12.5
+  CRYING_OBSIDIAN:
+    buy-price: 120.0
+    sell-price: 51.0
+  CUT_COPPER:
+    buy-price: 38.0
+    sell-price: 9.5
+  CUT_COPPER_SLAB:
+    buy-price: 19.0
+    sell-price: 4.75
+  CUT_COPPER_STAIRS:
+    buy-price: 38.0
+    sell-price: 9.5
+  CUT_RED_SANDSTONE:
+    buy-price: 7.0
+    sell-price: 2.27
+  CUT_RED_SANDSTONE_SLAB:
+    buy-price: 3.5
+    sell-price: 1.14
+  CUT_SANDSTONE:
+    buy-price: 5.0
+    sell-price: 1.62
+  CUT_SANDSTONE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.81
+  CYAN_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  CYAN_BED:
+    buy-price: 19
+    sell-price: 4.75
+  CYAN_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  CYAN_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  CYAN_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  CYAN_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  CYAN_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  CYAN_DYE:
+    buy-price: 2
+    sell-price: 0.5
+  CYAN_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  CYAN_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  CYAN_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  CYAN_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  CYAN_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  CYAN_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  CYAN_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  DAMAGED_ANVIL:
+    buy-price: 50.0
+    sell-price: 12.5
+  DANDELION:
+    buy-price: 1.5
+    sell-price: 0.49
+  DANGER_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  DARK_OAK_BOAT:
+    buy-price: 4.5
+    sell-price: 1.12
+  DARK_OAK_BUTTON:
+    buy-price: 1.5
+    sell-price: 0.38
+  DARK_OAK_CHEST_BOAT:
+    buy-price: 9.5
+    sell-price: 2.38
+  DARK_OAK_DOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  DARK_OAK_FENCE:
+    buy-price: 2.5
+    sell-price: 0.62
+  DARK_OAK_FENCE_GATE:
+    buy-price: 3.5
+    sell-price: 0.88
+  DARK_OAK_HANGING_SIGN:
+    buy-price: 3.5
+    sell-price: 0.88
+  DARK_OAK_LEAVES:
+    buy-price: 1.0
+    sell-price: 0.25
+  DARK_OAK_LOG:
+    buy-price: 5.0
+    sell-price: 1.25
+  DARK_OAK_PLANKS:
+    buy-price: 1.5
+    sell-price: 0.38
+  DARK_OAK_PRESSURE_PLATE:
+    buy-price: 1.5
+    sell-price: 0.38
+  DARK_OAK_SAPLING:
+    buy-price: 3.0
+    sell-price: 0.75
+  DARK_OAK_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  DARK_OAK_SIGN:
+    buy-price: 2.5
+    sell-price: 0.62
+  DARK_OAK_SLAB:
+    buy-price: 0.75
+    sell-price: 0.19
+  DARK_OAK_STAIRS:
+    buy-price: 1.5
+    sell-price: 0.38
+  DARK_OAK_TRAPDOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  DARK_OAK_WOOD:
+    buy-price: 5.0
+    sell-price: 1.25
+  DARK_PRISMARINE:
+    buy-price: 25.0
+    sell-price: 10.62
+  DARK_PRISMARINE_SLAB:
+    buy-price: 12.5
+    sell-price: 5.31
+  DARK_PRISMARINE_STAIRS:
+    buy-price: 25.0
+    sell-price: 10.62
+  DAYLIGHT_DETECTOR:
+    buy-price: 22.0
+    sell-price: 5.5
+  DEAD_BRAIN_CORAL:
+    buy-price: 3.0
+    sell-price: 0.98
+  DEAD_BRAIN_CORAL_BLOCK:
+    buy-price: 3.0
+    sell-price: 1.27
+  DEAD_BRAIN_CORAL_FAN:
+    buy-price: 2.0
+    sell-price: 0.85
+  DEAD_BUBBLE_CORAL:
+    buy-price: 3.0
+    sell-price: 0.98
+  DEAD_BUBBLE_CORAL_BLOCK:
+    buy-price: 3.0
+    sell-price: 1.27
+  DEAD_BUBBLE_CORAL_FAN:
+    buy-price: 2.0
+    sell-price: 0.85
+  DEAD_BUSH:
+    buy-price: 2.0
+    sell-price: 0.65
+  DEAD_FIRE_CORAL:
+    buy-price: 3.0
+    sell-price: 0.98
+  DEAD_FIRE_CORAL_BLOCK:
+    buy-price: 3.0
+    sell-price: 1.27
+  DEAD_FIRE_CORAL_FAN:
+    buy-price: 2.0
+    sell-price: 0.85
+  DEAD_HORN_CORAL:
+    buy-price: 3.0
+    sell-price: 0.98
+  DEAD_HORN_CORAL_BLOCK:
+    buy-price: 3.0
+    sell-price: 1.27
+  DEAD_HORN_CORAL_FAN:
+    buy-price: 2.0
+    sell-price: 0.85
+  DEAD_TUBE_CORAL:
+    buy-price: 3.0
+    sell-price: 0.98
+  DEAD_TUBE_CORAL_BLOCK:
+    buy-price: 3.0
+    sell-price: 1.27
+  DEAD_TUBE_CORAL_FAN:
+    buy-price: 2.0
+    sell-price: 0.85
+  DECORATED_POT:
+    buy-price: 20.0
+    sell-price: 8.5
+  DEEPSLATE:
+    buy-price: 3.0
+    sell-price: 0.75
+  DEEPSLATE_BRICKS:
+    buy-price: 5.0
+    sell-price: 1.25
+  DEEPSLATE_BRICK_SLAB:
+    buy-price: 2.5
+    sell-price: 0.62
+  DEEPSLATE_BRICK_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  DEEPSLATE_BRICK_WALL:
+    buy-price: 5.0
+    sell-price: 1.25
+  DEEPSLATE_COAL_ORE:
+    buy-price: 15.0
+    sell-price: 4.88
+  DEEPSLATE_COPPER_ORE:
+    buy-price: 22.0
+    sell-price: 7.15
+  DEEPSLATE_DIAMOND_ORE:
+    buy-price: 1200.0
+    sell-price: 660.0
+  DEEPSLATE_EMERALD_ORE:
+    buy-price: 620.0
+    sell-price: 341.0
+  DEEPSLATE_GOLD_ORE:
+    buy-price: 155.0
+    sell-price: 65.88
+  DEEPSLATE_IRON_ORE:
+    buy-price: 50.0
+    sell-price: 16.25
+  DEEPSLATE_LAPIS_ORE:
+    buy-price: 75.0
+    sell-price: 31.88
+  DEEPSLATE_REDSTONE_ORE:
+    buy-price: 28.0
+    sell-price: 9.1
+  DEEPSLATE_TILES:
+    buy-price: 6.0
+    sell-price: 1.5
+  DEEPSLATE_TILE_SLAB:
+    buy-price: 3.0
+    sell-price: 0.75
+  DEEPSLATE_TILE_STAIRS:
+    buy-price: 6.0
+    sell-price: 1.5
+  DEEPSLATE_TILE_WALL:
+    buy-price: 6.0
+    sell-price: 1.5
+  DETECTOR_RAIL:
+    buy-price: 22.0
+    sell-price: 5.5
+  DIAMOND:
+    buy-price: 900.0
+    sell-price: 495.0
+  DIAMOND_AXE:
+    buy-price: 2800.0
+    sell-price: 1540.0
+  DIAMOND_BLOCK:
+    buy-price: 8100.0
+    sell-price: 4455.0
+  DIAMOND_BOOTS:
+    buy-price: 3600.0
+    sell-price: 1980.0
+  DIAMOND_CHESTPLATE:
+    buy-price: 7200.0
+    sell-price: 3960.0
+  DIAMOND_HELMET:
+    buy-price: 4500.0
+    sell-price: 2475.0
+  DIAMOND_HOE:
+    buy-price: 2800.0
+    sell-price: 1540.0
+  DIAMOND_HORSE_ARMOR:
+    buy-price: 1800.0
+    sell-price: 990.0
+  DIAMOND_LEGGINGS:
+    buy-price: 6300.0
+    sell-price: 3465.0
+  DIAMOND_NAUTILUS_ARMOR:
+    buy-price: 1500.0
+    sell-price: 825.0
+  DIAMOND_ORE:
+    buy-price: 1100.0
+    sell-price: 605.0
+  DIAMOND_PICKAXE:
+    buy-price: 2800.0
+    sell-price: 1540.0
+  DIAMOND_SHOVEL:
+    buy-price: 2800.0
+    sell-price: 1540.0
+  DIAMOND_SPEAR:
+    buy-price: 1000.0
+    sell-price: 550.0
+  DIAMOND_SWORD:
+    buy-price: 1900.0
+    sell-price: 1045.0
+  DIORITE:
+    buy-price: 2.5
+    sell-price: 0.81
+  DIORITE_SLAB:
+    buy-price: 1.25
+    sell-price: 0.41
+  DIORITE_STAIRS:
+    buy-price: 2.5
+    sell-price: 0.81
+  DIORITE_WALL:
+    buy-price: 2.5
+    sell-price: 0.81
+  DIRT:
+    buy-price: 1.5
+    sell-price: 0.49
+  DIRT_PATH:
+    buy-price: 3.0
+    sell-price: 0.98
+  DISC_FRAGMENT_5:
+    buy-price: 65.0
+    sell-price: 35.75
+  DISPENSER:
+    buy-price: 22.0
+    sell-price: 5.5
+  DOLPHIN_SPAWN_EGG:
+    buy-price: 600.0
+    sell-price: 255.0
+  DONKEY_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  DRAGON_BREATH:
+    buy-enabled: false
+    sell-enabled: false
+  DRAGON_HEAD:
+    buy-enabled: false
+    sell-enabled: false
+  DRIED_GHAST:
+    buy-price: 500.0
+    sell-price: 212.5
+  DRIED_KELP:
+    buy-price: 2.0
+    sell-price: 0.5
+  DRIED_KELP_BLOCK:
+    buy-price: 8.0
+    sell-price: 2.0
+  DRIPSTONE_BLOCK:
+    buy-price: 8.0
+    sell-price: 2.6
+  DROPPER:
+    buy-price: 15.0
+    sell-price: 3.75
+  DROWNED_SPAWN_EGG:
+    buy-price: 600.0
+    sell-price: 255.0
+  DUNE_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  ECHO_SHARD:
+    buy-price: 220.0
+    sell-price: 121.0
+  EGG:
+    buy-price: 3.0
+    sell-price: 0.75
+  ELDER_GUARDIAN_SPAWN_EGG:
+    buy-price: 2000.0
+    sell-price: 850.0
+  ELYTRA:
+    buy-price: 35000.0
+    sell-price: 21000.0
+  EMERALD:
+    buy-price: 450.0
+    sell-price: 247.5
+  EMERALD_BLOCK:
+    buy-price: 4050.0
+    sell-price: 2227.5
+  EMERALD_ORE:
+    buy-price: 550.0
+    sell-price: 302.5
+  ENCHANTED_BOOK_AQUA_AFFINITY_1:
+    buy-price: 1040
+    sell-price: 221.0
+  ENCHANTED_BOOK_BANE_OF_ARTHROPODS_1:
+    buy-price: 585
+    sell-price: 124.31
+  ENCHANTED_BOOK_BANE_OF_ARTHROPODS_2:
+    buy-price: 2037
+    sell-price: 432.86
+  ENCHANTED_BOOK_BANE_OF_ARTHROPODS_3:
+    buy-price: 4226
+    sell-price: 898.02
+  ENCHANTED_BOOK_BANE_OF_ARTHROPODS_4:
+    buy-price: 7094
+    sell-price: 1507.47
+  ENCHANTED_BOOK_BANE_OF_ARTHROPODS_5:
+    buy-price: 10600
+    sell-price: 2252.5
+  ENCHANTED_BOOK_BLAST_PROTECTION_1:
+    buy-price: 715
+    sell-price: 151.94
+  ENCHANTED_BOOK_BLAST_PROTECTION_2:
+    buy-price: 2490
+    sell-price: 529.12
+  ENCHANTED_BOOK_BLAST_PROTECTION_3:
+    buy-price: 5166
+    sell-price: 1097.77
+  ENCHANTED_BOOK_BLAST_PROTECTION_4:
+    buy-price: 8670
+    sell-price: 1842.38
+  ENCHANTED_BOOK_BREACH_1:
+    buy-price: 1170
+    sell-price: 248.62
+  ENCHANTED_BOOK_BREACH_2:
+    buy-price: 4074
+    sell-price: 865.73
+  ENCHANTED_BOOK_BREACH_3:
+    buy-price: 8453
+    sell-price: 1796.26
+  ENCHANTED_BOOK_BREACH_4:
+    buy-price: 14187
+    sell-price: 3014.74
+  ENCHANTED_BOOK_CHANNELING_1:
+    buy-price: 1560
+    sell-price: 331.5
+  ENCHANTED_BOOK_CURSE_OF_BINDING_1:
+    buy-price: 65
+    sell-price: 13.81
+  ENCHANTED_BOOK_CURSE_OF_VANISHING_1:
+    buy-price: 65
+    sell-price: 13.81
+  ENCHANTED_BOOK_DENSITY_1:
+    buy-price: 1040
+    sell-price: 221.0
+  ENCHANTED_BOOK_DENSITY_2:
+    buy-price: 3621
+    sell-price: 769.46
+  ENCHANTED_BOOK_DENSITY_3:
+    buy-price: 7514
+    sell-price: 1596.72
+  ENCHANTED_BOOK_DENSITY_4:
+    buy-price: 12611
+    sell-price: 2679.84
+  ENCHANTED_BOOK_DENSITY_5:
+    buy-price: 18844
+    sell-price: 4004.35
+  ENCHANTED_BOOK_DEPTH_STRIDER_1:
+    buy-price: 715
+    sell-price: 151.94
+  ENCHANTED_BOOK_DEPTH_STRIDER_2:
+    buy-price: 2490
+    sell-price: 529.12
+  ENCHANTED_BOOK_DEPTH_STRIDER_3:
+    buy-price: 5166
+    sell-price: 1097.77
+  ENCHANTED_BOOK_EFFICIENCY_1:
+    buy-price: 910
+    sell-price: 193.38
+  ENCHANTED_BOOK_EFFICIENCY_2:
+    buy-price: 3169
+    sell-price: 673.41
+  ENCHANTED_BOOK_EFFICIENCY_3:
+    buy-price: 6574
+    sell-price: 1396.97
+  ENCHANTED_BOOK_EFFICIENCY_4:
+    buy-price: 11034
+    sell-price: 2344.72
+  ENCHANTED_BOOK_EFFICIENCY_5:
+    buy-price: 16489
+    sell-price: 3503.91
+  ENCHANTED_BOOK_FEATHER_FALLING_1:
+    buy-price: 650
+    sell-price: 138.12
+  ENCHANTED_BOOK_FEATHER_FALLING_2:
+    buy-price: 2263
+    sell-price: 480.89
+  ENCHANTED_BOOK_FEATHER_FALLING_3:
+    buy-price: 4696
+    sell-price: 997.9
+  ENCHANTED_BOOK_FEATHER_FALLING_4:
+    buy-price: 7882
+    sell-price: 1674.92
+  ENCHANTED_BOOK_FIRE_ASPECT_1:
+    buy-price: 910
+    sell-price: 193.38
+  ENCHANTED_BOOK_FIRE_ASPECT_2:
+    buy-price: 3169
+    sell-price: 673.41
+  ENCHANTED_BOOK_FIRE_PROTECTION_1:
+    buy-price: 715
+    sell-price: 151.94
+  ENCHANTED_BOOK_FIRE_PROTECTION_2:
+    buy-price: 2490
+    sell-price: 529.12
+  ENCHANTED_BOOK_FIRE_PROTECTION_3:
+    buy-price: 5166
+    sell-price: 1097.77
+  ENCHANTED_BOOK_FIRE_PROTECTION_4:
+    buy-price: 8670
+    sell-price: 1842.38
+  ENCHANTED_BOOK_FLAME_1:
+    buy-price: 1170
+    sell-price: 248.62
+  ENCHANTED_BOOK_FORTUNE_1:
+    buy-price: 1560
+    sell-price: 331.5
+  ENCHANTED_BOOK_FORTUNE_2:
+    buy-price: 5432
+    sell-price: 1154.3
+  ENCHANTED_BOOK_FORTUNE_3:
+    buy-price: 11270
+    sell-price: 2394.88
+  ENCHANTED_BOOK_FROST_WALKER_1:
+    buy-price: 1950
+    sell-price: 414.38
+  ENCHANTED_BOOK_FROST_WALKER_2:
+    buy-price: 6790
+    sell-price: 1442.88
+  ENCHANTED_BOOK_IMPALING_1:
+    buy-price: 715
+    sell-price: 151.94
+  ENCHANTED_BOOK_IMPALING_2:
+    buy-price: 2490
+    sell-price: 529.12
+  ENCHANTED_BOOK_IMPALING_3:
+    buy-price: 5166
+    sell-price: 1097.77
+  ENCHANTED_BOOK_IMPALING_4:
+    buy-price: 8670
+    sell-price: 1842.38
+  ENCHANTED_BOOK_IMPALING_5:
+    buy-price: 12955
+    sell-price: 2752.94
+  ENCHANTED_BOOK_INFINITY_1:
+    buy-price: 3900
+    sell-price: 828.75
+  ENCHANTED_BOOK_KNOCKBACK_1:
+    buy-price: 650
+    sell-price: 138.12
+  ENCHANTED_BOOK_KNOCKBACK_2:
+    buy-price: 2263
+    sell-price: 480.89
+  ENCHANTED_BOOK_LOOTING_1:
+    buy-price: 1170
+    sell-price: 248.62
+  ENCHANTED_BOOK_LOOTING_2:
+    buy-price: 4074
+    sell-price: 865.73
+  ENCHANTED_BOOK_LOOTING_3:
+    buy-price: 8453
+    sell-price: 1796.26
+  ENCHANTED_BOOK_LOYALTY_1:
+    buy-price: 780
+    sell-price: 165.75
+  ENCHANTED_BOOK_LOYALTY_2:
+    buy-price: 2716
+    sell-price: 577.15
+  ENCHANTED_BOOK_LOYALTY_3:
+    buy-price: 5635
+    sell-price: 1197.44
+  ENCHANTED_BOOK_LUCK_OF_THE_SEA_1:
+    buy-price: 910
+    sell-price: 193.38
+  ENCHANTED_BOOK_LUCK_OF_THE_SEA_2:
+    buy-price: 3169
+    sell-price: 673.41
+  ENCHANTED_BOOK_LUCK_OF_THE_SEA_3:
+    buy-price: 6574
+    sell-price: 1396.97
+  ENCHANTED_BOOK_LURE_1:
+    buy-price: 780
+    sell-price: 165.75
+  ENCHANTED_BOOK_LURE_2:
+    buy-price: 2716
+    sell-price: 577.15
+  ENCHANTED_BOOK_LURE_3:
+    buy-price: 5635
+    sell-price: 1197.44
+  ENCHANTED_BOOK_MENDING_1:
+    buy-price: 7150
+    sell-price: 1519.38
+  ENCHANTED_BOOK_MULTISHOT_1:
+    buy-price: 1950
+    sell-price: 414.38
+  ENCHANTED_BOOK_PIERCING_1:
+    buy-price: 650
+    sell-price: 138.12
+  ENCHANTED_BOOK_PIERCING_2:
+    buy-price: 2263
+    sell-price: 480.89
+  ENCHANTED_BOOK_PIERCING_3:
+    buy-price: 4696
+    sell-price: 997.9
+  ENCHANTED_BOOK_PIERCING_4:
+    buy-price: 7882
+    sell-price: 1674.92
+  ENCHANTED_BOOK_POWER_1:
+    buy-price: 780
+    sell-price: 165.75
+  ENCHANTED_BOOK_POWER_2:
+    buy-price: 2716
+    sell-price: 577.15
+  ENCHANTED_BOOK_POWER_3:
+    buy-price: 5635
+    sell-price: 1197.44
+  ENCHANTED_BOOK_POWER_4:
+    buy-price: 9458
+    sell-price: 2009.83
+  ENCHANTED_BOOK_POWER_5:
+    buy-price: 14133
+    sell-price: 3003.26
+  ENCHANTED_BOOK_PROJECTILE_PROTECTION_1:
+    buy-price: 715
+    sell-price: 151.94
+  ENCHANTED_BOOK_PROJECTILE_PROTECTION_2:
+    buy-price: 2490
+    sell-price: 529.12
+  ENCHANTED_BOOK_PROJECTILE_PROTECTION_3:
+    buy-price: 5166
+    sell-price: 1097.77
+  ENCHANTED_BOOK_PROJECTILE_PROTECTION_4:
+    buy-price: 8670
+    sell-price: 1842.38
+  ENCHANTED_BOOK_PROTECTION_1:
+    buy-price: 780
+    sell-price: 165.75
+  ENCHANTED_BOOK_PROTECTION_2:
+    buy-price: 2716
+    sell-price: 577.15
+  ENCHANTED_BOOK_PROTECTION_3:
+    buy-price: 5635
+    sell-price: 1197.44
+  ENCHANTED_BOOK_PROTECTION_4:
+    buy-price: 9458
+    sell-price: 2009.83
+  ENCHANTED_BOOK_PUNCH_1:
+    buy-price: 650
+    sell-price: 138.12
+  ENCHANTED_BOOK_PUNCH_2:
+    buy-price: 2263
+    sell-price: 480.89
+  ENCHANTED_BOOK_QUICK_CHARGE_1:
+    buy-price: 780
+    sell-price: 165.75
+  ENCHANTED_BOOK_QUICK_CHARGE_2:
+    buy-price: 2716
+    sell-price: 577.15
+  ENCHANTED_BOOK_QUICK_CHARGE_3:
+    buy-price: 5635
+    sell-price: 1197.44
+  ENCHANTED_BOOK_RESPIRATION_1:
+    buy-price: 780
+    sell-price: 165.75
+  ENCHANTED_BOOK_RESPIRATION_2:
+    buy-price: 2716
+    sell-price: 577.15
+  ENCHANTED_BOOK_RESPIRATION_3:
+    buy-price: 5635
+    sell-price: 1197.44
+  ENCHANTED_BOOK_RIPTIDE_1:
+    buy-price: 910
+    sell-price: 193.38
+  ENCHANTED_BOOK_RIPTIDE_2:
+    buy-price: 3169
+    sell-price: 673.41
+  ENCHANTED_BOOK_RIPTIDE_3:
+    buy-price: 6574
+    sell-price: 1396.97
+  ENCHANTED_BOOK_SHARPNESS_1:
+    buy-price: 845
+    sell-price: 179.56
+  ENCHANTED_BOOK_SHARPNESS_2:
+    buy-price: 2942
+    sell-price: 625.17
+  ENCHANTED_BOOK_SHARPNESS_3:
+    buy-price: 6105
+    sell-price: 1297.31
+  ENCHANTED_BOOK_SHARPNESS_4:
+    buy-price: 10246
+    sell-price: 2177.28
+  ENCHANTED_BOOK_SHARPNESS_5:
+    buy-price: 15311
+    sell-price: 3253.59
+  ENCHANTED_BOOK_SILK_TOUCH_1:
+    buy-price: 3250
+    sell-price: 690.62
+  ENCHANTED_BOOK_SMITE_1:
+    buy-price: 650
+    sell-price: 138.12
+  ENCHANTED_BOOK_SMITE_2:
+    buy-price: 2263
+    sell-price: 480.89
+  ENCHANTED_BOOK_SMITE_3:
+    buy-price: 4696
+    sell-price: 997.9
+  ENCHANTED_BOOK_SMITE_4:
+    buy-price: 7882
+    sell-price: 1674.92
+  ENCHANTED_BOOK_SMITE_5:
+    buy-price: 11778
+    sell-price: 2502.82
+  ENCHANTED_BOOK_SOUL_SPEED_1:
+    buy-price: 1560
+    sell-price: 331.5
+  ENCHANTED_BOOK_SOUL_SPEED_2:
+    buy-price: 5432
+    sell-price: 1154.3
+  ENCHANTED_BOOK_SOUL_SPEED_3:
+    buy-price: 11270
+    sell-price: 2394.88
+  ENCHANTED_BOOK_SWEEPING_EDGE_1:
+    buy-price: 780
+    sell-price: 165.75
+  ENCHANTED_BOOK_SWEEPING_EDGE_2:
+    buy-price: 2716
+    sell-price: 577.15
+  ENCHANTED_BOOK_SWEEPING_EDGE_3:
+    buy-price: 5635
+    sell-price: 1197.44
+  ENCHANTED_BOOK_SWIFT_SNEAK_1:
+    buy-price: 1300
+    sell-price: 276.25
+  ENCHANTED_BOOK_SWIFT_SNEAK_2:
+    buy-price: 4527
+    sell-price: 961.99
+  ENCHANTED_BOOK_SWIFT_SNEAK_3:
+    buy-price: 9392
+    sell-price: 1995.8
+  ENCHANTED_BOOK_THORNS_1:
+    buy-price: 910
+    sell-price: 193.38
+  ENCHANTED_BOOK_THORNS_2:
+    buy-price: 3169
+    sell-price: 673.41
+  ENCHANTED_BOOK_THORNS_3:
+    buy-price: 6574
+    sell-price: 1396.97
+  ENCHANTED_BOOK_UNBREAKING_1:
+    buy-price: 1040
+    sell-price: 221.0
+  ENCHANTED_BOOK_UNBREAKING_2:
+    buy-price: 3621
+    sell-price: 769.46
+  ENCHANTED_BOOK_UNBREAKING_3:
+    buy-price: 7514
+    sell-price: 1596.72
+  ENCHANTED_BOOK_WIND_BURST_1:
+    buy-price: 1950
+    sell-price: 414.38
+  ENCHANTED_BOOK_WIND_BURST_2:
+    buy-price: 6790
+    sell-price: 1442.88
+  ENCHANTED_BOOK_WIND_BURST_3:
+    buy-price: 14088
+    sell-price: 2993.7
+  ENCHANTED_GOLDEN_APPLE:
+    buy-price: 12000.0
+    sell-price: 7200.0
+  ENCHANTING_TABLE:
+    buy-price: 800.0
+    sell-price: 340.0
+  ENDERMAN_SPAWN_EGG:
+    buy-price: 800.0
+    sell-price: 340.0
+  ENDERMITE_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  ENDER_CHEST:
+    buy-price: 600.0
+    sell-price: 330.0
+  ENDER_DRAGON_SPAWN_EGG:
+    buy-price: 10000.0
+    sell-price: 4250.0
+  ENDER_EYE:
+    buy-price: 120.0
+    sell-price: 51.0
+  ENDER_PEARL:
+    buy-price: 75.0
+    sell-price: 18.75
+  END_CRYSTAL:
+    buy-enabled: false
+    sell-enabled: false
+  END_ROD:
+    buy-price: 20.0
+    sell-price: 8.5
+  END_STONE:
+    buy-price: 12.0
+    sell-price: 5.1
+  END_STONE_BRICKS:
+    buy-price: 15.0
+    sell-price: 6.38
+  END_STONE_BRICK_SLAB:
+    buy-price: 7.5
+    sell-price: 3.19
+  END_STONE_BRICK_STAIRS:
+    buy-price: 15.0
+    sell-price: 6.38
+  END_STONE_BRICK_WALL:
+    buy-price: 15.0
+    sell-price: 6.38
+  EVOKER_SPAWN_EGG:
+    buy-price: 1200.0
+    sell-price: 510.0
+  EXPERIENCE_BOTTLE:
+    buy-price: 120.0
+    sell-price: 51.0
+  EXPLORER_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  EXPOSED_CHISELED_COPPER:
+    buy-price: 43.0
+    sell-price: 10.75
+  EXPOSED_COPPER:
+    buy-price: 126.0
+    sell-price: 31.5
+  EXPOSED_COPPER_BARS:
+    buy-price: 5.0
+    sell-price: 1.25
+  EXPOSED_COPPER_BULB:
+    buy-price: 48.0
+    sell-price: 12.0
+  EXPOSED_COPPER_CHAIN:
+    buy-price: 7.0
+    sell-price: 1.75
+  EXPOSED_COPPER_CHEST:
+    buy-price: 18.0
+    sell-price: 4.5
+  EXPOSED_COPPER_DOOR:
+    buy-price: 57.0
+    sell-price: 14.25
+  EXPOSED_COPPER_GOLEM_STATUE:
+    buy-price: 25.0
+    sell-price: 6.25
+  EXPOSED_COPPER_GRATE:
+    buy-price: 43.0
+    sell-price: 10.75
+  EXPOSED_COPPER_LANTERN:
+    buy-price: 8.0
+    sell-price: 2.0
+  EXPOSED_COPPER_TORCH:
+    buy-price: 3.0
+    sell-price: 0.75
+  EXPOSED_COPPER_TRAPDOOR:
+    buy-price: 46.0
+    sell-price: 11.5
+  EXPOSED_CUT_COPPER:
+    buy-price: 38.0
+    sell-price: 9.5
+  EXPOSED_CUT_COPPER_SLAB:
+    buy-price: 19.0
+    sell-price: 4.75
+  EXPOSED_CUT_COPPER_STAIRS:
+    buy-price: 38.0
+    sell-price: 9.5
+  EXPOSED_LIGHTNING_ROD:
+    buy-price: 15.0
+    sell-price: 3.75
+  EYE_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  FARMLAND:
+    buy-price: 3.0
+    sell-price: 0.98
+  FEATHER:
+    buy-price: 3.0
+    sell-price: 0.75
+  FERMENTED_SPIDER_EYE:
+    buy-price: 12.0
+    sell-price: 3.0
+  FERN:
+    buy-price: 2.0
+    sell-price: 0.65
+  FIELD_MASONED_BANNER_PATTERN:
+    buy-price: 60.0
+    sell-price: 25.5
+  FIREFLY_BUSH:
+    buy-price: 8.0
+    sell-price: 2.6
+  'minecraft:firework_rocket[minecraft:fireworks={flight_duration:1}]':
+    buy-price: 6.0
+    sell-price: 1.5
+  'minecraft:firework_rocket[minecraft:fireworks={flight_duration:2}]':
+    buy-price: 12.0
+    sell-price: 3.0
+  'minecraft:firework_rocket[minecraft:fireworks={flight_duration:3}]':
+    buy-price: 22.0
+    sell-price: 5.5
+  FIREWORK_STAR:
+    buy-price: 12.0
+    sell-price: 3.0
+  FIRE_CHARGE:
+    buy-price: 8.0
+    sell-price: 2.6
+  FIRE_CORAL:
+    buy-price: 8.0
+    sell-price: 3.4
+  FIRE_CORAL_BLOCK:
+    buy-price: 12.0
+    sell-price: 5.1
+  FIRE_CORAL_FAN:
+    buy-price: 8.0
+    sell-price: 3.4
+  FISHING_ROD:
+    buy-price: 20.0
+    sell-price: 5.0
+  FLETCHING_TABLE:
+    buy-price: 15.0
+    sell-price: 3.75
+  FLINT:
+    buy-price: 5.0
+    sell-price: 1.62
+  FLINT_AND_STEEL:
+    buy-price: 22.0
+    sell-price: 5.5
+  FLOWERING_AZALEA:
+    buy-price: 12.0
+    sell-price: 3.9
+  FLOWERING_AZALEA_LEAVES:
+    buy-price: 3.0
+    sell-price: 0.98
+  FLOWER_BANNER_PATTERN:
+    buy-price: 60.0
+    sell-price: 25.5
+  FLOWER_POT:
+    buy-price: 5.0
+    sell-price: 1.62
+  FLOW_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 600.0
+    sell-price: 330.0
+  FLOW_BANNER_PATTERN:
+    buy-price: 300.0
+    sell-price: 165.0
+  FLOW_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  FOX_SPAWN_EGG:
+    buy-price: 450.0
+    sell-price: 191.25
+  FRIEND_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  FROGSPAWN:
+    buy-price: 15.0
+    sell-price: 6.38
+  FROG_SPAWN_EGG:
+    buy-price: 350.0
+    sell-price: 148.75
+  FURNACE:
+    buy-price: 8.0
+    sell-price: 2.0
+  FURNACE_MINECART:
+    buy-price: 45.0
+    sell-price: 11.25
+  GHAST_SPAWN_EGG:
+    buy-price: 1000.0
+    sell-price: 425.0
+  GHAST_TEAR:
+    buy-price: 160.0
+    sell-price: 88.0
+  GILDED_BLACKSTONE:
+    buy-price: 50.0
+    sell-price: 21.25
+  GLASS:
+    buy-price: 3.0
+    sell-price: 0.75
+  GLASS_BOTTLE:
+    buy-price: 1.5
+    sell-price: 0.38
+  GLASS_PANE:
+    buy-price: 1.5
+    sell-price: 0.38
+  GLISTERING_MELON_SLICE:
+    buy-price: 22.0
+    sell-price: 9.35
+  GLOBE_BANNER_PATTERN:
+    buy-price: 200.0
+    sell-price: 85.0
+  GLOWSTONE:
+    buy-price: 30.0
+    sell-price: 7.5
+  GLOWSTONE_DUST:
+    buy-price: 8.0
+    sell-price: 2.0
+  GLOW_BERRIES:
+    buy-price: 8.0
+    sell-price: 2.0
+  GLOW_INK_SAC:
+    buy-price: 18.0
+    sell-price: 7.65
+  GLOW_ITEM_FRAME:
+    buy-price: 22.0
+    sell-price: 9.35
+  GLOW_LICHEN:
+    buy-price: 5.0
+    sell-price: 1.62
+  GLOW_SQUID_SPAWN_EGG:
+    buy-price: 400.0
+    sell-price: 170.0
+  GOAT_HORN:
+    buy-price: 50.0
+    sell-price: 21.25
+  GOAT_SPAWN_EGG:
+    buy-price: 400.0
+    sell-price: 170.0
+  GOLDEN_APPLE:
+    buy-price: 500.0
+    sell-price: 212.5
+  GOLDEN_AXE:
+    buy-price: 350.0
+    sell-price: 87.5
+  GOLDEN_BOOTS:
+    buy-price: 400.0
+    sell-price: 100.0
+  GOLDEN_CARROT:
+    buy-price: 55.0
+    sell-price: 23.38
+  GOLDEN_CHESTPLATE:
+    buy-price: 800.0
+    sell-price: 200.0
+  GOLDEN_HELMET:
+    buy-price: 500.0
+    sell-price: 125.0
+  GOLDEN_HOE:
+    buy-price: 350.0
+    sell-price: 87.5
+  GOLDEN_HORSE_ARMOR:
+    buy-price: 500.0
+    sell-price: 212.5
+  GOLDEN_LEGGINGS:
+    buy-price: 700.0
+    sell-price: 175.0
+  GOLDEN_NAUTILUS_ARMOR:
+    buy-price: 350.0
+    sell-price: 148.75
+  GOLDEN_PICKAXE:
+    buy-price: 350.0
+    sell-price: 87.5
+  GOLDEN_SHOVEL:
+    buy-price: 350.0
+    sell-price: 87.5
+  GOLDEN_SPEAR:
+    buy-price: 140.0
+    sell-price: 35.0
+  GOLDEN_SWORD:
+    buy-price: 250.0
+    sell-price: 62.5
+  GOLD_BLOCK:
+    buy-price: 990.0
+    sell-price: 247.5
+  GOLD_INGOT:
+    buy-price: 110.0
+    sell-price: 27.5
+  GOLD_NUGGET:
+    buy-price: 13.0
+    sell-price: 3.25
+  GOLD_ORE:
+    buy-price: 140.0
+    sell-price: 59.5
+  GRANITE:
+    buy-price: 2.5
+    sell-price: 0.81
+  GRANITE_SLAB:
+    buy-price: 1.25
+    sell-price: 0.41
+  GRANITE_STAIRS:
+    buy-price: 2.5
+    sell-price: 0.81
+  GRANITE_WALL:
+    buy-price: 2.5
+    sell-price: 0.81
+  GRASS_BLOCK:
+    buy-price: 5.0
+    sell-price: 1.62
+  GRAVEL:
+    buy-price: 1.5
+    sell-price: 0.49
+  GRAY_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  GRAY_BED:
+    buy-price: 19
+    sell-price: 4.75
+  GRAY_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  GRAY_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  GRAY_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  GRAY_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  GRAY_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  GRAY_DYE:
+    buy-price: 2
+    sell-price: 0.5
+  GRAY_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  GRAY_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  GRAY_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  GRAY_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  GRAY_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  GRAY_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  GRAY_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  GREEN_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  GREEN_BED:
+    buy-price: 19
+    sell-price: 4.75
+  GREEN_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  GREEN_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  GREEN_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  GREEN_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  GREEN_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  GREEN_DYE:
+    buy-price: 2
+    sell-price: 0.5
+  GREEN_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  GREEN_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  GREEN_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  GREEN_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  GREEN_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  GREEN_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  GREEN_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  GRINDSTONE:
+    buy-price: 22.0
+    sell-price: 5.5
+  GUARDIAN_SPAWN_EGG:
+    buy-price: 800.0
+    sell-price: 340.0
+  GUNPOWDER:
+    buy-price: 12.0
+    sell-price: 3.0
+  GUSTER_BANNER_PATTERN:
+    buy-price: 300.0
+    sell-price: 165.0
+  GUSTER_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  HANGING_ROOTS:
+    buy-price: 3.0
+    sell-price: 0.98
+  HAPPY_GHAST_SPAWN_EGG:
+    buy-price: 1500.0
+    sell-price: 637.5
+  HAY_BLOCK:
+    buy-price: 15.0
+    sell-price: 3.75
+  HEARTBREAK_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  HEART_OF_THE_SEA:
+    buy-price: 2200.0
+    sell-price: 1210.0
+  HEART_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  HEAVY_CORE:
+    buy-enabled: false
+    sell-enabled: false
+  HEAVY_WEIGHTED_PRESSURE_PLATE:
+    buy-price: 40.0
+    sell-price: 10.0
+  HOGLIN_SPAWN_EGG:
+    buy-price: 800.0
+    sell-price: 340.0
+  HONEYCOMB:
+    buy-price: 12.0
+    sell-price: 3.0
+  HONEYCOMB_BLOCK:
+    buy-price: 48.0
+    sell-price: 12.0
+  HONEY_BLOCK:
+    buy-price: 80.0
+    sell-price: 20.0
+  HONEY_BOTTLE:
+    buy-price: 22.0
+    sell-price: 5.5
+  HOPPER:
+    buy-price: 80.0
+    sell-price: 20.0
+  HOPPER_MINECART:
+    buy-price: 90.0
+    sell-price: 22.5
+  HORN_CORAL:
+    buy-price: 8.0
+    sell-price: 3.4
+  HORN_CORAL_BLOCK:
+    buy-price: 12.0
+    sell-price: 5.1
+  HORN_CORAL_FAN:
+    buy-price: 8.0
+    sell-price: 3.4
+  HORSE_SPAWN_EGG:
+    buy-price: 600.0
+    sell-price: 255.0
+  HOST_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  HOWL_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  HUSK_SPAWN_EGG:
+    buy-price: 550.0
+    sell-price: 233.75
+  ICE:
+    buy-price: 5.0
+    sell-price: 1.62
+  INFESTED_CHISELED_STONE_BRICKS:
+    buy-price: 1.0
+    sell-price: 0.33
+  INFESTED_COBBLESTONE:
+    buy-price: 1.0
+    sell-price: 0.33
+  INFESTED_CRACKED_STONE_BRICKS:
+    buy-price: 1.0
+    sell-price: 0.33
+  INFESTED_DEEPSLATE:
+    buy-price: 1.0
+    sell-price: 0.33
+  INFESTED_MOSSY_STONE_BRICKS:
+    buy-price: 1.0
+    sell-price: 0.33
+  INFESTED_STONE:
+    buy-price: 1.0
+    sell-price: 0.33
+  INFESTED_STONE_BRICKS:
+    buy-price: 1.0
+    sell-price: 0.33
+  INK_SAC:
+    buy-price: 6.0
+    sell-price: 1.5
+  IRON_AXE:
+    buy-price: 120.0
+    sell-price: 30.0
+  IRON_BARS:
+    buy-price: 6.0
+    sell-price: 1.5
+  IRON_BLOCK:
+    buy-price: 315.0
+    sell-price: 78.75
+  IRON_BOOTS:
+    buy-price: 130.0
+    sell-price: 32.5
+  IRON_CHESTPLATE:
+    buy-price: 250.0
+    sell-price: 62.5
+  IRON_DOOR:
+    buy-price: 25.0
+    sell-price: 6.25
+  IRON_GOLEM_SPAWN_EGG:
+    buy-price: 1200.0
+    sell-price: 510.0
+  IRON_HELMET:
+    buy-price: 160.0
+    sell-price: 40.0
+  IRON_HOE:
+    buy-price: 120.0
+    sell-price: 30.0
+  IRON_HORSE_ARMOR:
+    buy-price: 200.0
+    sell-price: 85.0
+  IRON_INGOT:
+    buy-price: 35.0
+    sell-price: 8.75
+  IRON_LEGGINGS:
+    buy-price: 220.0
+    sell-price: 55.0
+  IRON_NAUTILUS_ARMOR:
+    buy-price: 200.0
+    sell-price: 85.0
+  IRON_NUGGET:
+    buy-price: 4.5
+    sell-price: 1.12
+  IRON_ORE:
+    buy-price: 45.0
+    sell-price: 14.62
+  IRON_PICKAXE:
+    buy-price: 120.0
+    sell-price: 30.0
+  IRON_SHOVEL:
+    buy-price: 120.0
+    sell-price: 30.0
+  IRON_SPEAR:
+    buy-price: 45.0
+    sell-price: 11.25
+  IRON_SWORD:
+    buy-price: 80.0
+    sell-price: 20.0
+  IRON_TRAPDOOR:
+    buy-price: 30.0
+    sell-price: 7.5
+  ITEM_FRAME:
+    buy-price: 8.0
+    sell-price: 2.0
+  JACK_O_LANTERN:
+    buy-price: 10.0
+    sell-price: 2.5
+  JUKEBOX:
+    buy-price: 75.0
+    sell-price: 31.88
+  JUNGLE_BOAT:
+    buy-price: 4.5
+    sell-price: 1.12
+  JUNGLE_BUTTON:
+    buy-price: 1.5
+    sell-price: 0.38
+  JUNGLE_CHEST_BOAT:
+    buy-price: 9.5
+    sell-price: 2.38
+  JUNGLE_DOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  JUNGLE_FENCE:
+    buy-price: 2.5
+    sell-price: 0.62
+  JUNGLE_FENCE_GATE:
+    buy-price: 3.5
+    sell-price: 0.88
+  JUNGLE_HANGING_SIGN:
+    buy-price: 3.5
+    sell-price: 0.88
+  JUNGLE_LEAVES:
+    buy-price: 1.0
+    sell-price: 0.25
+  JUNGLE_LOG:
+    buy-price: 5.0
+    sell-price: 1.25
+  JUNGLE_PLANKS:
+    buy-price: 1.5
+    sell-price: 0.38
+  JUNGLE_PRESSURE_PLATE:
+    buy-price: 1.5
+    sell-price: 0.38
+  JUNGLE_SAPLING:
+    buy-price: 3.0
+    sell-price: 0.75
+  JUNGLE_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  JUNGLE_SIGN:
+    buy-price: 2.5
+    sell-price: 0.62
+  JUNGLE_SLAB:
+    buy-price: 0.75
+    sell-price: 0.19
+  JUNGLE_STAIRS:
+    buy-price: 1.5
+    sell-price: 0.38
+  JUNGLE_TRAPDOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  JUNGLE_WOOD:
+    buy-price: 5.0
+    sell-price: 1.25
+  KELP:
+    buy-price: 1.5
+    sell-price: 0.38
+  KNOWLEDGE_BOOK:
+    buy-price: 50.0
+    sell-price: 21.25
+  LADDER:
+    buy-price: 2.0
+    sell-price: 0.5
+  LANTERN:
+    buy-price: 12.0
+    sell-price: 3.0
+  LAPIS_BLOCK:
+    buy-price: 450.0
+    sell-price: 191.25
+  LAPIS_LAZULI:
+    buy-price: 50.0
+    sell-price: 21.25
+  LAPIS_ORE:
+    buy-price: 65.0
+    sell-price: 27.62
+  LARGE_AMETHYST_BUD:
+    buy-price: 30.0
+    sell-price: 12.75
+  LARGE_FERN:
+    buy-price: 3.0
+    sell-price: 0.98
+  LAVA_BUCKET:
+    buy-price: 80.0
+    sell-price: 20.0
+  LEAD:
+    buy-price: 22.0
+    sell-price: 7.15
+  LEAF_LITTER:
+    buy-price: 2.0
+    sell-price: 0.65
+  LEATHER:
+    buy-price: 10.0
+    sell-price: 2.5
+  LEATHER_BOOTS:
+    buy-price: 12.0
+    sell-price: 3.0
+  LEATHER_CHESTPLATE:
+    buy-price: 25.0
+    sell-price: 6.25
+  LEATHER_HELMET:
+    buy-price: 15.0
+    sell-price: 3.75
+  LEATHER_HORSE_ARMOR:
+    buy-price: 40.0
+    sell-price: 10.0
+  LEATHER_LEGGINGS:
+    buy-price: 22.0
+    sell-price: 5.5
+  LECTERN:
+    buy-price: 22.0
+    sell-price: 5.5
+  LEVER:
+    buy-price: 3.0
+    sell-price: 0.75
+  LIGHTNING_ROD:
+    buy-price: 30.0
+    sell-price: 12.75
+  LIGHT_BLUE_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  LIGHT_BLUE_BED:
+    buy-price: 19
+    sell-price: 4.75
+  LIGHT_BLUE_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  LIGHT_BLUE_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  LIGHT_BLUE_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  LIGHT_BLUE_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  LIGHT_BLUE_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  LIGHT_BLUE_DYE:
+    buy-price: 1.5
+    sell-price: 0.38
+  LIGHT_BLUE_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  LIGHT_BLUE_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  LIGHT_BLUE_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  LIGHT_BLUE_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  LIGHT_BLUE_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  LIGHT_BLUE_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  LIGHT_BLUE_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  LIGHT_GRAY_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  LIGHT_GRAY_BED:
+    buy-price: 19
+    sell-price: 4.75
+  LIGHT_GRAY_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  LIGHT_GRAY_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  LIGHT_GRAY_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  LIGHT_GRAY_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  LIGHT_GRAY_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  LIGHT_GRAY_DYE:
+    buy-price: 1.5
+    sell-price: 0.38
+  LIGHT_GRAY_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  LIGHT_GRAY_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  LIGHT_GRAY_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  LIGHT_GRAY_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  LIGHT_GRAY_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  LIGHT_GRAY_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  LIGHT_GRAY_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  LIGHT_WEIGHTED_PRESSURE_PLATE:
+    buy-price: 50.0
+    sell-price: 12.5
+  LILAC:
+    buy-price: 4.0
+    sell-price: 1.3
+  LILY_OF_THE_VALLEY:
+    buy-price: 3.0
+    sell-price: 0.98
+  LILY_PAD:
+    buy-price: 4.0
+    sell-price: 1.3
+  LIME_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  LIME_BED:
+    buy-price: 19
+    sell-price: 4.75
+  LIME_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  LIME_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  LIME_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  LIME_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  LIME_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  LIME_DYE:
+    buy-price: 2
+    sell-price: 0.5
+  LIME_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  LIME_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  LIME_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  LIME_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  LIME_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  LIME_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  LIME_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  LINGERING_POTION_AWKWARD:
+    buy-price: 24
+    sell-price: 3.0
+  LINGERING_POTION_FIRE_RESISTANCE:
+    buy-price: 350
+    sell-price: 74.38
+  LINGERING_POTION_HARMING:
+    buy-price: 324
+    sell-price: 68.85
+  LINGERING_POTION_HEALING:
+    buy-price: 324
+    sell-price: 68.85
+  LINGERING_POTION_HERO_OF_THE_VILLAGE:
+    buy-enabled: false
+    sell-enabled: false
+  LINGERING_POTION_INFESTED:
+    buy-price: 350
+    sell-price: 74.38
+  LINGERING_POTION_INVISIBILITY:
+    buy-price: 400
+    sell-price: 85.0
+  LINGERING_POTION_LEAPING:
+    buy-price: 276
+    sell-price: 58.65
+  LINGERING_POTION_LONG_FIRE_RESISTANCE:
+    buy-price: 490
+    sell-price: 104.12
+  LINGERING_POTION_LONG_INVISIBILITY:
+    buy-price: 560
+    sell-price: 119.0
+  LINGERING_POTION_LONG_LEAPING:
+    buy-price: 386
+    sell-price: 82.02
+  LINGERING_POTION_LONG_NIGHT_VISION:
+    buy-price: 420
+    sell-price: 89.25
+  LINGERING_POTION_LONG_POISON:
+    buy-price: 350
+    sell-price: 74.38
+  LINGERING_POTION_LONG_REGENERATION:
+    buy-price: 560
+    sell-price: 119.0
+  LINGERING_POTION_LONG_SLOWNESS:
+    buy-price: 280
+    sell-price: 59.5
+  LINGERING_POTION_LONG_SLOW_FALLING:
+    buy-price: 490
+    sell-price: 104.12
+  LINGERING_POTION_LONG_STRENGTH:
+    buy-price: 526
+    sell-price: 111.77
+  LINGERING_POTION_LONG_SWIFTNESS:
+    buy-price: 386
+    sell-price: 82.02
+  LINGERING_POTION_LONG_TURTLE_MASTER:
+    buy-price: 840
+    sell-price: 178.5
+  LINGERING_POTION_LONG_WATER_BREATHING:
+    buy-price: 490
+    sell-price: 104.12
+  LINGERING_POTION_LONG_WEAKNESS:
+    buy-price: 314
+    sell-price: 66.72
+  LINGERING_POTION_MUNDANE:
+    buy-price: 24
+    sell-price: 3.0
+  LINGERING_POTION_NIGHT_VISION:
+    buy-price: 300
+    sell-price: 63.75
+  LINGERING_POTION_OOZING:
+    buy-price: 400
+    sell-price: 85.0
+  LINGERING_POTION_POISON:
+    buy-price: 250
+    sell-price: 53.12
+  LINGERING_POTION_REGENERATION:
+    buy-price: 400
+    sell-price: 85.0
+  LINGERING_POTION_SLOWNESS:
+    buy-price: 200
+    sell-price: 42.5
+  LINGERING_POTION_SLOW_FALLING:
+    buy-price: 350
+    sell-price: 74.38
+  LINGERING_POTION_STRENGTH:
+    buy-price: 376
+    sell-price: 79.9
+  LINGERING_POTION_STRONG_HARMING:
+    buy-price: 518
+    sell-price: 110.08
+  LINGERING_POTION_STRONG_HEALING:
+    buy-price: 518
+    sell-price: 110.08
+  LINGERING_POTION_STRONG_LEAPING:
+    buy-price: 442
+    sell-price: 93.92
+  LINGERING_POTION_STRONG_POISON:
+    buy-price: 400
+    sell-price: 85.0
+  LINGERING_POTION_STRONG_REGENERATION:
+    buy-price: 640
+    sell-price: 136.0
+  LINGERING_POTION_STRONG_SLOWNESS:
+    buy-price: 320
+    sell-price: 68.0
+  LINGERING_POTION_STRONG_STRENGTH:
+    buy-price: 602
+    sell-price: 127.92
+  LINGERING_POTION_STRONG_SWIFTNESS:
+    buy-price: 442
+    sell-price: 93.92
+  LINGERING_POTION_STRONG_TURTLE_MASTER:
+    buy-price: 960
+    sell-price: 204.0
+  LINGERING_POTION_SWIFTNESS:
+    buy-price: 276
+    sell-price: 58.65
+  LINGERING_POTION_THICK:
+    buy-price: 24
+    sell-price: 3.0
+  LINGERING_POTION_TURTLE_MASTER:
+    buy-price: 600
+    sell-price: 127.5
+  LINGERING_POTION_WATER:
+    buy-price: 10
+    sell-price: 1.25
+  LINGERING_POTION_WATER_BREATHING:
+    buy-price: 350
+    sell-price: 74.38
+  LINGERING_POTION_WEAKNESS:
+    buy-price: 224
+    sell-price: 47.6
+  LINGERING_POTION_WEAVING:
+    buy-price: 400
+    sell-price: 85.0
+  LINGERING_POTION_WIND_CHARGED:
+    buy-price: 450
+    sell-price: 95.62
+  LLAMA_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  LODESTONE:
+    buy-price: 450.0
+    sell-price: 191.25
+  LODESTONE_COMPASS:
+    buy-price: 120.0
+    sell-price: 51.0
+  LOOM:
+    buy-price: 12.0
+    sell-price: 3.0
+  MACE:
+    buy-price: 12000.0
+    sell-price: 7200.0
+  MAGENTA_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  MAGENTA_BED:
+    buy-price: 19
+    sell-price: 4.75
+  MAGENTA_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  MAGENTA_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  MAGENTA_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  MAGENTA_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  MAGENTA_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  MAGENTA_DYE:
+    buy-price: 2
+    sell-price: 0.5
+  MAGENTA_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  MAGENTA_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  MAGENTA_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  MAGENTA_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  MAGENTA_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  MAGENTA_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  MAGENTA_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  MAGMA_BLOCK:
+    buy-price: 10.0
+    sell-price: 4.25
+  MAGMA_CREAM:
+    buy-price: 15.0
+    sell-price: 3.75
+  MAGMA_CUBE_SPAWN_EGG:
+    buy-price: 700.0
+    sell-price: 297.5
+  MANGROVE_BOAT:
+    buy-price: 4.5
+    sell-price: 1.12
+  MANGROVE_BUTTON:
+    buy-price: 1.5
+    sell-price: 0.38
+  MANGROVE_CHEST_BOAT:
+    buy-price: 9.5
+    sell-price: 2.38
+  MANGROVE_DOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  MANGROVE_FENCE:
+    buy-price: 2.5
+    sell-price: 0.62
+  MANGROVE_FENCE_GATE:
+    buy-price: 3.5
+    sell-price: 0.88
+  MANGROVE_HANGING_SIGN:
+    buy-price: 3.5
+    sell-price: 0.88
+  MANGROVE_LEAVES:
+    buy-price: 1.0
+    sell-price: 0.25
+  MANGROVE_LOG:
+    buy-price: 5.0
+    sell-price: 1.25
+  MANGROVE_PLANKS:
+    buy-price: 1.5
+    sell-price: 0.38
+  MANGROVE_PRESSURE_PLATE:
+    buy-price: 1.5
+    sell-price: 0.38
+  MANGROVE_PROPAGULE:
+    buy-price: 3.0
+    sell-price: 0.75
+  MANGROVE_ROOTS:
+    buy-price: 3.0
+    sell-price: 0.75
+  MANGROVE_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  MANGROVE_SIGN:
+    buy-price: 2.5
+    sell-price: 0.62
+  MANGROVE_SLAB:
+    buy-price: 0.75
+    sell-price: 0.19
+  MANGROVE_STAIRS:
+    buy-price: 1.5
+    sell-price: 0.38
+  MANGROVE_TRAPDOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  MANGROVE_WOOD:
+    buy-price: 5.0
+    sell-price: 1.25
+  MAP:
+    buy-price: 8.0
+    sell-price: 2.6
+  MEDIUM_AMETHYST_BUD:
+    buy-price: 20.0
+    sell-price: 8.5
+  MELON:
+    buy-price: 12.0
+    sell-price: 3.0
+  MELON_SEEDS:
+    buy-price: 1.0
+    sell-price: 0.25
+  MELON_SLICE:
+    buy-price: 1.5
+    sell-price: 0.38
+  MILK_BUCKET:
+    buy-price: 70.0
+    sell-price: 17.5
+  MINECART:
+    buy-price: 40.0
+    sell-price: 10.0
+  MINER_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  MOJANG_BANNER_PATTERN:
+    buy-price: 400.0
+    sell-price: 220.0
+  MOOSHROOM_SPAWN_EGG:
+    buy-price: 700.0
+    sell-price: 297.5
+  MOSSY_COBBLESTONE:
+    buy-price: 6.0
+    sell-price: 1.95
+  MOSSY_COBBLESTONE_SLAB:
+    buy-price: 3.0
+    sell-price: 0.98
+  MOSSY_COBBLESTONE_STAIRS:
+    buy-price: 6.0
+    sell-price: 1.95
+  MOSSY_COBBLESTONE_WALL:
+    buy-price: 6.0
+    sell-price: 1.95
+  MOSSY_STONE_BRICKS:
+    buy-price: 7.0
+    sell-price: 2.27
+  MOSSY_STONE_BRICK_SLAB:
+    buy-price: 3.5
+    sell-price: 1.14
+  MOSSY_STONE_BRICK_STAIRS:
+    buy-price: 7.0
+    sell-price: 2.27
+  MOSSY_STONE_BRICK_WALL:
+    buy-price: 7.0
+    sell-price: 2.27
+  MOSS_BLOCK:
+    buy-price: 6.0
+    sell-price: 1.5
+  MOSS_CARPET:
+    buy-price: 3.0
+    sell-price: 0.75
+  MOURNER_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  MUD:
+    buy-price: 3.0
+    sell-price: 0.98
+  MUDDY_MANGROVE_ROOTS:
+    buy-price: 4.0
+    sell-price: 1.0
+  MUD_BRICKS:
+    buy-price: 7.0
+    sell-price: 2.27
+  MUD_BRICK_SLAB:
+    buy-price: 3.5
+    sell-price: 1.14
+  MUD_BRICK_STAIRS:
+    buy-price: 7.0
+    sell-price: 2.27
+  MUD_BRICK_WALL:
+    buy-price: 7.0
+    sell-price: 2.27
+  MULE_SPAWN_EGG:
+    buy-price: 550.0
+    sell-price: 233.75
+  MUSHROOM_STEM:
+    buy-price: 8.0
+    sell-price: 2.0
+  MUSHROOM_STEW:
+    buy-price: 8.0
+    sell-price: 2.0
+  MUSIC_DISC_11:
+    buy-price: 300.0
+    sell-price: 165.0
+  MUSIC_DISC_13:
+    buy-price: 200.0
+    sell-price: 85.0
+  MUSIC_DISC_5:
+    buy-price: 600.0
+    sell-price: 330.0
+  MUSIC_DISC_BLOCKS:
+    buy-price: 200.0
+    sell-price: 85.0
+  MUSIC_DISC_CAT:
+    buy-price: 200.0
+    sell-price: 85.0
+  MUSIC_DISC_CHIRP:
+    buy-price: 200.0
+    sell-price: 85.0
+  MUSIC_DISC_CREATOR:
+    buy-price: 350.0
+    sell-price: 148.75
+  MUSIC_DISC_CREATOR_MUSIC_BOX:
+    buy-price: 400.0
+    sell-price: 170.0
+  MUSIC_DISC_FAR:
+    buy-price: 200.0
+    sell-price: 85.0
+  MUSIC_DISC_LAVA_CHICKEN:
+    buy-price: 250.0
+    sell-price: 106.25
+  MUSIC_DISC_MALL:
+    buy-price: 200.0
+    sell-price: 85.0
+  MUSIC_DISC_MELLOHI:
+    buy-price: 200.0
+    sell-price: 85.0
+  MUSIC_DISC_OTHERSIDE:
+    buy-price: 500.0
+    sell-price: 275.0
+  MUSIC_DISC_PIGSTEP:
+    buy-price: 800.0
+    sell-price: 440.0
+  MUSIC_DISC_PRECIPICE:
+    buy-price: 350.0
+    sell-price: 148.75
+  MUSIC_DISC_RELIC:
+    buy-price: 400.0
+    sell-price: 170.0
+  MUSIC_DISC_STAL:
+    buy-price: 200.0
+    sell-price: 85.0
+  MUSIC_DISC_STRAD:
+    buy-price: 200.0
+    sell-price: 85.0
+  MUSIC_DISC_TEARS:
+    buy-price: 250.0
+    sell-price: 106.25
+  MUSIC_DISC_WAIT:
+    buy-price: 200.0
+    sell-price: 85.0
+  MUSIC_DISC_WARD:
+    buy-price: 200.0
+    sell-price: 85.0
+  MUTTON:
+    buy-price: 5.0
+    sell-price: 1.25
+  MYCELIUM:
+    buy-price: 8.0
+    sell-price: 2.6
+  NAME_TAG:
+    buy-price: 150.0
+    sell-price: 63.75
+  NAUTILUS_SHELL:
+    buy-price: 160.0
+    sell-price: 88.0
+  NAUTILUS_SPAWN_EGG:
+    buy-price: 800.0
+    sell-price: 340.0
+  NETHERITE_AXE:
+    buy-price: 8500.0
+    sell-price: 5100.0
+  NETHERITE_BLOCK:
+    buy-price: 50000.0
+    sell-price: 30000.0
+  NETHERITE_BOOTS:
+    buy-price: 8500.0
+    sell-price: 5100.0
+  NETHERITE_CHESTPLATE:
+    buy-price: 16000.0
+    sell-price: 9600.0
+  NETHERITE_HELMET:
+    buy-price: 10000.0
+    sell-price: 6000.0
+  NETHERITE_HOE:
+    buy-price: 8500.0
+    sell-price: 5100.0
+  NETHERITE_HORSE_ARMOR:
+    buy-price: 6000.0
+    sell-price: 3600.0
+  NETHERITE_INGOT:
+    buy-price: 5500.0
+    sell-price: 3300.0
+  NETHERITE_LEGGINGS:
+    buy-price: 14000.0
+    sell-price: 8400.0
+  NETHERITE_NAUTILUS_ARMOR:
+    buy-price: 7500.0
+    sell-price: 4500.0
+  NETHERITE_PICKAXE:
+    buy-price: 8500.0
+    sell-price: 5100.0
+  NETHERITE_SCRAP:
+    buy-price: 1500.0
+    sell-price: 900.0
+  NETHERITE_SHOVEL:
+    buy-price: 8500.0
+    sell-price: 5100.0
+  NETHERITE_SPEAR:
+    buy-price: 6200.0
+    sell-price: 3720.0
+  NETHERITE_SWORD:
+    buy-price: 7500.0
+    sell-price: 4500.0
+  NETHERITE_UPGRADE_SMITHING_TEMPLATE:
+    buy-price: 2500.0
+    sell-price: 1500.0
+  NETHERRACK:
+    buy-price: 0.75
+    sell-price: 0.19
+  NETHER_BRICK:
+    buy-price: 5.0
+    sell-price: 1.62
+  NETHER_BRICKS:
+    buy-price: 8.0
+    sell-price: 3.4
+  NETHER_BRICK_FENCE:
+    buy-price: 8.0
+    sell-price: 3.4
+  NETHER_BRICK_SLAB:
+    buy-price: 4.0
+    sell-price: 1.7
+  NETHER_BRICK_STAIRS:
+    buy-price: 8.0
+    sell-price: 3.4
+  NETHER_BRICK_WALL:
+    buy-price: 8.0
+    sell-price: 3.4
+  NETHER_GOLD_ORE:
+    buy-price: 40.0
+    sell-price: 17.0
+  NETHER_QUARTZ_ORE:
+    buy-price: 20.0
+    sell-price: 8.5
+  NETHER_SPROUTS:
+    buy-price: 4.0
+    sell-price: 1.3
+  NETHER_STAR:
+    buy-enabled: false
+    sell-enabled: false
+  NETHER_WART:
+    buy-price: 8.0
+    sell-price: 2.0
+  NETHER_WART_BLOCK:
+    buy-price: 5.0
+    sell-price: 1.25
+  NOTE_BLOCK:
+    buy-price: 8.0
+    sell-price: 2.0
+  OAK_BOAT:
+    buy-price: 4.5
+    sell-price: 1.12
+  OAK_BUTTON:
+    buy-price: 1.5
+    sell-price: 0.38
+  OAK_CHEST_BOAT:
+    buy-price: 9.5
+    sell-price: 2.38
+  OAK_DOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  OAK_FENCE:
+    buy-price: 2.5
+    sell-price: 0.62
+  OAK_FENCE_GATE:
+    buy-price: 3.5
+    sell-price: 0.88
+  OAK_HANGING_SIGN:
+    buy-price: 3.5
+    sell-price: 0.88
+  OAK_LEAVES:
+    buy-price: 1.0
+    sell-price: 0.25
+  OAK_LOG:
+    buy-price: 5.0
+    sell-price: 1.25
+  OAK_PLANKS:
+    buy-price: 1.5
+    sell-price: 0.38
+  OAK_PRESSURE_PLATE:
+    buy-price: 1.5
+    sell-price: 0.38
+  OAK_SAPLING:
+    buy-price: 3.0
+    sell-price: 0.75
+  OAK_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  OAK_SIGN:
+    buy-price: 2.5
+    sell-price: 0.62
+  OAK_SLAB:
+    buy-price: 0.75
+    sell-price: 0.19
+  OAK_STAIRS:
+    buy-price: 1.5
+    sell-price: 0.38
+  OAK_TRAPDOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  OAK_WOOD:
+    buy-price: 5.0
+    sell-price: 1.25
+  OBSERVER:
+    buy-price: 40.0
+    sell-price: 10.0
+  OBSIDIAN:
+    buy-price: 80.0
+    sell-price: 34.0
+  OCELOT_SPAWN_EGG:
+    buy-price: 450.0
+    sell-price: 191.25
+  OCHRE_FROGLIGHT:
+    buy-price: 25.0
+    sell-price: 10.62
+  OMINOUS_BANNER:
+    buy-price: 100.0
+    sell-price: 42.5
+  OMINOUS_BOTTLE:
+    buy-enabled: false
+    sell-enabled: false
+  OMINOUS_TRIAL_KEY:
+    buy-price: 250.0
+    sell-price: 137.5
+  OPEN_EYEBLOSSOM:
+    buy-price: 15.0
+    sell-price: 4.88
+  ORANGE_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  ORANGE_BED:
+    buy-price: 19
+    sell-price: 4.75
+  ORANGE_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  ORANGE_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  ORANGE_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  ORANGE_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  ORANGE_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  ORANGE_DYE:
+    buy-price: 1.5
+    sell-price: 0.38
+  ORANGE_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  ORANGE_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  ORANGE_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  ORANGE_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  ORANGE_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  ORANGE_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  ORANGE_TULIP:
+    buy-price: 3.0
+    sell-price: 0.98
+  ORANGE_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  OXEYE_DAISY:
+    buy-price: 3.0
+    sell-price: 0.98
+  OXIDIZED_CHISELED_COPPER:
+    buy-price: 43.0
+    sell-price: 10.75
+  OXIDIZED_COPPER:
+    buy-price: 126.0
+    sell-price: 31.5
+  OXIDIZED_COPPER_BARS:
+    buy-price: 5.0
+    sell-price: 1.25
+  OXIDIZED_COPPER_BULB:
+    buy-price: 48.0
+    sell-price: 12.0
+  OXIDIZED_COPPER_CHAIN:
+    buy-price: 7.0
+    sell-price: 1.75
+  OXIDIZED_COPPER_CHEST:
+    buy-price: 18.0
+    sell-price: 4.5
+  OXIDIZED_COPPER_DOOR:
+    buy-price: 57.0
+    sell-price: 14.25
+  OXIDIZED_COPPER_GOLEM_STATUE:
+    buy-price: 25.0
+    sell-price: 6.25
+  OXIDIZED_COPPER_GRATE:
+    buy-price: 43.0
+    sell-price: 10.75
+  OXIDIZED_COPPER_LANTERN:
+    buy-price: 8.0
+    sell-price: 2.0
+  OXIDIZED_COPPER_TORCH:
+    buy-price: 3.0
+    sell-price: 0.75
+  OXIDIZED_COPPER_TRAPDOOR:
+    buy-price: 46.0
+    sell-price: 11.5
+  OXIDIZED_CUT_COPPER:
+    buy-price: 38.0
+    sell-price: 9.5
+  OXIDIZED_CUT_COPPER_SLAB:
+    buy-price: 19.0
+    sell-price: 4.75
+  OXIDIZED_CUT_COPPER_STAIRS:
+    buy-price: 38.0
+    sell-price: 9.5
+  OXIDIZED_LIGHTNING_ROD:
+    buy-price: 15.0
+    sell-price: 3.75
+  PACKED_ICE:
+    buy-price: 12.0
+    sell-price: 3.9
+  PACKED_MUD:
+    buy-price: 5.0
+    sell-price: 1.62
+  PAINTING:
+    buy-price: 8.0
+    sell-price: 2.0
+  PALE_HANGING_MOSS:
+    buy-price: 4.0
+    sell-price: 1.0
+  PALE_MOSS_BLOCK:
+    buy-price: 6.0
+    sell-price: 1.5
+  PALE_MOSS_CARPET:
+    buy-price: 3.0
+    sell-price: 0.75
+  PALE_OAK_BOAT:
+    buy-price: 5.4
+    sell-price: 1.35
+  PALE_OAK_BUTTON:
+    buy-price: 2.4
+    sell-price: 0.6
+  PALE_OAK_CHEST_BOAT:
+    buy-price: 10.4
+    sell-price: 2.6
+  PALE_OAK_DOOR:
+    buy-price: 3.4
+    sell-price: 0.85
+  PALE_OAK_FENCE:
+    buy-price: 3.4
+    sell-price: 0.85
+  PALE_OAK_FENCE_GATE:
+    buy-price: 4.4
+    sell-price: 1.1
+  PALE_OAK_HANGING_SIGN:
+    buy-price: 4.4
+    sell-price: 1.1
+  PALE_OAK_LEAVES:
+    buy-price: 1.0
+    sell-price: 0.25
+  PALE_OAK_LOG:
+    buy-price: 8.0
+    sell-price: 2.0
+  PALE_OAK_PLANKS:
+    buy-price: 2.4
+    sell-price: 0.6
+  PALE_OAK_PRESSURE_PLATE:
+    buy-price: 2.4
+    sell-price: 0.6
+  PALE_OAK_SAPLING:
+    buy-price: 3.0
+    sell-price: 0.75
+  PALE_OAK_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  PALE_OAK_SIGN:
+    buy-price: 3.4
+    sell-price: 0.85
+  PALE_OAK_SLAB:
+    buy-price: 1.2
+    sell-price: 0.3
+  PALE_OAK_STAIRS:
+    buy-price: 2.4
+    sell-price: 0.6
+  PALE_OAK_TRAPDOOR:
+    buy-price: 3.4
+    sell-price: 0.85
+  PALE_OAK_WOOD:
+    buy-price: 8.0
+    sell-price: 2.0
+  PANDA_SPAWN_EGG:
+    buy-price: 600.0
+    sell-price: 255.0
+  PAPER:
+    buy-price: 1.5
+    sell-price: 0.38
+  PARCHED_SPAWN_EGG:
+    buy-price: 700.0
+    sell-price: 297.5
+  PARROT_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  PEARLESCENT_FROGLIGHT:
+    buy-price: 25.0
+    sell-price: 10.62
+  PEONY:
+    buy-price: 4.0
+    sell-price: 1.3
+  PHANTOM_MEMBRANE:
+    buy-price: 30.0
+    sell-price: 7.5
+  PHANTOM_SPAWN_EGG:
+    buy-price: 700.0
+    sell-price: 297.5
+  PIGLIN_BANNER_PATTERN:
+    buy-price: 180.0
+    sell-price: 76.5
+  PIGLIN_BRUTE_SPAWN_EGG:
+    buy-price: 1000.0
+    sell-price: 425.0
+  PIGLIN_HEAD:
+    buy-enabled: false
+    sell-enabled: false
+  PIGLIN_SPAWN_EGG:
+    buy-price: 700.0
+    sell-price: 297.5
+  PIG_SPAWN_EGG:
+    buy-price: 300.0
+    sell-price: 127.5
+  PILLAGER_SPAWN_EGG:
+    buy-price: 800.0
+    sell-price: 340.0
+  PINK_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  PINK_BED:
+    buy-price: 19
+    sell-price: 4.75
+  PINK_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  PINK_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  PINK_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  PINK_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  PINK_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  PINK_DYE:
+    buy-price: 1.5
+    sell-price: 0.38
+  PINK_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  PINK_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  PINK_PETALS:
+    buy-price: 3.0
+    sell-price: 0.98
+  PINK_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  PINK_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  PINK_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  PINK_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  PINK_TULIP:
+    buy-price: 3.0
+    sell-price: 0.98
+  PINK_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  PISTON:
+    buy-price: 40.0
+    sell-price: 10.0
+  PITCHER_PLANT:
+    buy-price: 40.0
+    sell-price: 17.0
+  PITCHER_POD:
+    buy-price: 25.0
+    sell-price: 10.62
+  PLENTY_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  PODZOL:
+    buy-price: 6.0
+    sell-price: 1.95
+  POINTED_DRIPSTONE:
+    buy-price: 6.0
+    sell-price: 1.95
+  POISONOUS_POTATO:
+    buy-price: 1.0
+    sell-price: 0.25
+  POLAR_BEAR_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  POLISHED_ANDESITE:
+    buy-price: 3.5
+    sell-price: 1.14
+  POLISHED_ANDESITE_SLAB:
+    buy-price: 1.75
+    sell-price: 0.57
+  POLISHED_ANDESITE_STAIRS:
+    buy-price: 3.5
+    sell-price: 1.14
+  POLISHED_BASALT:
+    buy-price: 5.0
+    sell-price: 2.12
+  POLISHED_BLACKSTONE:
+    buy-price: 6.0
+    sell-price: 2.55
+  POLISHED_BLACKSTONE_BRICKS:
+    buy-price: 8.0
+    sell-price: 3.4
+  POLISHED_BLACKSTONE_BRICK_SLAB:
+    buy-price: 4.0
+    sell-price: 1.7
+  POLISHED_BLACKSTONE_BRICK_STAIRS:
+    buy-price: 8.0
+    sell-price: 3.4
+  POLISHED_BLACKSTONE_BRICK_WALL:
+    buy-price: 8.0
+    sell-price: 3.4
+  POLISHED_BLACKSTONE_BUTTON:
+    buy-price: 4.0
+    sell-price: 1.3
+  POLISHED_BLACKSTONE_PRESSURE_PLATE:
+    buy-price: 5.0
+    sell-price: 1.62
+  POLISHED_BLACKSTONE_SLAB:
+    buy-price: 3.0
+    sell-price: 1.27
+  POLISHED_BLACKSTONE_STAIRS:
+    buy-price: 6.0
+    sell-price: 2.55
+  POLISHED_BLACKSTONE_WALL:
+    buy-price: 6.0
+    sell-price: 2.55
+  POLISHED_DEEPSLATE:
+    buy-price: 4.0
+    sell-price: 1.0
+  POLISHED_DEEPSLATE_SLAB:
+    buy-price: 2.0
+    sell-price: 0.5
+  POLISHED_DEEPSLATE_STAIRS:
+    buy-price: 4.0
+    sell-price: 1.0
+  POLISHED_DEEPSLATE_WALL:
+    buy-price: 4.0
+    sell-price: 1.0
+  POLISHED_DIORITE:
+    buy-price: 3.5
+    sell-price: 1.14
+  POLISHED_DIORITE_SLAB:
+    buy-price: 1.75
+    sell-price: 0.57
+  POLISHED_DIORITE_STAIRS:
+    buy-price: 3.5
+    sell-price: 1.14
+  POLISHED_GRANITE:
+    buy-price: 3.5
+    sell-price: 1.14
+  POLISHED_GRANITE_SLAB:
+    buy-price: 1.75
+    sell-price: 0.57
+  POLISHED_GRANITE_STAIRS:
+    buy-price: 3.5
+    sell-price: 1.14
+  POLISHED_TUFF:
+    buy-price: 5.0
+    sell-price: 1.62
+  POLISHED_TUFF_SLAB:
+    buy-price: 2.5
+    sell-price: 0.81
+  POLISHED_TUFF_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.62
+  POLISHED_TUFF_WALL:
+    buy-price: 5.0
+    sell-price: 1.62
+  POPPED_CHORUS_FRUIT:
+    buy-price: 15.0
+    sell-price: 3.75
+  POPPY:
+    buy-price: 1.5
+    sell-price: 0.49
+  PORKCHOP:
+    buy-price: 5.0
+    sell-price: 1.25
+  POTATO:
+    buy-price: 3.0
+    sell-price: 0.75
+  POTION_AWKWARD:
+    buy-price: 10
+    sell-price: 1.25
+  POTION_FIRE_RESISTANCE:
+    buy-price: 140
+    sell-price: 29.75
+  POTION_HARMING:
+    buy-price: 130
+    sell-price: 27.62
+  POTION_HEALING:
+    buy-price: 130
+    sell-price: 27.62
+  POTION_HERO_OF_THE_VILLAGE:
+    buy-enabled: false
+    sell-enabled: false
+  POTION_INFESTED:
+    buy-price: 140
+    sell-price: 29.75
+  POTION_INVISIBILITY:
+    buy-price: 160
+    sell-price: 34.0
+  POTION_LEAPING:
+    buy-price: 110
+    sell-price: 23.38
+  POTION_LONG_FIRE_RESISTANCE:
+    buy-price: 196
+    sell-price: 41.65
+  POTION_LONG_INVISIBILITY:
+    buy-price: 224
+    sell-price: 47.6
+  POTION_LONG_LEAPING:
+    buy-price: 154
+    sell-price: 32.73
+  POTION_LONG_NIGHT_VISION:
+    buy-price: 168
+    sell-price: 35.7
+  POTION_LONG_POISON:
+    buy-price: 140
+    sell-price: 29.75
+  POTION_LONG_REGENERATION:
+    buy-price: 224
+    sell-price: 47.6
+  POTION_LONG_SLOWNESS:
+    buy-price: 112
+    sell-price: 23.8
+  POTION_LONG_SLOW_FALLING:
+    buy-price: 196
+    sell-price: 41.65
+  POTION_LONG_STRENGTH:
+    buy-price: 210
+    sell-price: 44.62
+  POTION_LONG_SWIFTNESS:
+    buy-price: 154
+    sell-price: 32.73
+  POTION_LONG_TURTLE_MASTER:
+    buy-price: 336
+    sell-price: 71.4
+  POTION_LONG_WATER_BREATHING:
+    buy-price: 196
+    sell-price: 41.65
+  POTION_LONG_WEAKNESS:
+    buy-price: 126
+    sell-price: 26.77
+  POTION_MUNDANE:
+    buy-price: 10
+    sell-price: 1.25
+  POTION_NIGHT_VISION:
+    buy-price: 120
+    sell-price: 25.5
+  POTION_OOZING:
+    buy-price: 160
+    sell-price: 34.0
+  POTION_POISON:
+    buy-price: 100
+    sell-price: 21.25
+  POTION_REGENERATION:
+    buy-price: 160
+    sell-price: 34.0
+  POTION_SLOWNESS:
+    buy-price: 80
+    sell-price: 17.0
+  POTION_SLOW_FALLING:
+    buy-price: 140
+    sell-price: 29.75
+  POTION_STRENGTH:
+    buy-price: 150
+    sell-price: 31.88
+  POTION_STRONG_HARMING:
+    buy-price: 208
+    sell-price: 44.2
+  POTION_STRONG_HEALING:
+    buy-price: 208
+    sell-price: 44.2
+  POTION_STRONG_LEAPING:
+    buy-price: 176
+    sell-price: 37.4
+  POTION_STRONG_POISON:
+    buy-price: 160
+    sell-price: 34.0
+  POTION_STRONG_REGENERATION:
+    buy-price: 256
+    sell-price: 54.4
+  POTION_STRONG_SLOWNESS:
+    buy-price: 128
+    sell-price: 27.2
+  POTION_STRONG_STRENGTH:
+    buy-price: 240
+    sell-price: 51.0
+  POTION_STRONG_SWIFTNESS:
+    buy-price: 176
+    sell-price: 37.4
+  POTION_STRONG_TURTLE_MASTER:
+    buy-price: 384
+    sell-price: 81.6
+  POTION_SWIFTNESS:
+    buy-price: 110
+    sell-price: 23.38
+  POTION_THICK:
+    buy-price: 10
+    sell-price: 1.25
+  POTION_TURTLE_MASTER:
+    buy-price: 240
+    sell-price: 51.0
+  POTION_WATER:
+    buy-price: 4
+    sell-price: 0.5
+  POTION_WATER_BREATHING:
+    buy-price: 140
+    sell-price: 29.75
+  POTION_WEAKNESS:
+    buy-price: 90
+    sell-price: 19.12
+  POTION_WEAVING:
+    buy-price: 160
+    sell-price: 34.0
+  POTION_WIND_CHARGED:
+    buy-price: 180
+    sell-price: 38.25
+  POWDER_SNOW_BUCKET:
+    buy-price: 80.0
+    sell-price: 20.0
+  POWERED_RAIL:
+    buy-price: 45.0
+    sell-price: 11.25
+  PRISMARINE:
+    buy-price: 18.0
+    sell-price: 7.65
+  PRISMARINE_BRICKS:
+    buy-price: 22.0
+    sell-price: 9.35
+  PRISMARINE_BRICK_SLAB:
+    buy-price: 11.0
+    sell-price: 4.67
+  PRISMARINE_BRICK_STAIRS:
+    buy-price: 22.0
+    sell-price: 9.35
+  PRISMARINE_CRYSTALS:
+    buy-price: 12.0
+    sell-price: 5.1
+  PRISMARINE_SHARD:
+    buy-price: 10.0
+    sell-price: 4.25
+  PRISMARINE_SLAB:
+    buy-price: 9.0
+    sell-price: 3.82
+  PRISMARINE_STAIRS:
+    buy-price: 18.0
+    sell-price: 7.65
+  PRISMARINE_WALL:
+    buy-price: 18.0
+    sell-price: 7.65
+  PRIZE_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  PUFFERFISH:
+    buy-price: 12.0
+    sell-price: 5.1
+  PUFFERFISH_BUCKET:
+    buy-price: 85.0
+    sell-price: 36.12
+  PUFFERFISH_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  PUMPKIN:
+    buy-price: 6.0
+    sell-price: 1.5
+  PUMPKIN_PIE:
+    buy-price: 8.0
+    sell-price: 2.0
+  PUMPKIN_SEEDS:
+    buy-price: 1.0
+    sell-price: 0.25
+  PURPLE_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  PURPLE_BED:
+    buy-price: 19
+    sell-price: 4.75
+  PURPLE_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  PURPLE_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  PURPLE_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  PURPLE_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  PURPLE_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  PURPLE_DYE:
+    buy-price: 2.5
+    sell-price: 0.62
+  PURPLE_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  PURPLE_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  PURPLE_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  PURPLE_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  PURPLE_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  PURPLE_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  PURPLE_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  PURPUR_BLOCK:
+    buy-price: 15.0
+    sell-price: 6.38
+  PURPUR_PILLAR:
+    buy-price: 18.0
+    sell-price: 7.65
+  PURPUR_SLAB:
+    buy-price: 7.5
+    sell-price: 3.19
+  PURPUR_STAIRS:
+    buy-price: 15.0
+    sell-price: 6.38
+  QUARTZ:
+    buy-price: 16.0
+    sell-price: 6.8
+  QUARTZ_BLOCK:
+    buy-price: 64.0
+    sell-price: 27.2
+  QUARTZ_BRICKS:
+    buy-price: 68.0
+    sell-price: 28.9
+  QUARTZ_PILLAR:
+    buy-price: 68.0
+    sell-price: 28.9
+  QUARTZ_SLAB:
+    buy-price: 32.0
+    sell-price: 13.6
+  QUARTZ_STAIRS:
+    buy-price: 64.0
+    sell-price: 27.2
+  RABBIT:
+    buy-price: 5.0
+    sell-price: 1.25
+  RABBIT_FOOT:
+    buy-price: 40.0
+    sell-price: 17.0
+  RABBIT_HIDE:
+    buy-price: 6.0
+    sell-price: 1.5
+  RABBIT_SPAWN_EGG:
+    buy-price: 300.0
+    sell-price: 127.5
+  RABBIT_STEW:
+    buy-price: 15.0
+    sell-price: 6.38
+  RAIL:
+    buy-price: 8.0
+    sell-price: 2.0
+  RAISER_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  RAVAGER_SPAWN_EGG:
+    buy-price: 1500.0
+    sell-price: 637.5
+  RAW_COPPER:
+    buy-price: 10.0
+    sell-price: 2.5
+  RAW_COPPER_BLOCK:
+    buy-price: 90.0
+    sell-price: 22.5
+  RAW_GOLD:
+    buy-price: 85.0
+    sell-price: 21.25
+  RAW_GOLD_BLOCK:
+    buy-price: 765.0
+    sell-price: 191.25
+  RAW_IRON:
+    buy-price: 28.0
+    sell-price: 7.0
+  RAW_IRON_BLOCK:
+    buy-price: 252.0
+    sell-price: 63.0
+  RECOVERY_COMPASS:
+    buy-price: 300.0
+    sell-price: 127.5
+  REDSTONE:
+    buy-price: 16.0
+    sell-price: 4.0
+  REDSTONE_BLOCK:
+    buy-price: 144.0
+    sell-price: 36.0
+  REDSTONE_LAMP:
+    buy-price: 35.0
+    sell-price: 8.75
+  REDSTONE_ORE:
+    buy-price: 22.0
+    sell-price: 7.15
+  REDSTONE_TORCH:
+    buy-price: 8.0
+    sell-price: 2.0
+  RED_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  RED_BED:
+    buy-price: 19
+    sell-price: 4.75
+  RED_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  RED_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  RED_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  RED_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  RED_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  RED_DYE:
+    buy-price: 1
+    sell-price: 0.25
+  RED_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  RED_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  RED_MUSHROOM:
+    buy-price: 5.0
+    sell-price: 1.25
+  RED_MUSHROOM_BLOCK:
+    buy-price: 10.0
+    sell-price: 2.5
+  RED_NETHER_BRICKS:
+    buy-price: 12.0
+    sell-price: 5.1
+  RED_NETHER_BRICK_SLAB:
+    buy-price: 6.0
+    sell-price: 2.55
+  RED_NETHER_BRICK_STAIRS:
+    buy-price: 12.0
+    sell-price: 5.1
+  RED_NETHER_BRICK_WALL:
+    buy-price: 12.0
+    sell-price: 5.1
+  RED_SAND:
+    buy-price: 5.0
+    sell-price: 1.62
+  RED_SANDSTONE:
+    buy-price: 6.0
+    sell-price: 1.95
+  RED_SANDSTONE_SLAB:
+    buy-price: 3.0
+    sell-price: 0.98
+  RED_SANDSTONE_STAIRS:
+    buy-price: 6.0
+    sell-price: 1.95
+  RED_SANDSTONE_WALL:
+    buy-price: 6.0
+    sell-price: 1.95
+  RED_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  RED_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  RED_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  RED_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  RED_TULIP:
+    buy-price: 3.0
+    sell-price: 0.98
+  RED_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  REPEATER:
+    buy-price: 22.0
+    sell-price: 5.5
+  RESIN_BLOCK:
+    buy-price: 65.0
+    sell-price: 16.25
+  RESIN_BRICK:
+    buy-price: 3.0
+    sell-price: 0.75
+  RESIN_BRICKS:
+    buy-price: 8.0
+    sell-price: 2.0
+  RESIN_BRICK_SLAB:
+    buy-price: 4.0
+    sell-price: 1.0
+  RESIN_BRICK_STAIRS:
+    buy-price: 8.0
+    sell-price: 2.0
+  RESIN_BRICK_WALL:
+    buy-price: 8.0
+    sell-price: 2.0
+  RESIN_CLUMP:
+    buy-price: 18.0
+    sell-price: 4.5
+  RESPAWN_ANCHOR:
+    buy-price: 600.0
+    sell-price: 255.0
+  RIB_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  ROOTED_DIRT:
+    buy-price: 3.0
+    sell-price: 0.98
+  ROSE_BUSH:
+    buy-price: 4.0
+    sell-price: 1.3
+  ROTTEN_FLESH:
+    buy-price: 1.5
+    sell-price: 0.38
+  SADDLE:
+    buy-price: 220.0
+    sell-price: 93.5
+  SALMON:
+    buy-price: 4.0
+    sell-price: 1.0
+  SALMON_BUCKET:
+    buy-price: 85.0
+    sell-price: 36.12
+  SALMON_SPAWN_EGG:
+    buy-price: 250.0
+    sell-price: 106.25
+  SAND:
+    buy-price: 2.5
+    sell-price: 0.81
+  SANDSTONE:
+    buy-price: 4.0
+    sell-price: 1.3
+  SANDSTONE_SLAB:
+    buy-price: 2.0
+    sell-price: 0.65
+  SANDSTONE_STAIRS:
+    buy-price: 4.0
+    sell-price: 1.3
+  SANDSTONE_WALL:
+    buy-price: 4.0
+    sell-price: 1.3
+  SCAFFOLDING:
+    buy-price: 4.0
+    sell-price: 1.0
+  SCRAPE_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  SCULK:
+    buy-price: 15.0
+    sell-price: 6.38
+  SCULK_CATALYST:
+    buy-price: 80.0
+    sell-price: 34.0
+  SCULK_SENSOR:
+    buy-price: 60.0
+    sell-price: 25.5
+  SCULK_SHRIEKER:
+    buy-enabled: false
+    sell-enabled: false
+  SCULK_VEIN:
+    buy-price: 10.0
+    sell-price: 4.25
+  SEAGRASS:
+    buy-price: 2.0
+    sell-price: 0.65
+  SEA_LANTERN:
+    buy-price: 35.0
+    sell-price: 14.88
+  SEA_PICKLE:
+    buy-price: 6.0
+    sell-price: 2.55
+  SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  SHEAF_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  SHEARS:
+    buy-price: 15.0
+    sell-price: 3.75
+  SHEEP_SPAWN_EGG:
+    buy-price: 300.0
+    sell-price: 127.5
+  SHELTER_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  SHIELD:
+    buy-price: 45.0
+    sell-price: 11.25
+  SHORT_DRY_GRASS:
+    buy-price: 2.0
+    sell-price: 0.65
+  SHORT_GRASS:
+    buy-price: 1.0
+    sell-price: 0.33
+  SHROOMLIGHT:
+    buy-price: 20.0
+    sell-price: 8.5
+  SHULKER_BOX:
+    buy-price: 400
+    sell-price: 220.0
+  SHULKER_SHELL:
+    buy-price: 760.0
+    sell-price: 418.0
+  SHULKER_SPAWN_EGG:
+    buy-price: 1500.0
+    sell-price: 637.5
+  SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 800.0
+    sell-price: 440.0
+  SILVERFISH_SPAWN_EGG:
+    buy-price: 300.0
+    sell-price: 127.5
+  SKELETON_HORSE_SPAWN_EGG:
+    buy-price: 1500.0
+    sell-price: 637.5
+  SKELETON_SKULL:
+    buy-enabled: false
+    sell-enabled: false
+  SKELETON_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  SKULL_BANNER_PATTERN:
+    buy-price: 250.0
+    sell-price: 137.5
+  SKULL_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  SLIME_BALL:
+    buy-price: 15.0
+    sell-price: 3.75
+  SLIME_BLOCK:
+    buy-price: 135.0
+    sell-price: 33.75
+  SLIME_SPAWN_EGG:
+    buy-price: 600.0
+    sell-price: 255.0
+  SMALL_AMETHYST_BUD:
+    buy-price: 12.0
+    sell-price: 5.1
+  SMALL_DRIPLEAF:
+    buy-price: 5.0
+    sell-price: 1.62
+  SMITHING_TABLE:
+    buy-price: 22.0
+    sell-price: 5.5
+  SMOKER:
+    buy-price: 22.0
+    sell-price: 5.5
+  SMOOTH_BASALT:
+    buy-price: 5.0
+    sell-price: 2.12
+  SMOOTH_QUARTZ:
+    buy-price: 70.0
+    sell-price: 29.75
+  SMOOTH_QUARTZ_SLAB:
+    buy-price: 35.0
+    sell-price: 14.88
+  SMOOTH_QUARTZ_STAIRS:
+    buy-price: 70.0
+    sell-price: 29.75
+  SMOOTH_RED_SANDSTONE:
+    buy-price: 8.0
+    sell-price: 2.6
+  SMOOTH_RED_SANDSTONE_SLAB:
+    buy-price: 4.0
+    sell-price: 1.3
+  SMOOTH_RED_SANDSTONE_STAIRS:
+    buy-price: 8.0
+    sell-price: 2.6
+  SMOOTH_SANDSTONE:
+    buy-price: 6.0
+    sell-price: 1.95
+  SMOOTH_SANDSTONE_SLAB:
+    buy-price: 3.0
+    sell-price: 0.98
+  SMOOTH_SANDSTONE_STAIRS:
+    buy-price: 6.0
+    sell-price: 1.95
+  SMOOTH_STONE:
+    buy-price: 4.0
+    sell-price: 1.0
+  SMOOTH_STONE_SLAB:
+    buy-price: 2.0
+    sell-price: 0.5
+  SNIFFER_EGG:
+    buy-price: 600.0
+    sell-price: 330.0
+  SNIFFER_SPAWN_EGG:
+    buy-price: 800.0
+    sell-price: 340.0
+  SNORT_POTTERY_SHERD:
+    buy-price: 80.0
+    sell-price: 34.0
+  SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  SNOUT_BANNER_PATTERN:
+    buy-price: 80.0
+    sell-price: 34.0
+  SNOW:
+    buy-price: 1.0
+    sell-price: 0.25
+  SNOWBALL:
+    buy-price: 0.5
+    sell-price: 0.12
+  SNOW_BLOCK:
+    buy-price: 4.0
+    sell-price: 1.0
+  SNOW_GOLEM_SPAWN_EGG:
+    buy-price: 400.0
+    sell-price: 170.0
+  SOUL_CAMPFIRE:
+    buy-price: 15.0
+    sell-price: 3.75
+  SOUL_LANTERN:
+    buy-price: 15.0
+    sell-price: 3.75
+  SOUL_SAND:
+    buy-price: 6.0
+    sell-price: 2.55
+  SOUL_SOIL:
+    buy-price: 5.0
+    sell-price: 2.12
+  SOUL_TORCH:
+    buy-price: 4.0
+    sell-price: 1.0
+  SPECTRAL_ARROW:
+    buy-price: 24.0
+    sell-price: 2.0
+  SPIDER_EYE:
+    buy-price: 5.0
+    sell-price: 1.25
+  SPIDER_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  SPLASH_POTION_AWKWARD:
+    buy-price: 16
+    sell-price: 2.0
+  SPLASH_POTION_FIRE_RESISTANCE:
+    buy-price: 210
+    sell-price: 44.62
+  SPLASH_POTION_HARMING:
+    buy-price: 196
+    sell-price: 41.65
+  SPLASH_POTION_HEALING:
+    buy-price: 196
+    sell-price: 41.65
+  SPLASH_POTION_HERO_OF_THE_VILLAGE:
+    buy-enabled: false
+    sell-enabled: false
+  SPLASH_POTION_INFESTED:
+    buy-price: 210
+    sell-price: 44.62
+  SPLASH_POTION_INVISIBILITY:
+    buy-price: 240
+    sell-price: 51.0
+  SPLASH_POTION_LEAPING:
+    buy-price: 164
+    sell-price: 34.85
+  SPLASH_POTION_LONG_FIRE_RESISTANCE:
+    buy-price: 294
+    sell-price: 62.48
+  SPLASH_POTION_LONG_INVISIBILITY:
+    buy-price: 336
+    sell-price: 71.4
+  SPLASH_POTION_LONG_LEAPING:
+    buy-price: 230
+    sell-price: 48.88
+  SPLASH_POTION_LONG_NIGHT_VISION:
+    buy-price: 252
+    sell-price: 53.55
+  SPLASH_POTION_LONG_POISON:
+    buy-price: 210
+    sell-price: 44.62
+  SPLASH_POTION_LONG_REGENERATION:
+    buy-price: 336
+    sell-price: 71.4
+  SPLASH_POTION_LONG_SLOWNESS:
+    buy-price: 168
+    sell-price: 35.7
+  SPLASH_POTION_LONG_SLOW_FALLING:
+    buy-price: 294
+    sell-price: 62.48
+  SPLASH_POTION_LONG_STRENGTH:
+    buy-price: 314
+    sell-price: 66.72
+  SPLASH_POTION_LONG_SWIFTNESS:
+    buy-price: 230
+    sell-price: 48.88
+  SPLASH_POTION_LONG_TURTLE_MASTER:
+    buy-price: 504
+    sell-price: 107.1
+  SPLASH_POTION_LONG_WATER_BREATHING:
+    buy-price: 294
+    sell-price: 62.48
+  SPLASH_POTION_LONG_WEAKNESS:
+    buy-price: 190
+    sell-price: 40.38
+  SPLASH_POTION_MUNDANE:
+    buy-price: 16
+    sell-price: 2.0
+  SPLASH_POTION_NIGHT_VISION:
+    buy-price: 180
+    sell-price: 38.25
+  SPLASH_POTION_OOZING:
+    buy-price: 240
+    sell-price: 51.0
+  SPLASH_POTION_POISON:
+    buy-price: 150
+    sell-price: 31.88
+  SPLASH_POTION_REGENERATION:
+    buy-price: 240
+    sell-price: 51.0
+  SPLASH_POTION_SLOWNESS:
+    buy-price: 120
+    sell-price: 25.5
+  SPLASH_POTION_SLOW_FALLING:
+    buy-price: 210
+    sell-price: 44.62
+  SPLASH_POTION_STRENGTH:
+    buy-price: 224
+    sell-price: 47.6
+  SPLASH_POTION_STRONG_HARMING:
+    buy-price: 314
+    sell-price: 66.72
+  SPLASH_POTION_STRONG_HEALING:
+    buy-price: 314
+    sell-price: 66.72
+  SPLASH_POTION_STRONG_LEAPING:
+    buy-price: 262
+    sell-price: 55.67
+  SPLASH_POTION_STRONG_POISON:
+    buy-price: 240
+    sell-price: 51.0
+  SPLASH_POTION_STRONG_REGENERATION:
+    buy-price: 384
+    sell-price: 81.6
+  SPLASH_POTION_STRONG_SLOWNESS:
+    buy-price: 192
+    sell-price: 40.8
+  SPLASH_POTION_STRONG_STRENGTH:
+    buy-price: 358
+    sell-price: 76.08
+  SPLASH_POTION_STRONG_SWIFTNESS:
+    buy-price: 262
+    sell-price: 55.67
+  SPLASH_POTION_STRONG_TURTLE_MASTER:
+    buy-price: 576
+    sell-price: 122.4
+  SPLASH_POTION_SWIFTNESS:
+    buy-price: 164
+    sell-price: 34.85
+  SPLASH_POTION_THICK:
+    buy-price: 16
+    sell-price: 2.0
+  SPLASH_POTION_TURTLE_MASTER:
+    buy-price: 360
+    sell-price: 76.5
+  SPLASH_POTION_WATER:
+    buy-price: 6
+    sell-price: 0.75
+  SPLASH_POTION_WATER_BREATHING:
+    buy-price: 210
+    sell-price: 44.62
+  SPLASH_POTION_WEAKNESS:
+    buy-price: 136
+    sell-price: 28.9
+  SPLASH_POTION_WEAVING:
+    buy-price: 240
+    sell-price: 51.0
+  SPLASH_POTION_WIND_CHARGED:
+    buy-price: 270
+    sell-price: 57.38
+  SPONGE:
+    buy-price: 200.0
+    sell-price: 85.0
+  SPORE_BLOSSOM:
+    buy-price: 30.0
+    sell-price: 12.75
+  SPRUCE_BOAT:
+    buy-price: 4.5
+    sell-price: 1.12
+  SPRUCE_BUTTON:
+    buy-price: 1.5
+    sell-price: 0.38
+  SPRUCE_CHEST_BOAT:
+    buy-price: 9.5
+    sell-price: 2.38
+  SPRUCE_DOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  SPRUCE_FENCE:
+    buy-price: 2.5
+    sell-price: 0.62
+  SPRUCE_FENCE_GATE:
+    buy-price: 3.5
+    sell-price: 0.88
+  SPRUCE_HANGING_SIGN:
+    buy-price: 3.5
+    sell-price: 0.88
+  SPRUCE_LEAVES:
+    buy-price: 1.0
+    sell-price: 0.25
+  SPRUCE_LOG:
+    buy-price: 5.0
+    sell-price: 1.25
+  SPRUCE_PLANKS:
+    buy-price: 1.5
+    sell-price: 0.38
+  SPRUCE_PRESSURE_PLATE:
+    buy-price: 1.5
+    sell-price: 0.38
+  SPRUCE_SAPLING:
+    buy-price: 3.0
+    sell-price: 0.75
+  SPRUCE_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  SPRUCE_SIGN:
+    buy-price: 2.5
+    sell-price: 0.62
+  SPRUCE_SLAB:
+    buy-price: 0.75
+    sell-price: 0.19
+  SPRUCE_STAIRS:
+    buy-price: 1.5
+    sell-price: 0.38
+  SPRUCE_TRAPDOOR:
+    buy-price: 2.5
+    sell-price: 0.62
+  SPRUCE_WOOD:
+    buy-price: 5.0
+    sell-price: 1.25
+  SPYGLASS:
+    buy-price: 40.0
+    sell-price: 17.0
+  SQUID_SPAWN_EGG:
+    buy-price: 300.0
+    sell-price: 127.5
+  STICK:
+    buy-price: 0.5
+    sell-price: 0.12
+  STICKY_PISTON:
+    buy-price: 55.0
+    sell-price: 13.75
+  STONE:
+    buy-price: 2.5
+    sell-price: 0.62
+  STONECUTTER:
+    buy-price: 22.0
+    sell-price: 5.5
+  STONE_AXE:
+    buy-price: 8.0
+    sell-price: 2.0
+  STONE_BRICKS:
+    buy-price: 4.0
+    sell-price: 1.0
+  STONE_BRICK_SLAB:
+    buy-price: 2.0
+    sell-price: 0.5
+  STONE_BRICK_STAIRS:
+    buy-price: 4.0
+    sell-price: 1.0
+  STONE_BRICK_WALL:
+    buy-price: 4.0
+    sell-price: 1.0
+  STONE_BUTTON:
+    buy-price: 3.0
+    sell-price: 0.75
+  STONE_HOE:
+    buy-price: 8.0
+    sell-price: 2.0
+  STONE_PICKAXE:
+    buy-price: 8.0
+    sell-price: 2.0
+  STONE_PRESSURE_PLATE:
+    buy-price: 4.0
+    sell-price: 1.0
+  STONE_SHOVEL:
+    buy-price: 8.0
+    sell-price: 2.0
+  STONE_SLAB:
+    buy-price: 1.25
+    sell-price: 0.31
+  STONE_SPEAR:
+    buy-price: 12.0
+    sell-price: 3.0
+  STONE_STAIRS:
+    buy-price: 2.5
+    sell-price: 0.62
+  STONE_SWORD:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRAY_SPAWN_EGG:
+    buy-price: 550.0
+    sell-price: 233.75
+  STRIDER_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  STRING:
+    buy-price: 3.0
+    sell-price: 0.75
+  STRIPPED_ACACIA_LOG:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_ACACIA_WOOD:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_BAMBOO_BLOCK:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_BIRCH_LOG:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_BIRCH_WOOD:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_CHERRY_LOG:
+    buy-price: 9.0
+    sell-price: 2.25
+  STRIPPED_CHERRY_WOOD:
+    buy-price: 9.0
+    sell-price: 2.25
+  STRIPPED_CRIMSON_HYPHAE:
+    buy-price: 7.0
+    sell-price: 1.75
+  STRIPPED_CRIMSON_STEM:
+    buy-price: 7.0
+    sell-price: 1.75
+  STRIPPED_DARK_OAK_LOG:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_DARK_OAK_WOOD:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_JUNGLE_LOG:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_JUNGLE_WOOD:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_MANGROVE_LOG:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_MANGROVE_WOOD:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_OAK_LOG:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_OAK_WOOD:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_PALE_OAK_LOG:
+    buy-price: 9.0
+    sell-price: 2.25
+  STRIPPED_PALE_OAK_WOOD:
+    buy-price: 9.0
+    sell-price: 2.25
+  STRIPPED_SPRUCE_LOG:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_SPRUCE_WOOD:
+    buy-price: 6.0
+    sell-price: 1.5
+  STRIPPED_WARPED_HYPHAE:
+    buy-price: 7.0
+    sell-price: 1.75
+  STRIPPED_WARPED_STEM:
+    buy-price: 7.0
+    sell-price: 1.75
+  SUGAR:
+    buy-price: 2.0
+    sell-price: 0.5
+  SUGAR_CANE:
+    buy-price: 3.0
+    sell-price: 0.75
+  SUNFLOWER:
+    buy-price: 4.0
+    sell-price: 1.3
+  SUSPICIOUS_GRAVEL:
+    buy-price: 15.0
+    sell-price: 6.38
+  SUSPICIOUS_SAND:
+    buy-price: 15.0
+    sell-price: 6.38
+  SUSPICIOUS_STEW:
+    buy-price: 10.0
+    sell-price: 2.5
+  SWEET_BERRIES:
+    buy-price: 3.0
+    sell-price: 0.75
+  TADPOLE_BUCKET:
+    buy-price: 85.0
+    sell-price: 36.12
+  TADPOLE_SPAWN_EGG:
+    buy-price: 250.0
+    sell-price: 106.25
+  TALL_DRY_GRASS:
+    buy-price: 2.0
+    sell-price: 0.65
+  TALL_GRASS:
+    buy-price: 1.5
+    sell-price: 0.49
+  TARGET:
+    buy-price: 30.0
+    sell-price: 12.75
+  TERRACOTTA:
+    buy-price: 4
+    sell-price: 1.0
+  THING_BANNER_PATTERN:
+    buy-price: 120.0
+    sell-price: 66.0
+  TIDE_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  TINTED_GLASS:
+    buy-price: 25.0
+    sell-price: 10.62
+  TIPPED_ARROW_FIRE_RESISTANCE:
+    buy-price: 84
+    sell-price: 11.9
+  TIPPED_ARROW_HARMING:
+    buy-price: 78
+    sell-price: 11.05
+  TIPPED_ARROW_HEALING:
+    buy-price: 78
+    sell-price: 11.05
+  TIPPED_ARROW_INFESTED:
+    buy-price: 84
+    sell-price: 11.9
+  TIPPED_ARROW_INVISIBILITY:
+    buy-price: 96
+    sell-price: 13.6
+  TIPPED_ARROW_LEAPING:
+    buy-price: 66
+    sell-price: 9.35
+  TIPPED_ARROW_LONG_FIRE_RESISTANCE:
+    buy-price: 117
+    sell-price: 16.57
+  TIPPED_ARROW_LONG_INVISIBILITY:
+    buy-price: 135
+    sell-price: 19.12
+  TIPPED_ARROW_LONG_LEAPING:
+    buy-price: 93
+    sell-price: 13.17
+  TIPPED_ARROW_LONG_NIGHT_VISION:
+    buy-price: 102
+    sell-price: 14.45
+  TIPPED_ARROW_LONG_POISON:
+    buy-price: 84
+    sell-price: 11.9
+  TIPPED_ARROW_LONG_REGENERATION:
+    buy-price: 135
+    sell-price: 19.12
+  TIPPED_ARROW_LONG_SLOWNESS:
+    buy-price: 66
+    sell-price: 9.35
+  TIPPED_ARROW_LONG_SLOW_FALLING:
+    buy-price: 117
+    sell-price: 16.57
+  TIPPED_ARROW_LONG_STRENGTH:
+    buy-price: 126
+    sell-price: 17.85
+  TIPPED_ARROW_LONG_SWIFTNESS:
+    buy-price: 93
+    sell-price: 13.17
+  TIPPED_ARROW_LONG_TURTLE_MASTER:
+    buy-price: 201
+    sell-price: 28.47
+  TIPPED_ARROW_LONG_WATER_BREATHING:
+    buy-price: 117
+    sell-price: 16.57
+  TIPPED_ARROW_LONG_WEAKNESS:
+    buy-price: 75
+    sell-price: 10.62
+  TIPPED_ARROW_NIGHT_VISION:
+    buy-price: 72
+    sell-price: 10.2
+  TIPPED_ARROW_OOZING:
+    buy-price: 96
+    sell-price: 13.6
+  TIPPED_ARROW_POISON:
+    buy-price: 60
+    sell-price: 8.5
+  TIPPED_ARROW_REGENERATION:
+    buy-price: 96
+    sell-price: 13.6
+  TIPPED_ARROW_SLOWNESS:
+    buy-price: 48
+    sell-price: 6.8
+  TIPPED_ARROW_SLOW_FALLING:
+    buy-price: 84
+    sell-price: 11.9
+  TIPPED_ARROW_STRENGTH:
+    buy-price: 90
+    sell-price: 12.75
+  TIPPED_ARROW_STRONG_HARMING:
+    buy-price: 126
+    sell-price: 17.85
+  TIPPED_ARROW_STRONG_HEALING:
+    buy-price: 126
+    sell-price: 17.85
+  TIPPED_ARROW_STRONG_LEAPING:
+    buy-price: 105
+    sell-price: 14.88
+  TIPPED_ARROW_STRONG_POISON:
+    buy-price: 96
+    sell-price: 13.6
+  TIPPED_ARROW_STRONG_REGENERATION:
+    buy-price: 153
+    sell-price: 21.68
+  TIPPED_ARROW_STRONG_SLOWNESS:
+    buy-price: 78
+    sell-price: 11.05
+  TIPPED_ARROW_STRONG_STRENGTH:
+    buy-price: 144
+    sell-price: 20.4
+  TIPPED_ARROW_STRONG_SWIFTNESS:
+    buy-price: 105
+    sell-price: 14.88
+  TIPPED_ARROW_STRONG_TURTLE_MASTER:
+    buy-price: 231
+    sell-price: 32.73
+  TIPPED_ARROW_SWIFTNESS:
+    buy-price: 66
+    sell-price: 9.35
+  TIPPED_ARROW_TURTLE_MASTER:
+    buy-price: 144
+    sell-price: 20.4
+  TIPPED_ARROW_WATER_BREATHING:
+    buy-price: 84
+    sell-price: 11.9
+  TIPPED_ARROW_WEAKNESS:
+    buy-price: 54
+    sell-price: 7.65
+  TIPPED_ARROW_WEAVING:
+    buy-price: 96
+    sell-price: 13.6
+  TIPPED_ARROW_WIND_CHARGED:
+    buy-price: 108
+    sell-price: 15.3
+  TNT:
+    buy-price: 75.0
+    sell-price: 31.88
+  TNT_MINECART:
+    buy-price: 100.0
+    sell-price: 42.5
+  TORCH:
+    buy-price: 1.5
+    sell-price: 0.38
+  TORCHFLOWER:
+    buy-price: 35.0
+    sell-price: 14.88
+  TORCHFLOWER_SEEDS:
+    buy-price: 25.0
+    sell-price: 10.62
+  TOTEM_OF_UNDYING:
+    buy-price: 7200.0
+    sell-price: 3960.0
+  TRADER_LLAMA_SPAWN_EGG:
+    buy-price: 600.0
+    sell-price: 255.0
+  TRAPPED_CHEST:
+    buy-price: 12.0
+    sell-price: 3.0
+  TRIAL_KEY:
+    buy-price: 80.0
+    sell-price: 34.0
+  TRIDENT:
+    buy-price: 5000.0
+    sell-price: 3000.0
+  TRIPWIRE_HOOK:
+    buy-price: 8.0
+    sell-price: 2.0
+  TROPICAL_FISH:
+    buy-price: 15.0
+    sell-price: 6.38
+  TROPICAL_FISH_BUCKET:
+    buy-price: 85.0
+    sell-price: 36.12
+  TROPICAL_FISH_SPAWN_EGG:
+    buy-price: 400.0
+    sell-price: 170.0
+  TUBE_CORAL:
+    buy-price: 8.0
+    sell-price: 3.4
+  TUBE_CORAL_BLOCK:
+    buy-price: 12.0
+    sell-price: 5.1
+  TUBE_CORAL_FAN:
+    buy-price: 8.0
+    sell-price: 3.4
+  TUFF:
+    buy-price: 3.0
+    sell-price: 0.98
+  TUFF_BRICKS:
+    buy-price: 6.0
+    sell-price: 1.95
+  TUFF_BRICK_SLAB:
+    buy-price: 3.0
+    sell-price: 0.98
+  TUFF_BRICK_STAIRS:
+    buy-price: 6.0
+    sell-price: 1.95
+  TUFF_BRICK_WALL:
+    buy-price: 6.0
+    sell-price: 1.95
+  TUFF_SLAB:
+    buy-price: 1.5
+    sell-price: 0.49
+  TUFF_STAIRS:
+    buy-price: 3.0
+    sell-price: 0.98
+  TUFF_WALL:
+    buy-price: 3.0
+    sell-price: 0.98
+  TURTLE_EGG:
+    buy-price: 60.0
+    sell-price: 25.5
+  TURTLE_HELMET:
+    buy-price: 250.0
+    sell-price: 137.5
+  TURTLE_SCUTE:
+    buy-price: 45.0
+    sell-price: 19.12
+  TURTLE_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  TWISTING_VINES:
+    buy-price: 5.0
+    sell-price: 2.12
+  VERDANT_FROGLIGHT:
+    buy-price: 25.0
+    sell-price: 10.62
+  VEX_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  VEX_SPAWN_EGG:
+    buy-price: 800.0
+    sell-price: 340.0
+  VILLAGER_SPAWN_EGG:
+    buy-price: 1000.0
+    sell-price: 425.0
+  VINDICATOR_SPAWN_EGG:
+    buy-price: 900.0
+    sell-price: 382.5
+  VINE:
+    buy-price: 3.0
+    sell-price: 0.98
+  WANDERING_TRADER_SPAWN_EGG:
+    buy-price: 800.0
+    sell-price: 340.0
+  WARDEN_SPAWN_EGG:
+    buy-price: 5000.0
+    sell-price: 2125.0
+  WARD_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  WARPED_BUTTON:
+    buy-price: 2.0
+    sell-price: 0.5
+  WARPED_DOOR:
+    buy-price: 3.0
+    sell-price: 0.75
+  WARPED_FENCE:
+    buy-price: 3.0
+    sell-price: 0.75
+  WARPED_FENCE_GATE:
+    buy-price: 4.0
+    sell-price: 1.0
+  WARPED_FUNGUS:
+    buy-price: 4.0
+    sell-price: 1.0
+  WARPED_FUNGUS_ON_A_STICK:
+    buy-price: 12.0
+    sell-price: 3.0
+  WARPED_HANGING_SIGN:
+    buy-price: 4.0
+    sell-price: 1.0
+  WARPED_HYPHAE:
+    buy-price: 6.0
+    sell-price: 1.5
+  WARPED_NYLIUM:
+    buy-price: 8.0
+    sell-price: 3.4
+  WARPED_PLANKS:
+    buy-price: 2.0
+    sell-price: 0.5
+  WARPED_PRESSURE_PLATE:
+    buy-price: 2.0
+    sell-price: 0.5
+  WARPED_ROOTS:
+    buy-price: 2.0
+    sell-price: 0.5
+  WARPED_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  WARPED_SIGN:
+    buy-price: 3.0
+    sell-price: 0.75
+  WARPED_SLAB:
+    buy-price: 1.0
+    sell-price: 0.25
+  WARPED_STAIRS:
+    buy-price: 2.0
+    sell-price: 0.5
+  WARPED_STEM:
+    buy-price: 6.0
+    sell-price: 1.5
+  WARPED_TRAPDOOR:
+    buy-price: 3.0
+    sell-price: 0.75
+  WARPED_WART_BLOCK:
+    buy-price: 5.0
+    sell-price: 1.25
+  WATER_BUCKET:
+    buy-price: 65.0
+    sell-price: 16.25
+  WAXED_CHISELED_COPPER:
+    buy-price: 43.0
+    sell-price: 10.75
+  WAXED_COPPER_BARS:
+    buy-price: 5.0
+    sell-price: 1.25
+  WAXED_COPPER_BLOCK:
+    buy-price: 131.0
+    sell-price: 32.75
+  WAXED_COPPER_BULB:
+    buy-price: 48.0
+    sell-price: 12.0
+  WAXED_COPPER_CHAIN:
+    buy-price: 7.0
+    sell-price: 1.75
+  WAXED_COPPER_CHEST:
+    buy-price: 18.0
+    sell-price: 4.5
+  WAXED_COPPER_DOOR:
+    buy-price: 57.0
+    sell-price: 14.25
+  WAXED_COPPER_GOLEM_STATUE:
+    buy-price: 25.0
+    sell-price: 6.25
+  WAXED_COPPER_GRATE:
+    buy-price: 43.0
+    sell-price: 10.75
+  WAXED_COPPER_LANTERN:
+    buy-price: 8.0
+    sell-price: 2.0
+  WAXED_COPPER_TORCH:
+    buy-price: 3.0
+    sell-price: 0.75
+  WAXED_COPPER_TRAPDOOR:
+    buy-price: 46.0
+    sell-price: 11.5
+  WAXED_CUT_COPPER:
+    buy-price: 38.0
+    sell-price: 9.5
+  WAXED_CUT_COPPER_SLAB:
+    buy-price: 19.0
+    sell-price: 4.75
+  WAXED_CUT_COPPER_STAIRS:
+    buy-price: 38.0
+    sell-price: 9.5
+  WAXED_EXPOSED_CHISELED_COPPER:
+    buy-price: 43.0
+    sell-price: 10.75
+  WAXED_EXPOSED_COPPER:
+    buy-price: 131.0
+    sell-price: 32.75
+  WAXED_EXPOSED_COPPER_BARS:
+    buy-price: 5.0
+    sell-price: 1.25
+  WAXED_EXPOSED_COPPER_BULB:
+    buy-price: 48.0
+    sell-price: 12.0
+  WAXED_EXPOSED_COPPER_CHAIN:
+    buy-price: 7.0
+    sell-price: 1.75
+  WAXED_EXPOSED_COPPER_CHEST:
+    buy-price: 18.0
+    sell-price: 4.5
+  WAXED_EXPOSED_COPPER_DOOR:
+    buy-price: 57.0
+    sell-price: 14.25
+  WAXED_EXPOSED_COPPER_GOLEM_STATUE:
+    buy-price: 25.0
+    sell-price: 6.25
+  WAXED_EXPOSED_COPPER_GRATE:
+    buy-price: 43.0
+    sell-price: 10.75
+  WAXED_EXPOSED_COPPER_LANTERN:
+    buy-price: 8.0
+    sell-price: 2.0
+  WAXED_EXPOSED_COPPER_TORCH:
+    buy-price: 3.0
+    sell-price: 0.75
+  WAXED_EXPOSED_COPPER_TRAPDOOR:
+    buy-price: 46.0
+    sell-price: 11.5
+  WAXED_EXPOSED_CUT_COPPER:
+    buy-price: 38.0
+    sell-price: 9.5
+  WAXED_EXPOSED_CUT_COPPER_SLAB:
+    buy-price: 19.0
+    sell-price: 4.75
+  WAXED_EXPOSED_CUT_COPPER_STAIRS:
+    buy-price: 38.0
+    sell-price: 9.5
+  WAXED_EXPOSED_LIGHTNING_ROD:
+    buy-price: 15.0
+    sell-price: 3.75
+  WAXED_LIGHTNING_ROD:
+    buy-price: 15.0
+    sell-price: 3.75
+  WAXED_OXIDIZED_CHISELED_COPPER:
+    buy-price: 43.0
+    sell-price: 10.75
+  WAXED_OXIDIZED_COPPER:
+    buy-price: 131.0
+    sell-price: 32.75
+  WAXED_OXIDIZED_COPPER_BARS:
+    buy-price: 5.0
+    sell-price: 1.25
+  WAXED_OXIDIZED_COPPER_BULB:
+    buy-price: 48.0
+    sell-price: 12.0
+  WAXED_OXIDIZED_COPPER_CHAIN:
+    buy-price: 7.0
+    sell-price: 1.75
+  WAXED_OXIDIZED_COPPER_CHEST:
+    buy-price: 18.0
+    sell-price: 4.5
+  WAXED_OXIDIZED_COPPER_DOOR:
+    buy-price: 57.0
+    sell-price: 14.25
+  WAXED_OXIDIZED_COPPER_GOLEM_STATUE:
+    buy-price: 25.0
+    sell-price: 6.25
+  WAXED_OXIDIZED_COPPER_GRATE:
+    buy-price: 43.0
+    sell-price: 10.75
+  WAXED_OXIDIZED_COPPER_LANTERN:
+    buy-price: 8.0
+    sell-price: 2.0
+  WAXED_OXIDIZED_COPPER_TORCH:
+    buy-price: 3.0
+    sell-price: 0.75
+  WAXED_OXIDIZED_COPPER_TRAPDOOR:
+    buy-price: 46.0
+    sell-price: 11.5
+  WAXED_OXIDIZED_CUT_COPPER:
+    buy-price: 38.0
+    sell-price: 9.5
+  WAXED_OXIDIZED_CUT_COPPER_SLAB:
+    buy-price: 19.0
+    sell-price: 4.75
+  WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+    buy-price: 38.0
+    sell-price: 9.5
+  WAXED_OXIDIZED_LIGHTNING_ROD:
+    buy-price: 15.0
+    sell-price: 3.75
+  WAXED_WEATHERED_CHISELED_COPPER:
+    buy-price: 43.0
+    sell-price: 10.75
+  WAXED_WEATHERED_COPPER:
+    buy-price: 131.0
+    sell-price: 32.75
+  WAXED_WEATHERED_COPPER_BARS:
+    buy-price: 5.0
+    sell-price: 1.25
+  WAXED_WEATHERED_COPPER_BULB:
+    buy-price: 48.0
+    sell-price: 12.0
+  WAXED_WEATHERED_COPPER_CHAIN:
+    buy-price: 7.0
+    sell-price: 1.75
+  WAXED_WEATHERED_COPPER_CHEST:
+    buy-price: 18.0
+    sell-price: 4.5
+  WAXED_WEATHERED_COPPER_DOOR:
+    buy-price: 57.0
+    sell-price: 14.25
+  WAXED_WEATHERED_COPPER_GOLEM_STATUE:
+    buy-price: 25.0
+    sell-price: 6.25
+  WAXED_WEATHERED_COPPER_GRATE:
+    buy-price: 43.0
+    sell-price: 10.75
+  WAXED_WEATHERED_COPPER_LANTERN:
+    buy-price: 8.0
+    sell-price: 2.0
+  WAXED_WEATHERED_COPPER_TORCH:
+    buy-price: 3.0
+    sell-price: 0.75
+  WAXED_WEATHERED_COPPER_TRAPDOOR:
+    buy-price: 46.0
+    sell-price: 11.5
+  WAXED_WEATHERED_CUT_COPPER:
+    buy-price: 38.0
+    sell-price: 9.5
+  WAXED_WEATHERED_CUT_COPPER_SLAB:
+    buy-price: 19.0
+    sell-price: 4.75
+  WAXED_WEATHERED_CUT_COPPER_STAIRS:
+    buy-price: 38.0
+    sell-price: 9.5
+  WAXED_WEATHERED_LIGHTNING_ROD:
+    buy-price: 15.0
+    sell-price: 3.75
+  WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  WEATHERED_CHISELED_COPPER:
+    buy-price: 43.0
+    sell-price: 10.75
+  WEATHERED_COPPER:
+    buy-price: 126.0
+    sell-price: 31.5
+  WEATHERED_COPPER_BARS:
+    buy-price: 5.0
+    sell-price: 1.25
+  WEATHERED_COPPER_BULB:
+    buy-price: 48.0
+    sell-price: 12.0
+  WEATHERED_COPPER_CHAIN:
+    buy-price: 7.0
+    sell-price: 1.75
+  WEATHERED_COPPER_CHEST:
+    buy-price: 18.0
+    sell-price: 4.5
+  WEATHERED_COPPER_DOOR:
+    buy-price: 57.0
+    sell-price: 14.25
+  WEATHERED_COPPER_GOLEM_STATUE:
+    buy-price: 25.0
+    sell-price: 6.25
+  WEATHERED_COPPER_GRATE:
+    buy-price: 43.0
+    sell-price: 10.75
+  WEATHERED_COPPER_LANTERN:
+    buy-price: 8.0
+    sell-price: 2.0
+  WEATHERED_COPPER_TORCH:
+    buy-price: 3.0
+    sell-price: 0.75
+  WEATHERED_COPPER_TRAPDOOR:
+    buy-price: 46.0
+    sell-price: 11.5
+  WEATHERED_CUT_COPPER:
+    buy-price: 38.0
+    sell-price: 9.5
+  WEATHERED_CUT_COPPER_SLAB:
+    buy-price: 19.0
+    sell-price: 4.75
+  WEATHERED_CUT_COPPER_STAIRS:
+    buy-price: 38.0
+    sell-price: 9.5
+  WEATHERED_LIGHTNING_ROD:
+    buy-price: 15.0
+    sell-price: 3.75
+  WEEPING_VINES:
+    buy-price: 5.0
+    sell-price: 2.12
+  WET_SPONGE:
+    buy-price: 180.0
+    sell-price: 76.5
+  WHEAT:
+    buy-price: 3.0
+    sell-price: 0.75
+  WHEAT_SEEDS:
+    buy-price: 0.5
+    sell-price: 0.12
+  WHITE_BANNER:
+    buy-price: 9
+    sell-price: 2.25
+  WHITE_BED:
+    buy-price: 15
+    sell-price: 3.75
+  WHITE_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  WHITE_CANDLE:
+    buy-price: 3.5
+    sell-price: 0.88
+  WHITE_CARPET:
+    buy-price: 2
+    sell-price: 0.5
+  WHITE_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  WHITE_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  WHITE_DYE:
+    buy-price: 1
+    sell-price: 0.25
+  WHITE_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  WHITE_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  WHITE_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  WHITE_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  WHITE_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  WHITE_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  WHITE_TULIP:
+    buy-price: 3.0
+    sell-price: 0.98
+  WHITE_WOOL:
+    buy-price: 5
+    sell-price: 1.25
+  WILDFLOWERS:
+    buy-price: 3.0
+    sell-price: 0.98
+  WILD_ARMOR_TRIM_SMITHING_TEMPLATE:
+    buy-price: 350.0
+    sell-price: 148.75
+  WIND_CHARGE:
+    buy-price: 25.0
+    sell-price: 10.62
+  WITCH_SPAWN_EGG:
+    buy-price: 800.0
+    sell-price: 340.0
+  WITHER_ROSE:
+    buy-price: 50.0
+    sell-price: 21.25
+  WITHER_SKELETON_SKULL:
+    buy-enabled: false
+    sell-enabled: false
+  WITHER_SKELETON_SPAWN_EGG:
+    buy-price: 1200.0
+    sell-price: 510.0
+  WITHER_SPAWN_EGG:
+    buy-price: 8000.0
+    sell-price: 3400.0
+  WOLF_ARMOR:
+    buy-price: 75.0
+    sell-price: 31.88
+  WOLF_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  WOODEN_AXE:
+    buy-price: 4.0
+    sell-price: 1.0
+  WOODEN_HOE:
+    buy-price: 4.0
+    sell-price: 1.0
+  WOODEN_PICKAXE:
+    buy-price: 4.0
+    sell-price: 1.0
+  WOODEN_SHOVEL:
+    buy-price: 4.0
+    sell-price: 1.0
+  WOODEN_SPEAR:
+    buy-price: 8.0
+    sell-price: 2.0
+  WOODEN_SWORD:
+    buy-price: 3.0
+    sell-price: 0.75
+  WRITABLE_BOOK:
+    buy-price: 12.0
+    sell-price: 3.0
+  WRITTEN_BOOK:
+    buy-price: 12.0
+    sell-price: 3.0
+  YELLOW_BANNER:
+    buy-price: 10
+    sell-price: 2.5
+  YELLOW_BED:
+    buy-price: 19
+    sell-price: 4.75
+  YELLOW_BUNDLE:
+    buy-price: 20
+    sell-price: 5.0
+  YELLOW_CANDLE:
+    buy-price: 5
+    sell-price: 1.26
+  YELLOW_CARPET:
+    buy-price: 4
+    sell-price: 0.99
+  YELLOW_CONCRETE:
+    buy-price: 5
+    sell-price: 1.25
+  YELLOW_CONCRETE_POWDER:
+    buy-price: 4
+    sell-price: 1.01
+  YELLOW_DYE:
+    buy-price: 1
+    sell-price: 0.25
+  YELLOW_GLAZED_TERRACOTTA:
+    buy-price: 10
+    sell-price: 2.5
+  YELLOW_HARNESS:
+    buy-price: 25
+    sell-price: 6.25
+  YELLOW_SHULKER_BOX:
+    buy-price: 450
+    sell-price: 247.5
+  YELLOW_STAINED_GLASS:
+    buy-price: 4
+    sell-price: 1.01
+  YELLOW_STAINED_GLASS_PANE:
+    buy-price: 2.5
+    sell-price: 0.62
+  YELLOW_TERRACOTTA:
+    buy-price: 6
+    sell-price: 1.5
+  YELLOW_WOOL:
+    buy-price: 7
+    sell-price: 1.75
+  ZOGLIN_SPAWN_EGG:
+    buy-price: 900.0
+    sell-price: 382.5
+  ZOMBIE_HEAD:
+    buy-enabled: false
+    sell-enabled: false
+  ZOMBIE_HORSE_SPAWN_EGG:
+    buy-price: 1500.0
+    sell-price: 637.5
+  ZOMBIE_NAUTILUS_SPAWN_EGG:
+    buy-price: 900.0
+    sell-price: 382.5
+  ZOMBIE_SPAWN_EGG:
+    buy-price: 500.0
+    sell-price: 212.5
+  ZOMBIE_VILLAGER_SPAWN_EGG:
+    buy-price: 700.0
+    sell-price: 297.5
+  ZOMBIFIED_PIGLIN_SPAWN_EGG:
+    buy-price: 700.0
+    sell-price: 297.5
+  IRON_CHAIN:
+    buy-price: 55.0
+    sell-price: 17.86

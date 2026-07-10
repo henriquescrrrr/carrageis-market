@@ -1,0 +1,100 @@
+name: Market
+version: '${project.version}'
+main: pt.henrique.market.Market
+api-version: '1.21'
+description: A unified GUI-only marketplace plugin with Server Shop, Community Market, and Auctions
+author: Henrique
+website: https://github.com/henrique/Market
+
+softdepend: [MultiBank, Vault, PlayerSettings, BuildersDream, LandClaim, DeathChest]
+
+load: POSTWORLD
+
+commands:
+  market:
+    description: Opens the Market hub GUI
+    usage: /<command> [reload]
+    aliases: [m, shop, cmarket, servershop]
+    permission: market.use
+  sell:
+    description: Opens the sell interface
+    usage: /<command>
+    aliases: [s]
+    permission: market.sell
+
+permissions:
+  market.*:
+    description: Grants all Market permissions
+    default: op
+    children:
+      market.use: true
+      market.server: true
+      market.community: true
+      market.auctions: true
+      market.sell: true
+      market.auction: true
+      market.buy: true
+      market.bid: true
+      market.claim: true
+      market.withdraw: true
+      market.admin: true
+
+  market.use:
+    description: Allows access to the market hub GUI
+    default: true
+
+  market.server:
+    description: Allows access to the server shop
+    default: true
+
+  market.community:
+    description: Allows access to the community market (listings)
+    default: true
+
+  market.auctions:
+    description: Allows access to auctions
+    default: true
+
+  market.sell:
+    description: Allows creating fixed-price listings
+    default: true
+
+  market.auction:
+    description: Allows creating auctions
+    default: true
+
+  market.buy:
+    description: Allows purchasing from the community market
+    default: true
+
+  market.bid:
+    description: Allows bidding on auctions
+    default: true
+
+  market.claim:
+    description: Allows claiming items from storage
+    default: true
+
+  market.withdraw:
+    description: Allows withdrawing earnings
+    default: true
+
+  market.admin:
+    description: Allows access to admin functions
+    default: op
+    children:
+      market.admin.viewall: true
+      market.admin.remove: true
+      market.admin.reload: true
+
+  market.admin.viewall:
+    description: Allows viewing all listings/auctions
+    default: op
+
+  market.admin.remove:
+    description: Allows removing any listing or auction
+    default: op
+
+  market.admin.reload:
+    description: Allows reloading configuration and prices
+    default: op
