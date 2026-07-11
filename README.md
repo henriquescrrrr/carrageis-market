@@ -1,20 +1,20 @@
 # Market
 
-[![Modrinth Downloads](https://img.shields.io/modrinth/dt/market?logo=modrinth)](https://modrinth.com/plugin/market)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/carrageis-market?logo=modrinth)](https://modrinth.com/plugin/carrageis-market)
 [![GitHub License](https://img.shields.io/github/license/henrique/Market)](LICENSE)
 
 A unified, GUI-only **marketplace plugin** for Minecraft Paper 1.21.11+.
 
 One command (`/market`) opens a **hub GUI** with three main sections:
-- 🏪 **Server Market** — Buy/sell any item from the server at fixed prices (large spread encourages player trading)
-- 🛒 **Community Market** — Player-to-player fixed-price listings
-- 🔨 **Auctions** — Player-to-player bidding with anti-snipe protection
+**Server Market** — Buy/sell any item from the server at fixed prices (large spread encourages player trading)
+**Community Market** — Player-to-player fixed-price listings
+**Auctions** — Player-to-player bidding with anti-snipe protection
 
 Plus: Claim Storage, Earnings Withdrawal, My Listings/Auctions, Admin Panel — all GUI-driven.
 
-## ✨ Features
+Features
 
-### 🏪 Server Market
+Server Market
 - **Every item in the game** available for buy/sell
 - Category-based GUI (Blocks, Ores, Farming, Food, Mob Drops, Redstone, Decoration, Tools, Combat, Brewing, Misc)
 - Search, pagination, quantity selector (-32/-16/-8/-1 / +1/+8/+16/+32 / MIN/MAX)
@@ -26,42 +26,42 @@ Plus: Claim Storage, Earnings Withdrawal, My Listings/Auctions, Admin Panel — 
 - Per-item and per-category price overrides in `prices.yml`
 - Transaction logging to SQLite
 
-### 💰 Economy: MultiBank Integration
+Economy: MultiBank Integration
 - Uses **MultiBank** as the sole economy provider (no Vault/Essentials)
 - All monetary values handled in **cents** (long) for precision
 - Fully **async** — economy operations never block the main thread
 - Configurable **server shop bank account** for auditable transfers
 - Automatic balance re-check at confirm time to prevent exploits
 
-### 🛒 Community Market (Player Listings)
+Community Market (Player Listings)
 - Create listings with custom prices and durations
 - Browse paginated listings with sorting
 - Safe atomic purchases to prevent double-buying
 - Configurable taxes on sales
 
-### 🔨 Auction System
+Auction System
 - Start auctions with minimum bid and optional buyout price
 - **Anti-snipe protection** extends auction when bids arrive near the end
 - Bid history and automatic outbid notifications
 - Safe handling of auction endings and payouts
 
-### 📦 Claim Storage
+Claim Storage
 - Items from expired listings go to claim storage
 - Won auction items are safely delivered
 - Handles full inventories gracefully
 
-### 💰 Earnings Management
+Earnings Management
 - Pending earnings from sales accumulate
 - Withdraw all earnings at once
 - Complete transaction history
 
-### 🔐 Admin Features (GUI-based)
+Admin Features (GUI-based)
 - View all listings and auctions
 - Remove any listing or cancel auctions
 - Force-end auctions
 - Reload configuration in-game
 
-### 🎮 Hub GUI Flow
+Hub GUI Flow
 `/market` opens the Market Hub with:
 1. **Server Market** — Browse the server shop categories
 2. **Community Market** — Browse player listings
@@ -71,18 +71,18 @@ Plus: Claim Storage, Earnings Withdrawal, My Listings/Auctions, Admin Panel — 
 6. **My Listings / My Auctions** — Manage your stuff
 7. **Help / Admin** — Info and admin tools
 
-## 📋 Requirements
+Requirements
 
 | Requirement | Version |
 |-------------|---------|
 | **Server** | Paper 1.21.11+ (or Purpur, Folia-compatible forks) |
 | **Java** | Java 21+ |
-| **Economy** | [MultiBank](https://github.com/henrique/MultiBank) |
+| **Economy** | [MultiBank](https://github.com/henriquescrrrr/carrageis-multibank) |
 
 ### Economy Setup
 Market uses **MultiBank** for all economy operations:
 
-1. Install [MultiBank](https://github.com/henrique/MultiBank) on your server
+1. Install [MultiBank](https://github.com/henriquescrrrr/carrageis-multibank) on your server
 2. Create a server shop bank account (default ID: `server-shop`)
 3. Set the account ID in `config.yml`:
    ```yaml
@@ -93,9 +93,9 @@ Market uses **MultiBank** for all economy operations:
 
 All server shop transactions (buy/sell) transfer money to/from this dedicated account, providing a full audit trail.
 
-## 📥 Installation
+Installation
 
-1. Download the latest `market-x.x.x.jar` from [Modrinth](https://modrinth.com/plugin/market)
+1. Download the latest `market-x.x.x.jar` from [Modrinth](https://modrinth.com/plugin/carrageis-market)
 2. Place it in your server's `plugins/` folder
 3. Ensure you have an economy system installed (see above)
 4. Start or restart your server
@@ -112,7 +112,7 @@ If you previously used Market with Vault or EssentialsX:
 3. Update `config.yml` with the `economy.server-account-id` setting
 4. Restart the server
 
-## 🎮 Commands
+Commands
 
 | Command | Aliases | Description | Permission |
 |---------|---------|-------------|------------|
@@ -121,7 +121,7 @@ If you previously used Market with Vault or EssentialsX:
 
 **That's it!** Everything else is done through GUIs.
 
-## 🔒 Permissions
+Permissions
 
 | Permission | Description | Default |
 |------------|-------------|---------|
@@ -132,16 +132,11 @@ If you previously used Market with Vault or EssentialsX:
 | `market.auctions` | Access auctions | everyone |
 | `market.sell` | Create fixed-price listings | everyone |
 | `market.auction` | Create auctions | everyone |
-| `market.buy` | Purchase from the community market | everyone |
-| `market.bid` | Bid on auctions | everyone |
 | `market.claim` | Claim items from storage | everyone |
-| `market.withdraw` | Withdraw earnings | everyone |
 | `market.admin` | Access admin functions | op |
-| `market.admin.viewall` | View all listings/auctions | op |
-| `market.admin.remove` | Remove any listing/auction | op |
 | `market.admin.reload` | Reload configuration & prices | op |
 
-## ⚙️ Configuration
+Configuration
 
 ### config.yml Highlights
 
@@ -326,7 +321,7 @@ gui:
 
 Language files are in `plugins/Market/lang/` and can be customized.
 
-## 🔧 Troubleshooting
+Troubleshooting
 
 ### "No compatible economy provider found!"
 
@@ -334,7 +329,7 @@ This error appears when Market cannot find an economy system.
 
 **Solutions:**
 1. **Install Vault + an economy plugin:**
-   - Download [Vault]([https://www.spigotmc.org/resources/vault.34315/](https://modrinth.com/plugin/vault-2.0-economy-plugins))
+   - Download [VaultUnlocked](https://modrinth.com/plugin/vaultunlocked)
    - Download [EssentialsX](https://essentialsx.net/) or another economy plugin
    - Restart your server
 
@@ -347,7 +342,7 @@ This error appears when Market cannot find an economy system.
 This error appears when Market cannot find the MultiBank plugin.
 
 **Solutions:**
-1. Install [MultiBank](https://github.com/henrique/MultiBank) on your server
+1. Install [MultiBank](https://github.com/henriquescrrrr/carrageis-multibank) on your server
 2. Ensure MultiBank is enabled and loads before Market
 3. Check that MultiBank's API service is registered
 
@@ -377,22 +372,22 @@ database:
     password: your_password
 ```
 
-## 📊 API
+API
 
 Market does not currently provide a public API. If you need integration capabilities, please open an issue on GitHub.
 
-## 🤝 Support
+Support
 
-- **Issues & Bug Reports:** [GitHub Issues](https://github.com/henrique/Market/issues)
-- **Feature Requests:** [GitHub Issues](https://github.com/henrique/Market/issues)
+- **Issues & Bug Reports:** [GitHub Issues](https://github.com/henriquescrrrr/carrageis-market/issues)
+- **Feature Requests:** [GitHub Issues](https://github.com/henriquescrrrr/carrageis-market/issues)
 
-## 📜 License
+License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Credits
+Credits
 
 - Built for the Paper/Spigot community
-- Uses [MultiBank](https://github.com/henrique/MultiBank) for economy integration
+- Uses [MultiBank](https://github.com/henriquescrrrr/carrageis-multibank) for economy integration
 - Uses [HikariCP](https://github.com/brettwooldridge/HikariCP) for database connection pooling
 

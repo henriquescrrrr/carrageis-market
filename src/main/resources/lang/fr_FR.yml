@@ -49,8 +49,11 @@ messages:
   claim-empty: "&eVous n'avez aucun objet à réclamer."
   claim-inventory-full: "&cVotre inventaire est plein ! Veuillez libérer de l'espace."
   claim-all-success: "&a{count} objets réclamés !"
+  claim-items: "&eVous avez &6{count}&e objet(s) en attente au marché. Utilisez /market pour les réclamer."
 
   # Messages de Gains (Paiement Direct)
+  earnings-withdrawn: "&aVous avez retiré &6{amount}&a de vos gains. Nouveau solde : &6{balance}&a."
+  earnings-empty: "&eVous n'avez aucun gain à retirer."
   earnings-recovered: "&aRécupéré {amount} d'un dépôt échoué précédent. L'argent est sur votre compte."
   item-sold-offline: "&aPendant votre absence : &f{item}&a vendu à &f{buyer}&a pour &f{price}&a. L'argent est sur votre compte."
 

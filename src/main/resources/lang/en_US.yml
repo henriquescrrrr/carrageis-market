@@ -49,8 +49,11 @@ messages:
   claim-empty: "&eYou have no items to claim."
   claim-inventory-full: "&cYour inventory is full! Please make space."
   claim-all-success: "&aClaimed {count} items!"
+  claim-items: "&eYou have &6{count}&e item(s) waiting in the market. Use /market to claim them."
 
   # Earnings Messages (Direct Payment)
+  earnings-withdrawn: "&aWithdrew &6{amount}&a from your earnings. New balance: &6{balance}&a."
+  earnings-empty: "&eYou have no earnings to withdraw."
   earnings-recovered: "&aRecovered {amount} from a previous failed deposit. Money is now in your account."
   item-sold-offline: "&aWhile you were away: &f{item}&a sold to &f{buyer}&a for &f{price}&a. Money is in your account."
 

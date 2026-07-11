@@ -4,7 +4,7 @@ main: pt.henrique.market.Market
 api-version: '1.21'
 description: A unified GUI-only marketplace plugin with Server Shop, Community Market, and Auctions
 author: Henrique
-website: https://github.com/henrique/Market
+website: https://github.com/henriquescrrrr/carrageis-market
 
 softdepend: [MultiBank, Vault, PlayerSettings, BuildersDream, LandClaim, DeathChest]
 
@@ -33,10 +33,7 @@ permissions:
       market.auctions: true
       market.sell: true
       market.auction: true
-      market.buy: true
-      market.bid: true
       market.claim: true
-      market.withdraw: true
       market.admin: true
 
   market.use:
@@ -63,37 +60,15 @@ permissions:
     description: Allows creating auctions
     default: true
 
-  market.buy:
-    description: Allows purchasing from the community market
-    default: true
-
-  market.bid:
-    description: Allows bidding on auctions
-    default: true
-
   market.claim:
     description: Allows claiming items from storage
-    default: true
-
-  market.withdraw:
-    description: Allows withdrawing earnings
     default: true
 
   market.admin:
     description: Allows access to admin functions
     default: op
     children:
-      market.admin.viewall: true
-      market.admin.remove: true
       market.admin.reload: true
-
-  market.admin.viewall:
-    description: Allows viewing all listings/auctions
-    default: op
-
-  market.admin.remove:
-    description: Allows removing any listing or auction
-    default: op
 
   market.admin.reload:
     description: Allows reloading configuration and prices
