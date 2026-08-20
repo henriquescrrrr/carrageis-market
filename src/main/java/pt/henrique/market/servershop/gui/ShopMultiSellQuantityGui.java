@@ -11,7 +11,8 @@ import pt.henrique.market.Market;
 import pt.henrique.market.config.MessageManager;
 import pt.henrique.market.gui.MarketGui;
 import pt.henrique.market.servershop.MultiSellSession;
-import pt.henrique.market.servershop.model.ShopItem;
+import pt.henrique.market.servershop.SellVariantScanner;
+import pt.henrique.market.servershop.model.SellVariant;
 import pt.henrique.market.util.ItemBuilder;
 import pt.henrique.market.util.SoundUtil;
 import pt.henrique.market.util.TextUtil;
@@ -147,14 +148,13 @@ public class ShopMultiSellQuantityGui implements MarketGui {
         int eligible = 0;
         int totalUnits = 0;
         int maxTx = plugin.getConfig().getInt("server-shop.max-transaction-quantity", 2304);
-        for (String itemId : session.getSelected()) {
-            int qty = sellableQuantity(player, itemId, percent, maxTx);
+        List<SellVariant> held = heldVariants(player);
+        for (ItemStack template : session.getSelected()) {
+            SellVariant variant = SellVariantScanner.find(held, template);
+            if (variant == null) continue;
+            int qty = Math.min(MultiSellSession.applyPercent(variant.amount(), percent), maxTx);
             if (qty <= 0) continue;
-            ShopItem shopItem = plugin.getShopPriceManager().getShopItem(itemId);
-            ItemStack rep = plugin.getShopTransactionService().findFirstMatchingStack(player, shopItem);
-            double unit = plugin.getShopTransactionService()
-                    .computeAdjustedSellPrice(plugin.getShopPriceManager().getSellPrice(itemId), rep);
-            gross += Math.round(unit * qty * 100.0) / 100.0;
+            gross += Math.round(variant.unitPrice() * qty * 100.0) / 100.0;
             totalUnits += qty;
             eligible++;
         }
@@ -206,29 +206,22 @@ public class ShopMultiSellQuantityGui implements MarketGui {
      *  Eligibility / pricing helpers (shared logic with confirm GUI)
      * ════════════════════════════════════════════════════════ */
 
-    /**
-     * Quantity to sell for one item ID at the given percentage, or 0 if the item
-     * is not sellable / absent / a dream item / rounds to zero. Clamped to the
-     * per-transaction maximum.
-     */
-    private int sellableQuantity(Player player, String itemId, int percent, int maxTx) {
-        if (!plugin.getShopPricingService().isSellable(itemId)) return 0;
-        ShopItem shopItem = plugin.getShopPriceManager().getShopItem(itemId);
-        if (shopItem == null) return 0;
-        if (plugin.getShopPriceManager().getSellPrice(itemId) <= 0) return 0;
-        int total = plugin.getShopTransactionService().countItems(player, itemId);
-        if (total <= 0) return 0;
-        ItemStack rep = plugin.getShopTransactionService().findFirstMatchingStack(player, shopItem);
-        if (rep != null && plugin.getBuildersDreamHook() != null
-                && plugin.getBuildersDreamHook().isDreamItem(rep)) return 0;
-        return Math.min(MultiSellSession.applyPercent(total, percent), maxTx);
+    /** The distinct sellable items the player currently holds in their backpack. */
+    private List<SellVariant> heldVariants(Player player) {
+        boolean shulkerSell = plugin.getConfig().getBoolean("sell-inventory.shulker-sell.enabled", true);
+        return plugin.getSellVariantScanner()
+                .scanStorage(player, SellVariantScanner.Options.showAll(shulkerSell)).variants();
     }
 
+    /** How many of the selected items would actually sell at this percentage. */
     private int countEligible(Player player, MultiSellSession session, int percent) {
         int maxTx = plugin.getConfig().getInt("server-shop.max-transaction-quantity", 2304);
+        List<SellVariant> held = heldVariants(player);
         int count = 0;
-        for (String itemId : session.getSelected()) {
-            if (sellableQuantity(player, itemId, percent, maxTx) > 0) count++;
+        for (ItemStack template : session.getSelected()) {
+            SellVariant variant = SellVariantScanner.find(held, template);
+            if (variant == null) continue;
+            if (Math.min(MultiSellSession.applyPercent(variant.amount(), percent), maxTx) > 0) count++;
         }
         return count;
     }

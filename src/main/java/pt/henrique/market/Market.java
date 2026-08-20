@@ -21,6 +21,7 @@ import pt.henrique.market.servershop.gui.ShopGuiManager;
 import pt.henrique.market.servershop.listener.ChestSellListener;
 import pt.henrique.market.servershop.listener.ShopSearchSignHandler;
 import pt.henrique.market.servershop.service.ChestSellService;
+import pt.henrique.market.servershop.SellVariantScanner;
 import pt.henrique.market.servershop.service.EnchantPriceUtil;
 import pt.henrique.market.servershop.service.ShopPricingService;
 import pt.henrique.market.servershop.service.ShopTransactionService;
@@ -63,6 +64,7 @@ public final class Market extends JavaPlugin {
     private ShopPriceManager shopPriceManager;
     private ShopPricingService shopPricingService;
     private ShopTransactionService shopTransactionService;
+    private SellVariantScanner sellVariantScanner;
     private ShopGuiManager shopGuiManager;
     private ShopSearchSignHandler shopSearchSignHandler;
     private EnchantPriceUtil enchantPriceUtil;
@@ -144,6 +146,7 @@ public final class Market extends JavaPlugin {
         reloadToolModsHook();
         shopPricingService = new ShopPricingService(this);
         shopTransactionService = new ShopTransactionService(this);
+        sellVariantScanner = new SellVariantScanner(this);
         shopGuiManager = new ShopGuiManager(this);
         shopSearchSignHandler = new ShopSearchSignHandler(this);
         getServer().getPluginManager().registerEvents(shopSearchSignHandler, this);
@@ -268,6 +271,7 @@ public final class Market extends JavaPlugin {
     public ShopPriceManager getShopPriceManager() { return shopPriceManager; }
     public ShopPricingService getShopPricingService() { return shopPricingService; }
     public ShopTransactionService getShopTransactionService() { return shopTransactionService; }
+    public SellVariantScanner getSellVariantScanner() { return sellVariantScanner; }
     public ShopGuiManager getShopGuiManager() { return shopGuiManager; }
     public ShopSearchSignHandler getShopSearchSignHandler() { return shopSearchSignHandler; }
     public EnchantPriceUtil getEnchantPriceUtil() { return enchantPriceUtil; }

@@ -1,6 +1,10 @@
 package pt.henrique.market.servershop.service;
 
+import org.bukkit.inventory.ItemStack;
 import pt.henrique.market.Market;
+import pt.henrique.market.servershop.MaterialUtil;
+import pt.henrique.market.servershop.model.SellQuote;
+import pt.henrique.market.servershop.model.ShopItem;
 import pt.henrique.market.servershop.model.ShopPriceEntry;
 
 /**
@@ -14,6 +18,40 @@ public class ShopPricingService {
 
     public ShopPricingService(Market plugin) {
         this.plugin = plugin;
+    }
+
+    /**
+     * Values one concrete stack for selling to the server shop.
+     * <p>
+     * Buying is looked up by price-row ID, but selling has to start from the item
+     * the player is actually holding: two bows of the same material can be worth
+     * very different amounts, and an enchanted book is worth the sum of its
+     * enchantments rather than whatever single row it happens to match.
+     *
+     * @param stack the item being valued (never mutated)
+     * @return the quote, or {@code null} when the item cannot be sold
+     */
+    public SellQuote quoteSell(ItemStack stack) {
+        if (stack == null || stack.getType().isAir()) return null;
+
+        EnchantPriceUtil enchants = plugin.getEnchantPriceUtil();
+        if (enchants.isCompositeBookPricing(stack)) {
+            double summed = enchants.getBookSellValue(stack);
+            if (summed <= 0) return null;
+            String itemId = plugin.getShopPriceManager().identifySellItem(stack);
+            String name = MaterialUtil.formatName(stack.getType())
+                    + " (" + EnchantPriceUtil.describeEnchants(stack) + ")";
+            return new SellQuote(itemId, name, summed, true);
+        }
+
+        String itemId = plugin.getShopPriceManager().identifySellItem(stack);
+        if (itemId == null || !isSellable(itemId)) return null;
+        double baseSell = plugin.getShopPriceManager().getSellPrice(itemId);
+        if (baseSell <= 0) return null;
+
+        ShopItem shopItem = plugin.getShopPriceManager().getShopItem(itemId);
+        String name = shopItem != null ? shopItem.getDisplayName() : MaterialUtil.formatName(stack.getType());
+        return new SellQuote(itemId, name, baseSell, false);
     }
 
     public ShopPriceEntry getPriceEntry(String itemId) {

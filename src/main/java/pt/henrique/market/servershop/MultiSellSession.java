@@ -1,16 +1,23 @@
 package pt.henrique.market.servershop;
 
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Per-player state for the multi-select "sell to server" flow.
  * <p>
- * The player toggles {@link #active selection mode} on, clicks several sellable
- * inventory items to {@link #toggle(String) select} them, picks a
+ * The player toggles {@link #isActive() selection mode} on, clicks several sellable
+ * inventory items to {@link #toggle(ItemStack) select} them, picks a
  * {@link #getPercent() percentage}, and sells a percentage of the total amount
- * of each selected item type in one batch.
+ * of each selected item in one batch.
+ * <p>
+ * Selections are held as amount-1 item templates rather than price-row IDs, so
+ * picking a plain pickaxe never drags an enchanted one of the same type into the
+ * batch. Two items are the same selection only when
+ * {@link ItemStack#isSimilar(ItemStack)} agrees.
  * <p>
  * Stored per-player in {@code ShopGuiManager} so the selection survives the
  * fresh-instance-per-open pattern used by the shop GUIs. It is cleared only at
@@ -19,8 +26,8 @@ import java.util.Set;
  */
 public class MultiSellSession {
 
-    /** Item IDs the player has selected. Insertion order → stable preview grid. */
-    private final Set<String> selectedItemIds = new LinkedHashSet<>();
+    /** Item templates the player has selected. Insertion order → stable preview grid. */
+    private final List<ItemStack> selected = new ArrayList<>();
 
     /** Whether selection mode is currently toggled on in the Sell Items GUI. */
     private boolean active = false;
@@ -32,40 +39,51 @@ public class MultiSellSession {
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
 
-    /** @return whether the given item ID is currently selected. */
-    public boolean isSelected(String itemId) {
-        return selectedItemIds.contains(itemId);
+    /** @return whether this exact item is currently selected. */
+    public boolean isSelected(ItemStack template) {
+        return indexOf(template) >= 0;
     }
 
     /**
-     * Toggles selection of an item ID.
+     * Toggles selection of an item.
      *
      * @return {@code true} if the item is now selected, {@code false} if removed.
      */
-    public boolean toggle(String itemId) {
-        if (selectedItemIds.contains(itemId)) {
-            selectedItemIds.remove(itemId);
+    public boolean toggle(ItemStack template) {
+        int index = indexOf(template);
+        if (index >= 0) {
+            selected.remove(index);
             return false;
         }
-        selectedItemIds.add(itemId);
+        ItemStack copy = template.clone();
+        copy.setAmount(1);
+        selected.add(copy);
         return true;
     }
 
-    /** @return an unmodifiable, insertion-ordered view of selected item IDs. */
-    public Set<String> getSelected() {
-        return Collections.unmodifiableSet(selectedItemIds);
+    private int indexOf(ItemStack template) {
+        if (template == null) return -1;
+        for (int i = 0; i < selected.size(); i++) {
+            if (selected.get(i).isSimilar(template)) return i;
+        }
+        return -1;
     }
 
-    public int getSelectedCount() { return selectedItemIds.size(); }
+    /** @return an unmodifiable, insertion-ordered view of the selected templates. */
+    public List<ItemStack> getSelected() {
+        return Collections.unmodifiableList(selected);
+    }
 
-    public boolean isEmpty() { return selectedItemIds.isEmpty(); }
+    public int getSelectedCount() { return selected.size(); }
+
+    public boolean isEmpty() { return selected.isEmpty(); }
 
     /** Clears the selected items but keeps {@link #active} and {@link #percent}. */
-    public void clearSelection() { selectedItemIds.clear(); }
+    public void clearSelection() { selected.clear(); }
 
     /** Fully resets the session (clears selection and turns selection mode off). */
     public void reset() {
-        selectedItemIds.clear();
+        selected.clear();
         active = false;
     }
 

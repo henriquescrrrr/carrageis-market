@@ -4,7 +4,9 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import pt.henrique.market.Market;
 import pt.henrique.market.servershop.ItemParser;
 import pt.henrique.market.servershop.MaterialUtil;
@@ -394,6 +396,48 @@ public class ShopPriceManager {
     public ShopItem getShopItem(String itemId) { return itemRegistry.get(itemId); }
 
     public Map<String, ShopItem> getItemRegistry() { return Collections.unmodifiableMap(itemRegistry); }
+
+    /**
+     * Sell price of the single-enchantment book row for {@code enchantment} at
+     * {@code level} (e.g. {@code ENCHANTED_BOOK_EFFICIENCY_5}). When that exact
+     * level has no priced row, the highest configured level at or below it is
+     * used, mirroring the level fallback in {@code EnchantPriceUtil}.
+     *
+     * @return the sell price, or 0 when no row is priced or books are not sellable
+     */
+    public double getEnchantedBookSellPrice(Enchantment enchantment, int level) {
+        if (enchantment == null || level < 1) return 0;
+        String enchantKey = enchantment.getKey().getKey().toUpperCase(Locale.ROOT);
+        for (int lvl = level; lvl >= 1; lvl--) {
+            double price = getSellPrice("ENCHANTED_BOOK_" + enchantKey + "_" + lvl);
+            if (price > 0) return price;
+        }
+        return 0;
+    }
+
+    /**
+     * Price-row ID used to value and log a concrete stack that is being sold.
+     * <p>
+     * Identical to {@link #identifyItem} except for enchanted books carrying more
+     * than one stored enchantment: those match no single {@code ENCHANTED_BOOK_*}
+     * row, so they get the virtual {@link #MULTI_ENCHANT_BOOK_ID} and are priced
+     * by summing their enchantments (see {@code ShopPricingService.quoteSell}).
+     */
+    public String identifySellItem(ItemStack stack) {
+        if (stack == null || stack.getType().isAir()) return null;
+        if (stack.getItemMeta() instanceof EnchantmentStorageMeta storage && storage.hasStoredEnchants()) {
+            Map<Enchantment, Integer> stored = storage.getStoredEnchants();
+            if (stored.size() == 1) {
+                String single = identifyItem(stack);
+                if (single != null) return single;
+            }
+            return MULTI_ENCHANT_BOOK_ID;
+        }
+        return identifyItem(stack);
+    }
+
+    /** Virtual price-row ID for enchanted books holding more than one enchantment. */
+    public static final String MULTI_ENCHANT_BOOK_ID = "ENCHANTED_BOOK_MULTI";
 
     /**
      * Reverse-lookup: given a player's inventory ItemStack, find the matching ShopItem ID.

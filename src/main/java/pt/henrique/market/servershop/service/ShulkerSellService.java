@@ -4,13 +4,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import pt.henrique.market.Market;
 import pt.henrique.market.config.MessageManager;
+import pt.henrique.market.servershop.SellVariantScanner;
 import pt.henrique.market.servershop.ShulkerUtil;
-import pt.henrique.market.servershop.model.ShopItem;
-import pt.henrique.market.servershop.service.ChestSellService.SellPreviewEntry;
+import pt.henrique.market.servershop.model.SellQuote;
+import pt.henrique.market.servershop.model.SellVariant;
 import pt.henrique.market.util.SoundUtil;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,10 +19,10 @@ import java.util.Map;
  * sell the box only (returning contents), sell box + sellable contents, or sell
  * the sellable contents only (keeping the box).
  * <p>
- * The box is removed <b>by slot</b> (never via {@link ShopTransactionService#sellItem},
- * which scans by material and could remove a different shulker). Each operation
+ * The box is removed <b>by slot</b>, so a different shulker of the same colour is
+ * never taken instead of the one the player picked. Each operation
  * mutates the inventory first, then deposits synchronously, and on deposit failure
- * rolls back via a storage snapshot — mirroring {@code sellItem}'s anti-dupe model.
+ * rolls back via a storage snapshot, the same anti-dupe order used by {@code sellVariant}.
  * Items are only dropped on the ground after a successful deposit (and only on the
  * green-confirmed overflow path), so a cancel/failure never loses or duplicates items.
  */
@@ -38,7 +38,7 @@ public class ShulkerSellService {
 
     /** Classification of a shulker's contents. */
     public record ContentsScan(
-            List<SellPreviewEntry> sellable,   // aggregated by id (for value + display)
+            List<SellVariant> sellable,        // grouped per distinct item (for value + display)
             List<ItemStack> nonSellable,       // exact clones to return (no-price / dream / packed nested shulker)
             double grossSellable,              // pre-tax value of sellable contents
             int sellableUnits
@@ -57,36 +57,38 @@ public class ShulkerSellService {
         return gross - plugin.getShopPricingService().calculateTax(gross);
     }
 
-    /** Classifies the shulker's contents into sellable/non-sellable buckets. */
+    /**
+     * Classifies the shulker's contents into sellable/non-sellable buckets.
+     * <p>
+     * Sellable contents are grouped per distinct item, so an enchanted tool inside
+     * the box is valued on its own merits rather than at the price of the plain one
+     * next to it.
+     */
     public ContentsScan scan(ItemStack shulker) {
-        Map<String, SellPreviewEntry> agg = new LinkedHashMap<>();
+        ItemStack[] contents = ShulkerUtil.getContents(shulker);
         List<ItemStack> nonSellable = new ArrayList<>();
-        for (ItemStack c : ShulkerUtil.getContents(shulker)) {
+        for (ItemStack c : contents) {
             if (c == null || c.getType().isAir()) continue;
-            if (isSellableContent(c)) {
-                String id = plugin.getShopPriceManager().identifyItem(c);
-                double unit = plugin.getShopTransactionService()
-                        .computeAdjustedSellPrice(plugin.getShopPriceManager().getSellPrice(id), c);
-                ShopItem si = plugin.getShopPriceManager().getShopItem(id);
-                String name = si != null ? si.getDisplayName() : id;
-                SellPreviewEntry ex = agg.get(id);
-                if (ex != null) {
-                    agg.put(id, new SellPreviewEntry(ex.displayItem(), id, name,
-                            ex.pricePerUnit(), ex.quantity() + c.getAmount()));
-                } else {
-                    agg.put(id, new SellPreviewEntry(c.clone(), id, name, unit, c.getAmount()));
-                }
-            } else {
-                nonSellable.add(c.clone());
-            }
+            if (!isSellableContent(c)) nonSellable.add(c.clone());
         }
+
+        // Packed nested shulkers are never unpacked, so they are filtered out above
+        // and the scan below only ever sees the loose contents.
+        ItemStack[] sellableOnly = new ItemStack[contents.length];
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack c = contents[i];
+            if (c != null && !c.getType().isAir() && isSellableContent(c)) sellableOnly[i] = c;
+        }
+        List<SellVariant> sellable = plugin.getSellVariantScanner()
+                .scan(sellableOnly, SellVariantScanner.Options.showAll(false)).variants();
+
         double gross = 0;
         int units = 0;
-        for (SellPreviewEntry e : agg.values()) {
-            gross += e.totalValue();
-            units += e.quantity();
+        for (SellVariant variant : sellable) {
+            gross += variant.totalValue();
+            units += variant.amount();
         }
-        return new ContentsScan(new ArrayList<>(agg.values()), nonSellable, gross, units);
+        return new ContentsScan(sellable, nonSellable, Math.round(gross * 100.0) / 100.0, units);
     }
 
     /** Computes the quote for one option (for the chooser GUI lore). */
@@ -314,35 +316,42 @@ public class ShulkerSellService {
      *  Helpers
      * ════════════════════════════════════════════════════════ */
 
+    /**
+     * Whether one item inside the box can be sold.
+     * <p>
+     * Quoted the same way as anywhere else, so a box's contents are valued exactly
+     * as they would be loose in the inventory — an enchanted book with several
+     * enchantments included.
+     */
     private boolean isSellableContent(ItemStack stack) {
         if (stack == null || stack.getType().isAir()) return false;
         if (plugin.getBuildersDreamHook() != null && plugin.getBuildersDreamHook().isDreamItem(stack)) return false;
         if (ShulkerUtil.isNestedShulkerWithContents(stack)) return false; // never destroy a packed nested shulker
-        String id = plugin.getShopPriceManager().identifyItem(stack);
-        if (id == null || !plugin.getShopPricingService().isSellable(id)) return false;
-        double base = plugin.getShopPriceManager().getSellPrice(id);
-        if (base <= 0) return false;
-        return plugin.getShopTransactionService().computeAdjustedSellPrice(base, stack) > 0;
+        return unitValue(stack) > 0;
+    }
+
+    /** Sell value of one unit of {@code stack}, or 0 when it cannot be sold. */
+    private double unitValue(ItemStack stack) {
+        SellQuote quote = plugin.getShopPricingService().quoteSell(stack);
+        if (quote == null) return 0;
+        return plugin.getShopTransactionService()
+                .computeAdjustedSellPrice(quote.baseSell(), stack, quote.composite());
     }
 
     private double boxGross(ItemStack shulker) {
-        ItemStack empty = ShulkerUtil.emptiedClone(shulker);
-        String boxId = plugin.getShopPriceManager().identifyItem(empty);
-        if (boxId == null || !plugin.getShopPricingService().isSellable(boxId)) return 0;
-        double base = plugin.getShopPriceManager().getSellPrice(boxId);
-        if (base <= 0) return 0;
-        return plugin.getShopTransactionService().computeAdjustedSellPrice(base, empty);
+        return unitValue(ShulkerUtil.emptiedClone(shulker));
     }
 
     private String boxId(ItemStack shulker) {
-        return plugin.getShopPriceManager().identifyItem(ShulkerUtil.emptiedClone(shulker));
+        SellQuote quote = plugin.getShopPricingService().quoteSell(ShulkerUtil.emptiedClone(shulker));
+        return quote != null ? quote.itemId() : null;
     }
 
     private void logSellable(Player player, ContentsScan scan) {
-        for (SellPreviewEntry e : scan.sellable()) {
-            plugin.getShopTransactionService().logShopSale(player, e.itemId(), e.quantity(),
-                    e.pricePerUnit(), e.totalValue(),
-                    plugin.getShopPricingService().calculateTax(e.totalValue()));
+        for (SellVariant variant : scan.sellable()) {
+            plugin.getShopTransactionService().logShopSale(player, variant.itemId(), variant.amount(),
+                    variant.unitPrice(), variant.totalValue(),
+                    plugin.getShopPricingService().calculateTax(variant.totalValue()));
         }
     }
 

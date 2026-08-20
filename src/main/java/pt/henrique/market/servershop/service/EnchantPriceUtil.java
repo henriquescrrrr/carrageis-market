@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import pt.henrique.market.Market;
 
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -34,6 +36,12 @@ import java.util.Map;
  * </ul>
  * <p>
  * If no price is configured for an enchantment, its bonus is 0.
+ * <p>
+ * <b>Enchanted books</b> are priced differently: their value is the <em>sum</em> of
+ * the {@code ENCHANTED_BOOK_<ENCHANT>_<LEVEL>} sell prices of every enchantment they
+ * hold, so a book with Efficiency V, Unbreaking III and Fortune III is worth all
+ * three. Books priced that way get no enchantment bonus on top — the base already
+ * is the enchantments. Toggle with {@code server-shop.enchanted-book.sum-enchantments}.
  *
  * @see DurabilityPriceUtil
  */
@@ -172,11 +180,7 @@ public class EnchantPriceUtil {
      * @return total enchantment bonus in cents
      */
     public long getEnchantBonusCents(ItemStack stack) {
-        if (stack == null) return 0;
-        ItemMeta meta = stack.getItemMeta();
-        if (meta == null) return 0;
-
-        Map<Enchantment, Integer> enchantments = meta.getEnchants();
+        Map<Enchantment, Integer> enchantments = effectiveEnchants(stack);
         if (enchantments.isEmpty()) return 0;
 
         long totalBonus = 0;
@@ -188,6 +192,89 @@ public class EnchantPriceUtil {
         }
 
         return applyCap(totalBonus);
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  Enchanted books
+    // ══════════════════════════════════════════════════════════════
+
+    /**
+     * The enchantments that give an item value.
+     * <p>
+     * Enchanted books keep theirs in {@link EnchantmentStorageMeta} rather than in
+     * {@link ItemMeta#getEnchants()}, which returns an empty map for them — reading
+     * only the latter valued every book at zero.
+     */
+    public static Map<Enchantment, Integer> effectiveEnchants(ItemStack stack) {
+        if (stack == null) return Map.of();
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) return Map.of();
+        if (meta instanceof EnchantmentStorageMeta storage && storage.hasStoredEnchants()) {
+            return storage.getStoredEnchants();
+        }
+        return meta.getEnchants();
+    }
+
+    /** True for an enchanted book that carries at least one stored enchantment. */
+    public static boolean isEnchantedBook(ItemStack stack) {
+        return stack != null
+                && stack.getItemMeta() instanceof EnchantmentStorageMeta storage
+                && storage.hasStoredEnchants();
+    }
+
+    /**
+     * True when this stack is priced by summing its enchantments instead of by a
+     * single {@code ENCHANTED_BOOK_*} row. The enchantment bonus must then be
+     * skipped, or the enchantments would be paid for twice.
+     */
+    public boolean isCompositeBookPricing(ItemStack stack) {
+        return isEnchantedBook(stack) && isBookSummingEnabled();
+    }
+
+    private boolean isBookSummingEnabled() {
+        return plugin.getConfig().getBoolean("server-shop.enchanted-book.sum-enchantments", true);
+    }
+
+    /**
+     * Sell value of an enchanted book: the sum of the configured sell prices of
+     * every enchantment it holds. A book with Efficiency V, Unbreaking III and
+     * Fortune III is worth all three, not just the first one.
+     *
+     * @return the summed sell price, or 0 when none of its enchantments is priced
+     */
+    public double getBookSellValue(ItemStack stack) {
+        if (!isEnchantedBook(stack)) return 0;
+        double total = 0;
+        for (var entry : effectiveEnchants(stack).entrySet()) {
+            total += plugin.getShopPriceManager().getEnchantedBookSellPrice(entry.getKey(), entry.getValue());
+        }
+        return Math.round(total * 100.0) / 100.0;
+    }
+
+    /**
+     * Per-enchantment sell values for an enchanted book, in the order the book
+     * lists them. Used to show the player where the price comes from.
+     */
+    public Map<String, Double> getBookValueBreakdown(ItemStack stack) {
+        Map<String, Double> breakdown = new LinkedHashMap<>();
+        if (!isEnchantedBook(stack)) return breakdown;
+        for (var entry : effectiveEnchants(stack).entrySet()) {
+            double value = plugin.getShopPriceManager().getEnchantedBookSellPrice(entry.getKey(), entry.getValue());
+            breakdown.put(formatEnchantName(entry.getKey(), entry.getValue()), value);
+        }
+        return breakdown;
+    }
+
+    /** Human-readable enchantment list, e.g. {@code "Efficiency V, Unbreaking III"}. */
+    public static String describeEnchants(ItemStack stack) {
+        Map<Enchantment, Integer> enchants = effectiveEnchants(stack);
+        if (enchants.isEmpty()) return "";
+        StringBuilder sb = new StringBuilder();
+        for (var entry : enchants.entrySet()) {
+            if (!sb.isEmpty()) sb.append(", ");
+            sb.append(formatEnchantName(entry.getKey(), entry.getValue()));
+        }
+        return sb.toString();
     }
 
     private long bonusCents(long buyPriceCents) {
@@ -206,10 +293,7 @@ public class EnchantPriceUtil {
      * Checks if any enchantment on the item has a configured price.
      */
     public boolean hasAnyPricedEnchantment(ItemStack stack) {
-        if (stack == null) return false;
-        ItemMeta meta = stack.getItemMeta();
-        if (meta == null) return false;
-        for (var entry : meta.getEnchants().entrySet()) {
+        for (var entry : effectiveEnchants(stack).entrySet()) {
             if (getEnchantBuyPriceCents(entry.getKey(), entry.getValue()) > 0) {
                 return true;
             }
@@ -224,13 +308,10 @@ public class EnchantPriceUtil {
      * capped total actually paid.
      */
     public Map<String, Long> getEnchantBreakdown(ItemStack stack) {
-        Map<String, Long> breakdown = new HashMap<>();
-        if (stack == null) return breakdown;
-        ItemMeta meta = stack.getItemMeta();
-        if (meta == null) return breakdown;
+        Map<String, Long> breakdown = new LinkedHashMap<>();
 
         long total = 0;
-        for (var entry : meta.getEnchants().entrySet()) {
+        for (var entry : effectiveEnchants(stack).entrySet()) {
             long buyPrice = getEnchantBuyPriceCents(entry.getKey(), entry.getValue());
             if (buyPrice > 0) {
                 long bonus = bonusCents(buyPrice);
@@ -248,7 +329,7 @@ public class EnchantPriceUtil {
         return breakdown;
     }
 
-    private String formatEnchantName(Enchantment enchantment, int level) {
+    private static String formatEnchantName(Enchantment enchantment, int level) {
         String name = enchantment.getKey().getKey().replace("_", " ");
         // Capitalize each word
         StringBuilder sb = new StringBuilder();

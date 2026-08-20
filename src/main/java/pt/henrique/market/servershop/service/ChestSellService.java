@@ -10,15 +10,13 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import pt.henrique.market.Market;
-import pt.henrique.market.hook.BuildersDreamHook;
 import pt.henrique.market.hook.DeathChestHook;
 import pt.henrique.market.hook.LandClaimHook;
+import pt.henrique.market.servershop.SellVariantScanner;
 import pt.henrique.market.servershop.gui.SellChestPreviewGui;
-import pt.henrique.market.servershop.model.ShopItem;
-import pt.henrique.market.servershop.model.ShopPriceEntry;
+import pt.henrique.market.servershop.model.SellVariant;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -157,7 +155,7 @@ public class ChestSellService {
         endSession(player);
 
         // Scan inventory for sellable items
-        List<SellPreviewEntry> sellableItems = scanForSellableItems(containerInventory, player);
+        List<SellVariant> sellableItems = scanForSellableItems(containerInventory);
 
         if (sellableItems.isEmpty()) {
             player.sendMessage(plugin.getMessageManager().getPrefixedP(player,
@@ -176,54 +174,17 @@ public class ChestSellService {
 
     /**
      * Scans a container for items that can be sold in the server shop.
+     * <p>
+     * Grouping is per distinct item, so a chest holding a plain bow next to an
+     * enchanted one shows two lines at two prices instead of valuing both at
+     * whichever happened to sit in the lower slot.
      * Excludes: dream items (BuildersDream), items with no sell price.
      */
-    private List<SellPreviewEntry> scanForSellableItems(Inventory inventory, Player player) {
-        List<SellPreviewEntry> entries = new ArrayList<>();
-        BuildersDreamHook dreamHook = plugin.getBuildersDreamHook();
-
-        // Aggregate by item ID for cleaner display
-        Map<String, SellPreviewEntry> aggregated = new LinkedHashMap<>();
-
-        for (int i = 0; i < inventory.getSize(); i++) {
-            ItemStack item = inventory.getItem(i);
-            if (item == null || item.getType().isAir()) continue;
-
-            // Check for BuildersDream tag — reject dream items
-            if (dreamHook != null && dreamHook.isDreamItem(item)) continue;
-
-            // Identify item and check if it has a sell price
-            String itemId = plugin.getShopPriceManager().identifyItem(item);
-            if (itemId == null) continue;
-
-            ShopPriceEntry priceEntry = plugin.getShopPriceManager().getPriceEntry(itemId);
-            if (priceEntry == null || !priceEntry.sellEnabled() || priceEntry.sellPrice() <= 0) continue;
-
-            // Compute adjusted sell price per unit (includes enchant, mod, durability)
-            double adjustedPrice = plugin.getShopTransactionService()
-                    .computeAdjustedSellPrice(priceEntry.sellPrice(), item);
-            if (adjustedPrice <= 0) continue;
-
-            ShopItem shopItem = plugin.getShopPriceManager().getShopItem(itemId);
-            String displayName = shopItem != null ? shopItem.getDisplayName() : itemId;
-
-            // Aggregate by item ID
-            SellPreviewEntry existing = aggregated.get(itemId);
-            if (existing != null) {
-                // Add to existing quantity — keep the same per-unit price
-                aggregated.put(itemId, new SellPreviewEntry(
-                        existing.displayItem(), itemId, displayName,
-                        existing.pricePerUnit(),
-                        existing.quantity() + item.getAmount()));
-            } else {
-                aggregated.put(itemId, new SellPreviewEntry(
-                        item.clone(), itemId, displayName,
-                        adjustedPrice, item.getAmount()));
-            }
-        }
-
-        entries.addAll(aggregated.values());
-        return entries;
+    private List<SellVariant> scanForSellableItems(Inventory inventory) {
+        // Packed shulkers are listed as-is: their own contents are not unpacked here.
+        return plugin.getSellVariantScanner()
+                .scanContainer(inventory, SellVariantScanner.Options.showAll(false))
+                .variants();
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -319,21 +280,4 @@ public class ChestSellService {
         BukkitTask getTask() { return task; }
         void setTask(BukkitTask task) { this.task = task; }
     }
-
-    /**
-     * An entry in the sell preview showing one item type and its value.
-     */
-    public record SellPreviewEntry(
-            ItemStack displayItem,
-            String itemId,
-            String displayName,
-            double pricePerUnit,
-            int quantity
-    ) {
-        public double totalValue() {
-            return Math.round(pricePerUnit * quantity * 100.0) / 100.0;
-        }
-    }
 }
-
-

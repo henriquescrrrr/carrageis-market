@@ -1,7 +1,7 @@
 name: Market
 version: '${project.version}'
 main: pt.henrique.market.Market
-api-version: '1.21'
+api-version: '${paper.api.version}'
 description: A unified GUI-only marketplace plugin with Server Shop, Community Market, and Auctions
 author: Henrique
 website: https://github.com/henriquescrrrr/carrageis-market
@@ -18,8 +18,8 @@ commands:
     permission: market.use
   sell:
     description: Opens the sell interface
-    usage: /<command>
-    aliases: [s]
+    usage: /<command> [inventory|hand|container]
+    aliases: [s, vender, venda]
     permission: market.sell
 
 permissions:

@@ -1,9 +1,10 @@
 # Market
 
 [![Modrinth Downloads](https://img.shields.io/modrinth/dt/carrageis-market?logo=modrinth)](https://modrinth.com/plugin/carrageis-market)
-[![GitHub License](https://img.shields.io/github/license/henrique/Market)](LICENSE)
+[![GitHub License](https://img.shields.io/github/license/henriquescrrrr/carrageis-market)](LICENSE)
 
-A unified, GUI-only **marketplace plugin** for Minecraft Paper 1.21.11+.
+A unified, GUI-only **marketplace plugin** for Minecraft Paper/Purpur.
+Shipped as two jars from the same source: `+mc1.21.11` for 1.21.x and `+mc26.2` for 26.2.
 
 One command (`/market`) opens a **hub GUI** with three main sections:
 **Server Market** — Buy/sell any item from the server at fixed prices (large spread encourages player trading)
@@ -19,10 +20,13 @@ Server Market
 - Category-based GUI (Blocks, Ores, Farming, Food, Mob Drops, Redstone, Decoration, Tools, Combat, Brewing, Misc)
 - Search, pagination, quantity selector (-32/-16/-8/-1 / +1/+8/+16/+32 / MIN/MAX)
 - **Large spread** between buy/sell prices (default 75%) to keep the Community Market valuable
-- Sell Hand / Sell Inventory quick-sell
+- Three ways to sell, all reachable from `/sell` (also `/vender`): the inventory grid, the item in your hand, or a nearby chest, barrel, shulker or ender chest
+- **Selling is per item, not per material** — a Power V bow and a plain bow are two entries at two prices, and selling one never takes the other
 - **Durability-based pricing** — worn items sell for less (up to -50%), with Mending/Unbreaking adjustments
-- **Enchantment bonus pricing** — enchanted items sell for more (+25% of each enchantment's store buy price)
+- **Enchantment bonus pricing** — enchanted items sell for more (a configurable % of each enchantment's store buy price)
+- **Enchanted books are worth the sum of their enchantments** — Efficiency V + Unbreaking III + Fortune III is priced as all three
 - **Dedicated Armor Row** in Sell Inventory — equipped gear is visually separated and protected from accidental sale
+- Bulk sales hold back enchanted, renamed and modded gear by default, and say how many they skipped
 - Per-item and per-category price overrides in `prices.yml`
 - Transaction logging to SQLite
 
@@ -118,8 +122,10 @@ Commands
 |---------|---------|-------------|------------|
 | `/market` | `/m`, `/shop`, `/cmarket`, `/servershop` | Opens the Market Hub GUI | `market.use` |
 | `/market reload` | — | Reloads all configuration and prices | `market.admin.reload` |
+| `/sell` | `/s`, `/vender`, `/venda` | Asks how you want to sell | `market.sell` |
+| `/sell inventory\|hand\|container` | — | Goes straight to that one | `market.sell` |
 
-**That's it!** Everything else is done through GUIs.
+Everything else is done through GUIs.
 
 Permissions
 

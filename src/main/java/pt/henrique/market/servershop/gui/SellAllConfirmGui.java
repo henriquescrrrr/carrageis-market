@@ -5,31 +5,39 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import pt.henrique.market.Market;
 import pt.henrique.market.config.MessageManager;
 import pt.henrique.market.gui.MarketGui;
-import pt.henrique.market.servershop.ShulkerUtil;
-import pt.henrique.market.servershop.model.ShopItem;
+import pt.henrique.market.servershop.SellVariantScanner;
+import pt.henrique.market.servershop.model.SellVariant;
+import pt.henrique.market.servershop.service.EnchantPriceUtil;
 import pt.henrique.market.servershop.service.ShopTransactionService;
-import pt.henrique.market.servershop.service.ShopTransactionService.SellPriceBreakdown;
 import pt.henrique.market.util.ItemBuilder;
 import pt.henrique.market.util.SoundUtil;
 import pt.henrique.market.util.TextUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.IntPredicate;
 
 /**
  * Confirmation GUI for the "Sell Entire Inventory" action.
  *
- * <p>Scans the player's inventory, groups sellable items, shows a preview grid
- * with per-item breakdown, and requires a confirm click to execute.</p>
+ * <p>Scans the player's inventory, groups it into distinct items, shows a preview
+ * grid with per-item breakdown, and requires a confirm click to execute.</p>
+ *
+ * <p>Enchanted, renamed and tool-modded items are held back by default — a bulk
+ * sale is the one place where a mis-click costs gear that took hours to build.
+ * They are counted and reported, not silently dropped, and remain sellable one by
+ * one from the sell grid. Toggle with
+ * {@code sell-inventory.sell-all.skip-special-gear}.</p>
  *
  * <p>Layout (54 slots / 6 rows):</p>
  * <pre>
- *   Rows 0–4 (slots 0–44): item preview grid (up to 45 sellable item types)
- *   Row 5 (slots 45–53): [filler] [filler] [CONFIRM(47)] [filler] [INFO(49)] [filler] [CANCEL(51)] [filler] [BACK]
+ *   Rows 0–4 (slots 0–44): item preview grid (up to 45 distinct items)
+ *   Row 5 (slots 45–53): [CONFIRM(47)] [INFO(49)] [CANCEL(51)] [BACK(53)]
  * </pre>
  *
  * <p>Safety:</p>
@@ -51,7 +59,8 @@ public class SellAllConfirmGui implements MarketGui {
     private static final int SLOT_BACK    = 53;
 
     /** Snapshot of sellable items computed when the GUI opens. */
-    private List<SellEntry> sellEntries = new ArrayList<>();
+    private List<SellVariant> variants = new ArrayList<>();
+    private int    protectedItems = 0;
     private double grandTotal = 0;
     private double grandTax   = 0;
     private double grandNet   = 0;
@@ -59,11 +68,6 @@ public class SellAllConfirmGui implements MarketGui {
 
     /** Debounce flag — once confirm is executing, block further clicks. */
     private boolean executing = false;
-
-    /** Represents one grouped sellable item type with its price breakdown. */
-    private record SellEntry(String itemId, ShopItem shopItem, int quantity,
-                              double pricePerUnit, double subtotal,
-                              SellPriceBreakdown breakdown) {}
 
     public SellAllConfirmGui(Market plugin, ShopGuiManager shopGuiManager) {
         this.plugin = plugin;
@@ -88,70 +92,12 @@ public class SellAllConfirmGui implements MarketGui {
     //  Inventory scanning
     // ═════════════════════════════════════════════════════
 
-    /**
-     * Scans the player's inventory and groups sellable items.
-     * Respects config toggles for hotbar, armor, and shield inclusion.
-     */
     private void scanInventory(Player player) {
-        sellEntries = new ArrayList<>();
-        grandTotal = 0; grandTax = 0; grandNet = 0; totalItems = 0;
-
-        boolean includeHotbar = plugin.getConfig().getBoolean("sell-inventory.sell-all.include-hotbar", true);
-        boolean includeArmor  = plugin.getConfig().getBoolean("sell-inventory.sell-all.include-armor-and-shield", false);
-
-        // Group items by item ID → total quantity
-        Map<String, Integer> grouped = new LinkedHashMap<>();
-        // Also track a representative stack per item ID (for durability/enchant calcs)
-        Map<String, ItemStack> representativeStacks = new LinkedHashMap<>();
-
-        ItemStack[] contents = player.getInventory().getContents();
-        // Inventory layout: 0–8 = hotbar, 9–35 = main inventory, 36–39 = armor, 40 = offhand
-        for (int i = 0; i < contents.length; i++) {
-            ItemStack stack = contents[i];
-            if (stack == null || stack.getType().isAir()) continue;
-
-            // Skip shulker boxes with contents — they have a dedicated sell chooser;
-            // selling them in bulk here would destroy their contents.
-            if (plugin.getConfig().getBoolean("sell-inventory.shulker-sell.enabled", true)
-                    && ShulkerUtil.isShulkerBox(stack) && ShulkerUtil.hasContents(stack)) continue;
-
-            // Skip hotbar if config disables it
-            if (!includeHotbar && i <= 8) continue;
-            // Skip armor slots (36–39) and offhand (40) if config disables it
-            if (!includeArmor && i >= 36 && i <= 40) continue;
-
-            String itemId = plugin.getShopPriceManager().identifyItem(stack);
-            if (itemId == null) continue;
-            if (!plugin.getShopPricingService().isSellable(itemId)) continue;
-            // Skip BuildersDream creative dream items
-            if (plugin.getBuildersDreamHook() != null && plugin.getBuildersDreamHook().isDreamItem(stack)) continue;
-
-            grouped.merge(itemId, stack.getAmount(), Integer::sum);
-            representativeStacks.putIfAbsent(itemId, stack);
-        }
-
-        // Build sell entries with price calculations
-        for (Map.Entry<String, Integer> entry : grouped.entrySet()) {
-            String itemId = entry.getKey();
-            int qty = entry.getValue();
-
-            ShopItem shopItem = plugin.getShopPriceManager().getShopItem(itemId);
-            if (shopItem == null) continue;
-
-            double baseSell = plugin.getShopPriceManager().getSellPrice(itemId);
-            if (baseSell <= 0) continue;
-
-            ItemStack repStack = representativeStacks.get(itemId);
-            SellPriceBreakdown breakdown = plugin.getShopTransactionService()
-                    .computeSellBreakdown(baseSell, repStack);
-            double adjPrice = breakdown.finalSell();
-            double sub = Math.round(adjPrice * qty * 100.0) / 100.0;
-
-            sellEntries.add(new SellEntry(itemId, shopItem, qty, adjPrice, sub, breakdown));
-            totalItems += qty;
-            grandTotal += sub;
-        }
-
+        SellVariantScanner.Result result = plugin.getSellVariantScanner().scanForSellAll(player);
+        variants = result.variants();
+        protectedItems = result.protectedItems();
+        totalItems = result.totalUnits();
+        grandTotal = result.grossValue();
         grandTax = plugin.getShopPricingService().calculateTax(grandTotal);
         grandNet = grandTotal - grandTax;
     }
@@ -166,42 +112,38 @@ public class SellAllConfirmGui implements MarketGui {
         var filler = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build();
         for (int i = 0; i < 54; i++) inventory.setItem(i, filler);
 
-        // ── Item preview grid (rows 0–4, up to 45 entries) ───
-        for (int i = 0; i < Math.min(sellEntries.size(), 45); i++) {
-            SellEntry e = sellEntries.get(i);
-            String name = e.shopItem.getDisplayName();
+        for (int i = 0; i < Math.min(variants.size(), 45); i++) {
+            SellVariant variant = variants.get(i);
             List<String> lore = new ArrayList<>();
-            lore.add("&7Quantity: &f" + e.quantity);
-            lore.add("&7Price Each: &a" + msg.formatCurrency(e.pricePerUnit));
-            lore.add("&7Subtotal: &a" + msg.formatCurrency(e.subtotal));
-
-            if (e.breakdown.enchantBonus() > 0 || e.breakdown.modBonus() > 0 || e.breakdown.wearPenalty() > 0) {
-                lore.add("");
-                lore.add("&7Base: &f" + msg.formatCurrency(e.breakdown.baseSell()));
-                if (e.breakdown.enchantBonus() > 0)
-                    lore.add("&7Enchant: &a+" + msg.formatCurrency(e.breakdown.enchantBonus()));
-                if (e.breakdown.modBonus() > 0)
-                    lore.add("&7Mod Bonus: &a+" + msg.formatCurrency(e.breakdown.modBonus()));
-                if (e.breakdown.wearPenalty() > 0)
-                    lore.add("&7Wear: &c-" + msg.formatCurrency(e.breakdown.wearPenalty()));
+            lore.add(msg.getRaw(lang, "servershop.lore.variant-amount")
+                    .replace("{amount}", String.valueOf(variant.amount())));
+            lore.add(msg.getRaw(lang, "servershop.lore.variant-unit-price")
+                    .replace("{price}", msg.formatCurrency(variant.unitPrice())));
+            lore.add(msg.getRaw(lang, "servershop.lore.variant-stack-total")
+                    .replace("{total}", msg.formatCurrency(variant.totalValue())));
+            String enchants = EnchantPriceUtil.describeEnchants(variant.template());
+            if (!enchants.isEmpty()) {
+                lore.add(msg.getRaw(lang, "servershop.lore.variant-enchants").replace("{enchants}", enchants));
             }
-
-            ItemStack icon = e.shopItem.createItemStack(Math.min(e.quantity, 64));
-            inventory.setItem(i, new ItemBuilder(icon).name("&f" + name).lore(lore).build());
+            inventory.setItem(i, new ItemBuilder(variant.createStack(Math.min(variant.amount(), 64)))
+                    .name("&f" + variant.displayName()).lore(lore).build());
         }
 
-        if (sellEntries.isEmpty()) {
+        if (variants.isEmpty()) {
             inventory.setItem(22, new ItemBuilder(Material.BARRIER)
                     .name(msg.getRaw(lang, "servershop.buttons.sell-all-empty"))
                     .lore(msg.getList(lang, "servershop.lore.sell-all-empty")).build());
         }
 
         // ── Row 5: Confirm / Info / Cancel / Back ────────────
-        // Info summary
         List<String> infoLore = new ArrayList<>();
         infoLore.add("");
         infoLore.add(msg.getRaw(lang, "servershop.lore.sell-all-info-items").replace("{count}", String.valueOf(totalItems)));
-        infoLore.add(msg.getRaw(lang, "servershop.lore.sell-all-info-types").replace("{types}", String.valueOf(sellEntries.size())));
+        infoLore.add(msg.getRaw(lang, "servershop.lore.sell-all-info-types").replace("{types}", String.valueOf(variants.size())));
+        if (protectedItems > 0) {
+            infoLore.add(msg.getRaw(lang, "servershop.lore.sell-all-info-protected")
+                    .replace("{count}", String.valueOf(protectedItems)));
+        }
         infoLore.add("");
         infoLore.add(msg.getRaw(lang, "servershop.lore.sell-all-info-total").replace("{total}", msg.formatCurrency(grandTotal)));
         if (grandTax > 0)
@@ -211,12 +153,12 @@ public class SellAllConfirmGui implements MarketGui {
         inventory.setItem(SLOT_INFO, new ItemBuilder(Material.PAPER)
                 .name(msg.getRaw(lang, "servershop.buttons.sell-all-info")).lore(infoLore).build());
 
-        // Confirm
-        if (!sellEntries.isEmpty()) {
+        if (!variants.isEmpty()) {
             List<String> confirmLore = new ArrayList<>();
             confirmLore.add("");
-            confirmLore.add("&7Items: &f" + totalItems);
-            confirmLore.add("&7You Receive: &a" + msg.formatCurrency(grandNet));
+            confirmLore.add(msg.getRaw(lang, "servershop.lore.sell-all-info-items")
+                    .replace("{count}", String.valueOf(totalItems)));
+            confirmLore.add(msg.getRaw(lang, "servershop.lore.variant-net").replace("{net}", msg.formatCurrency(grandNet)));
             confirmLore.add("");
             confirmLore.add(msg.getRaw(lang, "servershop.lore.sell-all-confirm-hint"));
             inventory.setItem(SLOT_CONFIRM, new ItemBuilder(Material.LIME_WOOL)
@@ -224,12 +166,10 @@ public class SellAllConfirmGui implements MarketGui {
                     .lore(confirmLore).glow().build());
         }
 
-        // Cancel
         inventory.setItem(SLOT_CANCEL, new ItemBuilder(Material.RED_WOOL)
                 .name(msg.getRaw(lang, "servershop.buttons.sell-all-cancel"))
-                .lore("&7Cancel and go back.").build());
+                .lore(msg.getRaw(lang, "servershop.lore.sell-all-cancel")).build());
 
-        // Back
         inventory.setItem(SLOT_BACK, new ItemBuilder(Material.BARRIER)
                 .name(msg.getRaw(lang, "servershop.buttons.back")).build());
     }
@@ -252,6 +192,7 @@ public class SellAllConfirmGui implements MarketGui {
                 SoundUtil.playClickSound(player);
                 shopGuiManager.openSellInventory(player);
             }
+            default -> { /* preview cells are display only */ }
         }
     }
 
@@ -272,7 +213,7 @@ public class SellAllConfirmGui implements MarketGui {
 
         // Re-scan inventory at confirm time for safety
         scanInventory(player);
-        if (sellEntries.isEmpty()) {
+        if (variants.isEmpty()) {
             SoundUtil.playErrorSound(player);
             player.sendMessage(msg.getPrefixedP(player, "servershop.messages.sell-all-nothing"));
             executing = false;
@@ -280,18 +221,22 @@ public class SellAllConfirmGui implements MarketGui {
             return;
         }
 
-        // Execute each item type as an individual sell transaction
+        IntPredicate slots = plugin.getSellVariantScanner().sellAllSlots();
+        int maxTx = plugin.getConfig().getInt("server-shop.max-transaction-quantity", 2304);
+
         int successCount = 0;
         double totalEarned = 0;
         double totalTaxPaid = 0;
-
         boolean capReached = false;
-        for (SellEntry e : sellEntries) {
+
+        for (SellVariant variant : variants) {
+            int qty = Math.min(variant.amount(), maxTx);
+            if (qty <= 0) continue;
             ShopTransactionService.TransactionResult result =
-                    plugin.getShopTransactionService().sellItem(player, e.itemId, e.quantity);
+                    plugin.getShopTransactionService().sellVariant(player, variant, qty, slots);
             if (result == ShopTransactionService.TransactionResult.SUCCESS) {
-                successCount += e.quantity;
-                double sub = Math.round(e.pricePerUnit * e.quantity * 100.0) / 100.0;
+                successCount += qty;
+                double sub = Math.round(variant.unitPrice() * qty * 100.0) / 100.0;
                 double tax = plugin.getShopPricingService().calculateTax(sub);
                 totalEarned += (sub - tax);
                 totalTaxPaid += tax;
@@ -299,7 +244,7 @@ public class SellAllConfirmGui implements MarketGui {
                 capReached = true;
                 break; // no further sells can succeed today
             }
-            // If a single item type fails, others still proceed (partial success)
+            // If a single item fails, others still proceed (partial success)
         }
 
         if (capReached) {
@@ -318,18 +263,19 @@ public class SellAllConfirmGui implements MarketGui {
                         "count", String.valueOf(successCount),
                         "total", msg.formatCurrency(totalEarned))));
             }
+            if (protectedItems > 0) {
+                player.sendMessage(msg.getPrefixedP(player, "servershop.messages.sell-all-protected",
+                        "count", String.valueOf(protectedItems)));
+            }
         } else {
             SoundUtil.playErrorSound(player);
             player.sendMessage(msg.getPrefixedP(player, "servershop.messages.sell-all-failed"));
         }
 
         executing = false;
-        // Refresh sell inventory view
         shopGuiManager.openSellInventory(player);
     }
 
     @Override public GuiType getType() { return GuiType.SHOP_SELL_ALL_CONFIRM; }
     @Override public @NotNull Inventory getInventory() { return inventory; }
 }
-
-

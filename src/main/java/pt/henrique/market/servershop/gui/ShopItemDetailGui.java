@@ -11,11 +11,11 @@ import org.jetbrains.annotations.NotNull;
 import pt.henrique.market.Market;
 import pt.henrique.market.config.MessageManager;
 import pt.henrique.market.gui.MarketGui;
-import pt.henrique.market.hook.ToolModsHook;
+import pt.henrique.market.servershop.SellVariantScanner;
+import pt.henrique.market.servershop.model.SellVariant;
 import pt.henrique.market.servershop.model.ShopItem;
 import pt.henrique.market.servershop.model.ShopPriceEntry;
 import pt.henrique.market.servershop.service.ShopTransactionService;
-import pt.henrique.market.servershop.service.ShopTransactionService.SellPriceBreakdown;
 import pt.henrique.market.util.ItemBuilder;
 import pt.henrique.market.util.SoundUtil;
 import pt.henrique.market.util.TextUtil;
@@ -43,20 +43,22 @@ import java.util.Map;
  *   Row 5: filler×4 [ACTION] filler×3 [BACK]
  * </pre>
  *
- * In sell-only mode left-click shows a message; right-click sells.
+ * Buying happens here. Selling does not: this screen is a price row, and a row
+ * cannot say which of the player's bows to hand over — right-click routes to
+ * {@link SellVariantDetailGui} for the one item they own, or to the sell grid
+ * narrowed to that material when they own several.
  */
 public class ShopItemDetailGui implements MarketGui {
 
     private final Market plugin;
     private final ShopGuiManager shopGuiManager;
     private final String itemId;
-    private final boolean sellOnly;
     private Inventory inventory;
     private int quantity = 1;
 
     /** Pending confirmation: null = none. */
     private ConfirmAction pendingConfirm = null;
-    private enum ConfirmAction { BUY, SELL }
+    private enum ConfirmAction { BUY }
 
     // ── Row 0 ────────────────────────────────────────────
     private static final int SLOT_AUTO = 4;
@@ -81,14 +83,9 @@ public class ShopItemDetailGui implements MarketGui {
     private int packButtonCount = 4;
 
     public ShopItemDetailGui(Market plugin, ShopGuiManager shopGuiManager, String itemId) {
-        this(plugin, shopGuiManager, itemId, false);
-    }
-
-    public ShopItemDetailGui(Market plugin, ShopGuiManager shopGuiManager, String itemId, boolean sellOnly) {
         this.plugin = plugin;
         this.shopGuiManager = shopGuiManager;
         this.itemId = itemId;
-        this.sellOnly = sellOnly;
     }
 
     public void open(Player player) {
@@ -96,8 +93,7 @@ public class ShopItemDetailGui implements MarketGui {
         String lang = msg.getPlayerLanguage(player);
         ShopItem shopItem = plugin.getShopPriceManager().getShopItem(itemId);
         String itemName = shopItem != null ? shopItem.getDisplayName() : itemId;
-        String titleKey = sellOnly ? "servershop.titles.sell-only" : "servershop.titles.item-detail";
-        String title = msg.getRaw(lang, titleKey).replace("{item}", itemName);
+        String title = msg.getRaw(lang, "servershop.titles.item-detail").replace("{item}", itemName);
         inventory = Bukkit.createInventory(this, 54, TextUtil.colorize(title));
 
         if (shopItem != null) maxStackSize = shopItem.getBaseMaterial().getMaxStackSize();
@@ -131,17 +127,10 @@ public class ShopItemDetailGui implements MarketGui {
         double balance = plugin.getEconomyManager().getBalance(player.getUniqueId());
         String balStr = msg.formatCurrency(balance);
 
-        // Sell breakdown
-        ItemStack repStack = plugin.getShopTransactionService().findFirstMatchingStack(player, shopItem);
-        final SellPriceBreakdown breakdown;
-        final double adjSellPrice;
-        if (entry.sellEnabled() && entry.sellPrice() > 0) {
-            breakdown = plugin.getShopTransactionService().computeSellBreakdown(entry.sellPrice(), repStack);
-            adjSellPrice = breakdown.finalSell();
-        } else {
-            breakdown = null;
-            adjSellPrice = entry.sellPrice();
-        }
+        // This screen is a price row, so it quotes the row's own price. What a
+        // particular item is worth depends on its enchantments and wear, and that
+        // is shown on the sell screen for that item.
+        double adjSellPrice = entry.sellPrice();
 
         // ── Preview item (row 1 center) ──────────────────────
         List<String> prevLore = new ArrayList<>(msg.getList(lang, "servershop.lore.item-detail"));
@@ -150,26 +139,9 @@ public class ShopItemDetailGui implements MarketGui {
                 .replace("{sell_price}", entry.sellEnabled() ? msg.formatCurrency(adjSellPrice) : "N/A")
                 .replace("{spread}", String.valueOf(entry.getSpreadPercent()))
                 .replace("{balance}", balStr));
-        if (breakdown != null && (breakdown.enchantBonus() > 0 || breakdown.modBonus() > 0 || breakdown.wearPenalty() > 0)) {
+        if (entry.sellEnabled() && entry.sellPrice() > 0) {
             prevLore.add("");
-            prevLore.add("&7&m─────────────────");
-            prevLore.add("&eSell Breakdown:");
-            prevLore.add("  &7Base: &f" + msg.formatCurrency(breakdown.baseSell()));
-            if (breakdown.enchantBonus() > 0)
-                prevLore.add("  &7Enchant Bonus: &a+" + msg.formatCurrency(breakdown.enchantBonus()));
-            if (breakdown.modBonus() > 0) {
-                Map<String, Long> modBreakdown = ToolModsHook.getModBreakdown(repStack);
-                for (var modEntry : modBreakdown.entrySet()) {
-                    prevLore.add("  &7Mod: &a+" + msg.formatCurrency(pt.henrique.market.economy.EconomyManager.toDouble(modEntry.getValue()))
-                            + " &8(" + modEntry.getKey() + ")");
-                }
-            }
-            if (breakdown.wearPenalty() > 0)
-                prevLore.add("  &7Wear: &c-" + msg.formatCurrency(breakdown.wearPenalty())
-                        + " &8(" + breakdown.wearDescription() + ")");
-            else if (breakdown.wearDescription().contains("Mending"))
-                prevLore.add("  &7Wear: &aNone (Mending)");
-            prevLore.add("  &7Final: &a" + msg.formatCurrency(breakdown.finalSell()));
+            prevLore.add(msg.getRaw(lang, "servershop.lore.item-detail-sell-note"));
         }
         inventory.setItem(SLOT_PREVIEW, new ItemBuilder(shopItem.createItemStack(Math.min(quantity, 64)))
                 .name("&f&l" + itemName).lore(prevLore).build());
@@ -233,7 +205,7 @@ public class ShopItemDetailGui implements MarketGui {
         }
 
         // ── Row 5: action icon + back ────────────────────────
-        buildActionIcon(player, entry, shopItem, itemName, balStr, adjSellPrice, breakdown, msg, lang);
+        buildActionIcon(player, entry, shopItem, itemName, balStr, adjSellPrice, msg, lang);
         inventory.setItem(SLOT_BACK, new ItemBuilder(Material.BARRIER).name(msg.getRaw(lang, "servershop.buttons.back")).build());
     }
 
@@ -244,7 +216,7 @@ public class ShopItemDetailGui implements MarketGui {
      */
     private void buildActionIcon(Player player, ShopPriceEntry entry, ShopItem shopItem,
                                   String itemName, String balStr, double adjSellPrice,
-                                  SellPriceBreakdown breakdown, MessageManager msg, String lang) {
+                                  MessageManager msg, String lang) {
         double totalBuy = plugin.getShopPricingService().getTotalBuyPrice(itemId, quantity);
         double balance = plugin.getEconomyManager().getBalance(player.getUniqueId());
         int avail = plugin.getShopTransactionService().countItems(player, itemId);
@@ -267,54 +239,12 @@ public class ShopItemDetailGui implements MarketGui {
             return;
         }
 
-        // ── Confirm: SELL ────────────────────────────────────
-        if (pendingConfirm == ConfirmAction.SELL) {
-            double sellTot = Math.round(adjSellPrice * quantity * 100.0) / 100.0;
-            double tax = plugin.getShopPricingService().calculateTax(sellTot);
-            double net = sellTot - tax;
-            List<String> lore = new ArrayList<>();
-            lore.add("&7Item: &f" + itemName);
-            lore.add("&7Quantity: &f" + quantity);
-            lore.add("");
-            if (breakdown != null) {
-                lore.add("&eSell Breakdown (per unit):");
-                lore.add("  &7Base: &f" + msg.formatCurrency(breakdown.baseSell()));
-                if (breakdown.enchantBonus() > 0)
-                    lore.add("  &7Enchant: &a+" + msg.formatCurrency(breakdown.enchantBonus()));
-                if (breakdown.modBonus() > 0) {
-                    ItemStack rep2 = plugin.getShopTransactionService().findFirstMatchingStack(player, shopItem);
-                    Map<String, Long> modBreakdown = ToolModsHook.getModBreakdown(rep2);
-                    for (var modEntry : modBreakdown.entrySet()) {
-                        lore.add("  &7Mod: &a+" + msg.formatCurrency(pt.henrique.market.economy.EconomyManager.toDouble(modEntry.getValue()))
-                                + " &8(" + modEntry.getKey() + ")");
-                    }
-                }
-                if (breakdown.wearPenalty() > 0)
-                    lore.add("  &7Wear: &c-" + msg.formatCurrency(breakdown.wearPenalty())
-                            + " &8(" + breakdown.wearDescription() + ")");
-                else if (breakdown.wearDescription().contains("Mending"))
-                    lore.add("  &7Wear: &aNone (Mending)");
-                lore.add("  &7Unit: &a" + msg.formatCurrency(breakdown.finalSell()));
-                lore.add("");
-            }
-            lore.add("&7Total: &a" + msg.formatCurrency(sellTot));
-            if (tax > 0) {
-                lore.add("&7Tax: &c-" + msg.formatCurrency(tax));
-                lore.add("&7You Receive: &a" + msg.formatCurrency(net));
-            }
-            lore.add("");
-            lore.add(msg.getRaw(lang, sellOnly ? "servershop.lore.action-confirm-sell-left" : "servershop.lore.action-confirm-sell"));
-            inventory.setItem(SLOT_ACTION, new ItemBuilder(Material.ORANGE_CONCRETE)
-                    .name(msg.getRaw(lang, "servershop.buttons.confirm-sell")).lore(lore).glow().build());
-            return;
-        }
-
         // ── Normal: action icon with buy/sell info ───────────
         ItemStack icon = shopItem.createItemStack(Math.min(quantity, 64));
         List<String> lore = new ArrayList<>();
         lore.add("");
 
-        boolean canBuy  = !sellOnly && entry.buyEnabled() && entry.buyPrice() > 0;
+        boolean canBuy  = entry.buyEnabled() && entry.buyPrice() > 0;
         boolean canSell = entry.sellEnabled() && entry.sellPrice() > 0;
 
         if (canBuy) {
@@ -323,8 +253,6 @@ public class ShopItemDetailGui implements MarketGui {
                     .replace("{price}", msg.formatCurrency(entry.buyPrice()))
                     .replace("{total}", msg.formatCurrency(cost)));
             if (balance < cost) lore.add("  &c(Cannot afford)");
-        } else if (sellOnly) {
-            lore.add(msg.getRaw(lang, "servershop.lore.action-buy-disabled-sellonly"));
         } else {
             lore.add(msg.getRaw(lang, "servershop.lore.action-buy-disabled"));
         }
@@ -348,12 +276,8 @@ public class ShopItemDetailGui implements MarketGui {
         lore.add("&7Quantity: &f" + quantity);
         lore.add("&7Balance: &f" + balStr);
         lore.add("");
-        if (sellOnly) {
-            lore.add(msg.getRaw(lang, "servershop.lore.action-hint-sell-only-left"));
-        } else {
-            lore.add(msg.getRaw(lang, "servershop.lore.action-hint-buy"));
-            lore.add(msg.getRaw(lang, "servershop.lore.action-hint-sell"));
-        }
+        lore.add(msg.getRaw(lang, "servershop.lore.action-hint-buy"));
+        lore.add(msg.getRaw(lang, "servershop.lore.action-hint-sell"));
 
         inventory.setItem(SLOT_ACTION, new ItemBuilder(icon).name("&e&l" + itemName).lore(lore).build());
     }
@@ -410,28 +334,16 @@ public class ShopItemDetailGui implements MarketGui {
 
         if (pendingConfirm != null) {
             if (pendingConfirm == ConfirmAction.BUY && left) { executeBuy(player); return; }
-            // In sell-only mode, confirm sell with left click; otherwise right click
-            if (pendingConfirm == ConfirmAction.SELL && (sellOnly ? left : right)) { executeSell(player); return; }
             // Wrong click type → cancel confirm
             resetConfirm(); SoundUtil.playClickSound(player); updateDisplay(player);
             return;
         }
 
-        if (sellOnly) {
-            // In sell-only mode, use left click for sell action
-            if (left) {
-                handleSellIntent(player);
-            } else if (right) {
-                SoundUtil.playErrorSound(player);
-                player.sendMessage(plugin.getMessageManager().getPrefixedP(player, "servershop.messages.buy-disabled-sellonly"));
-            }
-        } else {
-            // Normal mode: left = buy, right = sell
-            if (left) {
-                handleBuyIntent(player);
-            } else if (right) {
-                handleSellIntent(player);
-            }
+        // Left = buy, right = sell
+        if (left) {
+            handleBuyIntent(player);
+        } else if (right) {
+            handleSellIntent(player);
         }
     }
 
@@ -475,6 +387,15 @@ public class ShopItemDetailGui implements MarketGui {
 
     // ── Sell ─────────────────────────────────────────────
 
+    /**
+     * Routes selling to the concrete item the player owns.
+     * <p>
+     * This screen is reached by browsing a price row, which says nothing about
+     * <em>which</em> of the player's bows should go. So: one matching item sells
+     * straight away, several open the sell grid narrowed to that material, and the
+     * player picks. Selling from the row itself is what used to hand over the good
+     * gear when a junk copy was meant.
+     */
     private void handleSellIntent(Player player) {
         ShopPriceEntry entry = plugin.getShopPriceManager().getPriceEntry(itemId);
         if (entry == null || !entry.sellEnabled()) {
@@ -482,40 +403,37 @@ public class ShopItemDetailGui implements MarketGui {
             player.sendMessage(plugin.getMessageManager().getPrefixedP(player, "servershop.messages.sell-disabled"));
             return;
         }
-        if (plugin.getConfig().getBoolean("server-shop.sell-confirmation", true)) {
-            pendingConfirm = ConfirmAction.SELL;
-            SoundUtil.playClickSound(player); updateDisplay(player);
-        } else { executeSell(player); }
-    }
 
-    private void executeSell(Player player) {
-        pendingConfirm = null;
-        MessageManager msg = plugin.getMessageManager();
-        ShopPriceEntry entry = plugin.getShopPriceManager().getPriceEntry(itemId);
-        if (entry == null || !entry.sellEnabled()) { SoundUtil.playErrorSound(player); return; }
         ShopItem shopItem = plugin.getShopPriceManager().getShopItem(itemId);
-        String itemName = shopItem != null ? shopItem.getDisplayName() : itemId;
-        int qty = quantity;
-        ItemStack rep = plugin.getShopTransactionService().findFirstMatchingStack(player, shopItem);
-        double adjPrice = plugin.getShopTransactionService().computeAdjustedSellPrice(entry.sellPrice(), rep);
-        double totalSell = Math.round(adjPrice * qty * 100.0) / 100.0;
-        double tax = plugin.getShopPricingService().calculateTax(totalSell);
-        double net = totalSell - tax;
-        ShopTransactionService.TransactionResult r = plugin.getShopTransactionService().sellItem(player, itemId, qty);
-        switch (r) {
-            case SUCCESS -> {
-                SoundUtil.playPurchaseSound(player);
-                if (tax > 0) player.sendMessage(msg.getPrefixedP(player, "servershop.messages.sell-success-tax", Map.of(
-                        "quantity", String.valueOf(qty), "item", itemName,
-                        "net_total", msg.formatCurrency(net), "tax_amount", msg.formatCurrency(tax))));
-                else player.sendMessage(msg.getPrefixedP(player, "servershop.messages.sell-success", Map.of(
-                        "quantity", String.valueOf(qty), "item", itemName, "total", msg.formatCurrency(net))));
-                updateDisplay(player);
-            }
-            case NOT_ENOUGH_ITEMS -> { SoundUtil.playErrorSound(player); player.sendMessage(msg.getPrefixedP(player, "servershop.messages.sell-no-items", "quantity", String.valueOf(qty))); }
-            case DREAM_ITEM_BLOCKED -> { SoundUtil.playErrorSound(player); player.sendMessage(msg.getPrefixedP(player, "messages.dream-item-blocked")); }
-            case DAILY_LIMIT_REACHED -> { SoundUtil.playErrorSound(player); player.sendMessage(msg.getPrefixedP(player, "servershop.messages.daily-sell-cap")); }
-            default               -> { SoundUtil.playErrorSound(player); player.sendMessage(msg.getPrefixedP(player, "servershop.messages.sell-failed")); }
+        if (shopItem == null) {
+            SoundUtil.playErrorSound(player);
+            player.sendMessage(plugin.getMessageManager().getPrefixedP(player, "servershop.messages.sell-disabled"));
+            return;
+        }
+
+        boolean shulkerSell = plugin.getConfig().getBoolean("sell-inventory.shulker-sell.enabled", true);
+        List<SellVariant> owned = new ArrayList<>();
+        for (SellVariant variant : plugin.getSellVariantScanner()
+                .scanStorage(player, SellVariantScanner.Options.showAll(shulkerSell)).variants()) {
+            if (variant.template().getType() == shopItem.getBaseMaterial()) owned.add(variant);
+        }
+
+        if (owned.isEmpty()) {
+            SoundUtil.playErrorSound(player);
+            player.sendMessage(plugin.getMessageManager().getPrefixedP(player,
+                    "servershop.messages.sell-no-items", "quantity", String.valueOf(quantity)));
+            return;
+        }
+
+        SoundUtil.playClickSound(player);
+        if (owned.size() == 1) {
+            shopGuiManager.openSellVariantDetail(player, owned.get(0),
+                    ShopTransactionService.STORAGE_SLOTS, SellVariantDetailGui.Origin.SELL_INVENTORY);
+        } else {
+            player.sendMessage(plugin.getMessageManager().getPrefixedP(player,
+                    "servershop.messages.sell-pick-variant",
+                    "count", String.valueOf(owned.size())));
+            shopGuiManager.openSellInventory(player, 0, shopItem.getBaseMaterial());
         }
     }
 
@@ -550,6 +468,6 @@ public class ShopItemDetailGui implements MarketGui {
         SoundUtil.playClickSound(player); updateDisplay(player);
     }
 
-    @Override public GuiType getType() { return sellOnly ? GuiType.SHOP_SELL_ONLY : GuiType.SHOP_ITEM_DETAIL; }
+    @Override public GuiType getType() { return GuiType.SHOP_ITEM_DETAIL; }
     @Override public @NotNull Inventory getInventory() { return inventory; }
 }

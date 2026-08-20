@@ -68,13 +68,17 @@ public class MessageManager {
                     String locale = f.getName().replace(".yml", "");
                     YamlConfiguration cfg = YamlConfiguration.loadConfiguration(f);
 
-                    // Merge jar defaults for en_US so missing keys are never null
-                    if (locale.equals("en_US")) {
-                        InputStream defaultStream = plugin.getResource("lang/en_US.yml");
-                        if (defaultStream != null) {
-                            cfg.setDefaults(YamlConfiguration.loadConfiguration(
-                                    new InputStreamReader(defaultStream, StandardCharsets.UTF_8)));
-                        }
+                    // Merge the jar's copy of this locale as defaults, falling back to
+                    // en_US. Language files on disk are never overwritten, so without
+                    // this every string added by an update would be missing from an
+                    // existing install — or, at best, show up in English.
+                    InputStream defaultStream = plugin.getResource("lang/" + f.getName());
+                    if (defaultStream == null) {
+                        defaultStream = plugin.getResource("lang/en_US.yml");
+                    }
+                    if (defaultStream != null) {
+                        cfg.setDefaults(YamlConfiguration.loadConfiguration(
+                                new InputStreamReader(defaultStream, StandardCharsets.UTF_8)));
                     }
                     languageConfigs.put(locale, cfg);
                     messageCaches.put(locale, new HashMap<>());

@@ -516,9 +516,9 @@ servershop:
     search-results: "&8&lSearch: {query}"
     sell-inventory: "&8&lSell Items"
     sell-only: "&8&lSell » {item}"
-    sell-chooser: "&8&lWhere do you want to sell?"
     confirm-action: "&8&lConfirm Action"
     sell-all-confirm: "&8&lSell All — Confirm"
+    sell-mode-chooser: '&8&lHow do you want to sell?'
 
   buttons:
     shulker-sell-box-only: "&e&lSell Box Only"
@@ -556,9 +556,6 @@ servershop:
     quantity-sub-16: "&c-16"
     quantity-sub-32: "&c-32"
     auto-quantity: "&b&lAuto Quantity"
-    sell-to-server: "&a&lSell to Server"
-    sell-to-community: "&e&lSell on Community Market"
-    sell-to-auction: "&6&lAuction / Bid It"
     # Pack selector buttons (1 pack = 1 full stack)
     pack-info: "&e&lPack Size: {stack_size}"
     pack-add: "&a+{packs} Stack"
@@ -571,6 +568,20 @@ servershop:
     sell-all-empty: "&c&lNothing to Sell"
     # Sell Chest button
     sell-chest: "&e&lSell Chest"
+    equipped-gear: '&e&lEquipped Gear'
+    gear-slot-0: 'Helmet'
+    gear-slot-1: 'Chestplate'
+    gear-slot-2: 'Leggings'
+    gear-slot-3: 'Boots'
+    gear-slot-4: 'Offhand / Shield'
+    quantity-info: '&e&lQuantity: &f{quantity}'
+    variant-sell: '&6&lSell this item'
+    sell-page-info: '&e&lYour sellable items'
+    sell-clear-filter: '&7Show every item again'
+    sell-mode-inventory: '&6&lFrom your inventory'
+    sell-mode-hand: '&6&lThe item in your hand'
+    sell-mode-container: '&6&lFrom a nearby container'
+    sell-mode-hint: '&e&lThree ways to sell'
 
   lore:
     shulker-entry:
@@ -735,16 +746,11 @@ servershop:
     # Action icon lore (center bottom item — left-click buy, right-click sell)
     action-buy-price: "&aBuy: &f{price}/ea &7→ Total: &a{total}"
     action-buy-disabled: "&7Buy: &cDisabled"
-    action-buy-disabled-sellonly: "&7Buy: &cSell-only mode"
     action-sell-price: "&6Sell: &f{price}/ea &7→ Net: &a{total}"
     action-sell-disabled: "&7Sell: &cDisabled"
     action-hint-buy: "&a▸ Left-click to BUY"
     action-hint-sell: "&6▸ Right-click to SELL"
-    action-hint-sell-only: "&6▸ Right-click to SELL"
-    action-hint-sell-only-left: "&6▸ Left-click to SELL"
     action-confirm-buy: "&a⚠ Left-click again to confirm purchase!"
-    action-confirm-sell: "&6⚠ Right-click again to confirm sale!"
-    action-confirm-sell-left: "&6⚠ Left-click again to confirm sale!"
     # Sell All confirmation GUI lore
     sell-all:
       - "&7Sell ALL sellable items from"
@@ -762,34 +768,6 @@ servershop:
     sell-all-info-tax: "&7Tax: &c-{tax}"
     sell-all-info-net: "&7You Receive: &a{net}"
     sell-all-confirm-hint: "&a⚠ Click to sell everything!"
-    sell-chooser-server:
-      - ""
-      - "&7Sell directly to the server"
-      - "&7for an instant payout."
-      - ""
-      - "&7Quantity: &f{quantity}"
-      - "&7Price per item: &6{price_each}"
-      - "&7Total payout: &a{total}"
-      - ""
-      - "&aClick to sell!"
-    sell-chooser-community:
-      - ""
-      - "&7List on the Community Market"
-      - "&7for other players to buy."
-      - ""
-      - "&7Quantity: &f{quantity}"
-      - "&7You set the price!"
-      - ""
-      - "&eClick to create listing!"
-    sell-chooser-auction:
-      - ""
-      - "&7Create an auction for"
-      - "&7other players to bid on."
-      - ""
-      - "&7Quantity: &f{quantity}"
-      - "&7You set the starting price!"
-      - ""
-      - "&6Click to create auction!"
     confirm-buy-action:
       - ""
       - "&7Are you sure you want to buy"
@@ -801,17 +779,58 @@ servershop:
       - "&7After: &f{remaining}"
       - ""
       - "&aClick to confirm!"
-    confirm-sell-action:
-      - ""
-      - "&7Are you sure you want to sell"
-      - "&f{quantity}x {item}"
-      - "&7for &6{total}&7?"
-      - ""
-      - "&7Price per item: &6{price_each}"
-      - "&7Tax: &c-{tax_amount}"
-      - "&7You receive: &a{net_total}"
-      - ""
-      - "&6Click to confirm!"
+    variant-amount: '&7Amount: &f{amount}'
+    variant-available: '&7You have: &f{available}'
+    variant-unit-price: '&7Price each: &a{price}'
+    variant-stack-total: '&7Total: &a{total}'
+    variant-enchants: '&7Enchantments: &b{enchants}'
+    variant-click-to-sell: '&eClick to sell this exact item'
+    variant-max-hint: '&7Sets the quantity to everything you have'
+    variant-total: '&7You receive: &a{total}'
+    variant-sell-line: '&7Selling: &f{quantity}x {item}'
+    variant-gross: '&7Value: &f{gross}'
+    variant-tax: '&7Tax: &c-{tax}'
+    variant-net: '&7You receive: &a{net}'
+    variant-not-enough: '&cYou only have {available} of the {quantity} selected.'
+    variant-sell-hint: '&6Click to sell'
+    variant-confirm-hint: '&6Click again to confirm'
+    breakdown-header: '&ePrice breakdown:'
+    breakdown-base: '  &7Base: &f{base}'
+    breakdown-enchant: '  &7Enchantments: &a+{bonus}'
+    breakdown-enchant-line: '    &8{enchant}: &a{value}'
+    breakdown-mod: '  &7Mod &8{mod}&7: &a+{value}'
+    breakdown-wear: '  &7Wear: &c-{penalty} &8({description})'
+    breakdown-wear-mending: '  &7Wear: &anone, it has Mending'
+    breakdown-final: '  &7Final: &a{final}'
+    sell-page-info: '&7Page &f{page}&7/&f{pages} &8- &f{types}&7 different items'
+    sell-filter-active: '&7Showing only: &f{item}'
+    gear-empty: '&7Nothing equipped'
+    gear-not-sellable: '&7This cannot be sold to the server.'
+    gear-click-to-sell: '&eClick to sell, then click again to confirm'
+    gear-selling-disabled: '&cUnequip it first to sell it.'
+    item-detail-sell-note: '&8Enchanted or worn ones are priced on their own.'
+    sell-all-cancel: '&7Go back without selling.'
+    multi-cancel: '&7Back to the percentage.'
+    sell-all-info-protected: '&7Left alone: &f{count} &7enchanted or named'
+    sell-mode-disabled: '&cSwitched off on this server'
+    sell-mode-inventory:
+      - '&7Every sellable item you carry,'
+      - '&7one entry per distinct item.'
+      - ''
+      - '&6Click to browse'
+    sell-mode-hand:
+      - "&7Sell what you're holding right now."
+      - '&7A packed shulker asks what to do with it.'
+      - ''
+      - '&6Click to sell'
+    sell-mode-container:
+      - '&7Click a chest, barrel, shulker or ender'
+      - '&7chest within 15 seconds to sell it out.'
+      - ''
+      - '&6Click to start'
+    sell-mode-hint:
+      - '&7Straight to one of them:'
+      - '&f/sell inventory &8- &f/sell hand &8- &f/sell container'
 
   messages:
     shulker-drop-warning: "&e{count} item(s) won't fit and will DROP on the ground."
@@ -843,7 +862,6 @@ servershop:
     reload-failed: "&cFailed to reload server shop configuration."
     sell-command-usage: "&eUse /sell to open the sell interface."
     buy-disabled: "&cThis item cannot be purchased."
-    buy-disabled-sellonly: "&cBuying is not available in sell-only mode."
     sell-disabled: "&cThis item cannot be sold."
     sell-all-success: "&aSold &f{count} &aitems for &f{total}&a!"
     sell-all-success-tax: "&aSold &f{count} &aitems for &f{net_total} &a(tax: &c{tax_amount}&a)!"
@@ -871,6 +889,11 @@ servershop:
     sell-chest-total-lore-net: "&7You receive: &a{net}"
     sell-chest-confirm: "&a&lConfirm Sale"
     sell-chest-cancel: "&c&lCancel"
+    gear-selling-disabled: '&cEquipped gear cannot be sold from here. Unequip it first.'
+    gear-confirm-click: '&eClick the equipped item again to confirm selling it.'
+    sell-pick-variant: '&eYou have &f{count} &edifferent versions of this item. Pick the one to sell.'
+    sell-mode-disabled: '&cThat way of selling is switched off on this server.'
+    sell-all-protected: '&7Left untouched: &f{count} &7enchanted or named item(s). Sell those one at a time.'
 
   category-names:
     disabled_op: "Disabled / OP Items"

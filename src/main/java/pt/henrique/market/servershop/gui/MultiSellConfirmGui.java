@@ -11,9 +11,10 @@ import pt.henrique.market.Market;
 import pt.henrique.market.config.MessageManager;
 import pt.henrique.market.gui.MarketGui;
 import pt.henrique.market.servershop.MultiSellSession;
-import pt.henrique.market.servershop.model.ShopItem;
+import pt.henrique.market.servershop.SellVariantScanner;
+import pt.henrique.market.servershop.model.SellVariant;
+import pt.henrique.market.servershop.service.EnchantPriceUtil;
 import pt.henrique.market.servershop.service.ShopTransactionService;
-import pt.henrique.market.servershop.service.ShopTransactionService.SellPriceBreakdown;
 import pt.henrique.market.util.ItemBuilder;
 import pt.henrique.market.util.SoundUtil;
 import pt.henrique.market.util.TextUtil;
@@ -27,9 +28,8 @@ import java.util.Map;
  * <p>
  * Mirrors {@link SellAllConfirmGui} but is scoped to the {@link MultiSellSession}
  * selection, selling {@code applyPercent(totalHeld, percent)} of each selected
- * item type. Executes by looping {@link ShopTransactionService#sellItem} per type
- * (reusing all its pricing, tax, anti-dupe and logging guarantees), re-scans at
- * confirm time, and clears the session afterwards.
+ * item. Because the selection is held as item templates rather than price rows,
+ * picking a plain pickaxe never sweeps up an enchanted one of the same type.
  *
  * <p>Layout (54 slots): preview grid 0–44, then Confirm(47) / Info(49) /
  * Cancel(51) / Back(53). Cancel and Back both return to the percentage picker.</p>
@@ -54,10 +54,9 @@ public class MultiSellConfirmGui implements MarketGui {
 
     private boolean executing = false;
 
-    /** One selected item type with its percentage-applied quantity and pricing. */
-    private record SellEntry(String itemId, ShopItem shopItem, int qtyToSell, int totalHeld,
-                             boolean capped, double pricePerUnit, double subtotal,
-                             SellPriceBreakdown breakdown) {}
+    /** One selected item with its percentage-applied quantity. */
+    private record SellEntry(SellVariant variant, int qtyToSell, int totalHeld,
+                             boolean capped, double subtotal) {}
 
     public MultiSellConfirmGui(Market plugin, ShopGuiManager shopGuiManager) {
         this.plugin = plugin;
@@ -90,35 +89,27 @@ public class MultiSellConfirmGui implements MarketGui {
         percent = session.getPercent();
         int maxTx = plugin.getConfig().getInt("server-shop.max-transaction-quantity", 2304);
 
-        for (String itemId : session.getSelected()) {
-            if (!plugin.getShopPricingService().isSellable(itemId)) continue;
-            ShopItem shopItem = plugin.getShopPriceManager().getShopItem(itemId);
-            if (shopItem == null) continue;
-            double baseSell = plugin.getShopPriceManager().getSellPrice(itemId);
-            if (baseSell <= 0) continue;
+        boolean shulkerSell = plugin.getConfig().getBoolean("sell-inventory.shulker-sell.enabled", true);
+        List<SellVariant> held = plugin.getSellVariantScanner()
+                .scanStorage(player, SellVariantScanner.Options.showAll(shulkerSell)).variants();
 
-            int totalHeld = plugin.getShopTransactionService().countItems(player, itemId);
-            if (totalHeld <= 0) continue;
+        // Walk the selection, not the inventory, so the preview keeps the order the
+        // player clicked in. Anything they since ran out of simply drops out.
+        for (ItemStack template : session.getSelected()) {
+            SellVariant variant = SellVariantScanner.find(held, template);
+            if (variant == null) continue;
 
-            ItemStack rep = plugin.getShopTransactionService().findFirstMatchingStack(player, shopItem);
-            // Skip BuildersDream creative dream items
-            if (rep != null && plugin.getBuildersDreamHook() != null
-                    && plugin.getBuildersDreamHook().isDreamItem(rep)) continue;
-
-            int wanted = MultiSellSession.applyPercent(totalHeld, percent);
+            int wanted = MultiSellSession.applyPercent(variant.amount(), percent);
             int qtyToSell = Math.min(wanted, maxTx);
             if (qtyToSell <= 0) continue;
-            boolean capped = wanted > maxTx;
 
-            SellPriceBreakdown breakdown = plugin.getShopTransactionService().computeSellBreakdown(baseSell, rep);
-            double adjPrice = breakdown.finalSell();
-            double sub = Math.round(adjPrice * qtyToSell * 100.0) / 100.0;
-
-            sellEntries.add(new SellEntry(itemId, shopItem, qtyToSell, totalHeld, capped, adjPrice, sub, breakdown));
+            double sub = Math.round(variant.unitPrice() * qtyToSell * 100.0) / 100.0;
+            sellEntries.add(new SellEntry(variant, qtyToSell, variant.amount(), wanted > maxTx, sub));
             totalItems += qtyToSell;
             grandTotal += sub;
         }
 
+        grandTotal = Math.round(grandTotal * 100.0) / 100.0;
         grandTax = plugin.getShopPricingService().calculateTax(grandTotal);
         grandNet = grandTotal - grandTax;
     }
@@ -133,34 +124,31 @@ public class MultiSellConfirmGui implements MarketGui {
         var filler = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build();
         for (int i = 0; i < 54; i++) inventory.setItem(i, filler);
 
-        // ── Preview grid (rows 0–4, up to 45 entries) ────────
         for (int i = 0; i < Math.min(sellEntries.size(), 45); i++) {
-            SellEntry e = sellEntries.get(i);
-            String name = e.shopItem.getDisplayName();
+            SellEntry entry = sellEntries.get(i);
+            SellVariant variant = entry.variant();
             List<String> lore = new ArrayList<>();
-            lore.add("&7Quantity: &f" + e.qtyToSell);
+            lore.add(msg.getRaw(lang, "servershop.lore.variant-amount")
+                    .replace("{amount}", String.valueOf(entry.qtyToSell())));
             lore.add(msg.getRaw(lang, "servershop.lore.multi-of-total")
-                    .replace("{total}", String.valueOf(e.totalHeld))
+                    .replace("{total}", String.valueOf(entry.totalHeld()))
                     .replace("{percent}", String.valueOf(percent)));
-            lore.add("&7Price Each: &a" + msg.formatCurrency(e.pricePerUnit));
-            lore.add("&7Subtotal: &a" + msg.formatCurrency(e.subtotal));
-            if (e.capped)
+            lore.add(msg.getRaw(lang, "servershop.lore.variant-unit-price")
+                    .replace("{price}", msg.formatCurrency(variant.unitPrice())));
+            lore.add(msg.getRaw(lang, "servershop.lore.variant-stack-total")
+                    .replace("{total}", msg.formatCurrency(entry.subtotal())));
+            if (entry.capped()) {
                 lore.add(msg.getRaw(lang, "servershop.lore.multi-capped")
-                        .replace("{max}", String.valueOf(plugin.getConfig().getInt("server-shop.max-transaction-quantity", 2304))));
-
-            if (e.breakdown.enchantBonus() > 0 || e.breakdown.modBonus() > 0 || e.breakdown.wearPenalty() > 0) {
-                lore.add("");
-                lore.add("&7Base: &f" + msg.formatCurrency(e.breakdown.baseSell()));
-                if (e.breakdown.enchantBonus() > 0)
-                    lore.add("&7Enchant: &a+" + msg.formatCurrency(e.breakdown.enchantBonus()));
-                if (e.breakdown.modBonus() > 0)
-                    lore.add("&7Mod Bonus: &a+" + msg.formatCurrency(e.breakdown.modBonus()));
-                if (e.breakdown.wearPenalty() > 0)
-                    lore.add("&7Wear: &c-" + msg.formatCurrency(e.breakdown.wearPenalty()));
+                        .replace("{max}", String.valueOf(
+                                plugin.getConfig().getInt("server-shop.max-transaction-quantity", 2304))));
+            }
+            String enchants = EnchantPriceUtil.describeEnchants(variant.template());
+            if (!enchants.isEmpty()) {
+                lore.add(msg.getRaw(lang, "servershop.lore.variant-enchants").replace("{enchants}", enchants));
             }
 
-            ItemStack icon = e.shopItem.createItemStack(Math.min(e.qtyToSell, 64));
-            inventory.setItem(i, new ItemBuilder(icon).name("&f" + name).lore(lore).build());
+            inventory.setItem(i, new ItemBuilder(variant.createStack(Math.min(entry.qtyToSell(), 64)))
+                    .name("&f" + variant.displayName()).lore(lore).build());
         }
 
         if (sellEntries.isEmpty()) {
@@ -187,8 +175,9 @@ public class MultiSellConfirmGui implements MarketGui {
         if (!sellEntries.isEmpty()) {
             List<String> confirmLore = new ArrayList<>();
             confirmLore.add("");
-            confirmLore.add("&7Items: &f" + totalItems);
-            confirmLore.add("&7You Receive: &a" + msg.formatCurrency(grandNet));
+            confirmLore.add(msg.getRaw(lang, "servershop.lore.sell-all-info-items")
+                    .replace("{count}", String.valueOf(totalItems)));
+            confirmLore.add(msg.getRaw(lang, "servershop.lore.variant-net").replace("{net}", msg.formatCurrency(grandNet)));
             confirmLore.add("");
             confirmLore.add(msg.getRaw(lang, "servershop.lore.multi-confirm-hint"));
             inventory.setItem(SLOT_CONFIRM, new ItemBuilder(Material.LIME_WOOL)
@@ -199,7 +188,7 @@ public class MultiSellConfirmGui implements MarketGui {
         // ── Cancel / Back ────────────────────────────────────
         inventory.setItem(SLOT_CANCEL, new ItemBuilder(Material.RED_WOOL)
                 .name(msg.getRaw(lang, "servershop.buttons.sell-all-cancel"))
-                .lore("&7Back to percentage selection.").build());
+                .lore(msg.getRaw(lang, "servershop.lore.multi-cancel")).build());
         inventory.setItem(SLOT_BACK, new ItemBuilder(Material.BARRIER)
                 .name(msg.getRaw(lang, "servershop.buttons.back")).build());
     }
@@ -222,6 +211,7 @@ public class MultiSellConfirmGui implements MarketGui {
                 SoundUtil.playClickSound(player);
                 shopGuiManager.openMultiSellQuantity(player);
             }
+            default -> { /* preview cells are display only */ }
         }
     }
 
@@ -244,22 +234,21 @@ public class MultiSellConfirmGui implements MarketGui {
         int successCount = 0;
         double totalEarned = 0;
         double totalTaxPaid = 0;
-
         boolean capReached = false;
-        for (SellEntry e : sellEntries) {
-            ShopTransactionService.TransactionResult result =
-                    plugin.getShopTransactionService().sellItem(player, e.itemId, e.qtyToSell);
+
+        for (SellEntry entry : sellEntries) {
+            ShopTransactionService.TransactionResult result = plugin.getShopTransactionService()
+                    .sellVariant(player, entry.variant(), entry.qtyToSell(), ShopTransactionService.STORAGE_SLOTS);
             if (result == ShopTransactionService.TransactionResult.SUCCESS) {
-                successCount += e.qtyToSell;
-                double sub = Math.round(e.pricePerUnit * e.qtyToSell * 100.0) / 100.0;
-                double tax = plugin.getShopPricingService().calculateTax(sub);
-                totalEarned += (sub - tax);
+                successCount += entry.qtyToSell();
+                double tax = plugin.getShopPricingService().calculateTax(entry.subtotal());
+                totalEarned += (entry.subtotal() - tax);
                 totalTaxPaid += tax;
             } else if (result == ShopTransactionService.TransactionResult.DAILY_LIMIT_REACHED) {
                 capReached = true;
                 break; // no further sells can succeed today
             }
-            // Partial success allowed — one type failing does not abort the rest.
+            // Partial success allowed — one item failing does not abort the rest.
         }
 
         if (capReached) {

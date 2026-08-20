@@ -1,14 +1,20 @@
 package pt.henrique.market.servershop.gui;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import pt.henrique.market.Market;
 import pt.henrique.market.servershop.MultiSellSession;
+import pt.henrique.market.servershop.ShulkerUtil;
+import pt.henrique.market.servershop.model.SellVariant;
 import pt.henrique.market.servershop.model.ShopCategory;
+import pt.henrique.market.servershop.service.ShopTransactionService;
+import pt.henrique.market.util.SoundUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.IntPredicate;
 
 /**
  * Central manager for all server shop GUI instances.
@@ -38,12 +44,42 @@ public class ShopGuiManager {
         new ShopItemDetailGui(plugin, this, itemId).open(player);
     }
 
-    public void openSellOnlyDetail(Player player, String itemId) {
-        new ShopItemDetailGui(plugin, this, itemId, true).open(player);
-    }
+    /**
+     * Sells whatever the player is holding: a packed shulker opens its own chooser,
+     * anything else opens the sell screen for that exact item.
+     *
+     * @param origin where the Back button should return to
+     */
+    public void startSellHand(Player player, SellVariantDetailGui.Origin origin) {
+        var msg = plugin.getMessageManager();
+        var held = player.getInventory().getItemInMainHand();
+        if (held.getType().isAir()) {
+            player.sendMessage(msg.getPrefixedP(player, "servershop.messages.sell-hand-empty"));
+            SoundUtil.playErrorSound(player);
+            return;
+        }
+        if (plugin.getBuildersDreamHook() != null && plugin.getBuildersDreamHook().isDreamItem(held)) {
+            player.sendMessage(msg.getPrefixedP(player, "messages.dream-item-blocked"));
+            SoundUtil.playErrorSound(player);
+            return;
+        }
 
-    public void openSellChooser(Player player, String itemId, int quantity) {
-        new ShopSellChooserGui(plugin, this, itemId, quantity).open(player);
+        int heldSlot = player.getInventory().getHeldItemSlot();
+        if (plugin.getConfig().getBoolean("sell-inventory.shulker-sell.enabled", true)
+                && ShulkerUtil.isShulkerBox(held) && ShulkerUtil.hasContents(held)) {
+            SoundUtil.playClickSound(player);
+            openShulkerSellChooser(player, heldSlot);
+            return;
+        }
+
+        SellVariant variant = plugin.getSellVariantScanner().variantOf(held, heldSlot);
+        if (variant == null) {
+            player.sendMessage(msg.getPrefixedP(player, "servershop.messages.sell-hand-not-sellable"));
+            SoundUtil.playErrorSound(player);
+            return;
+        }
+        SoundUtil.playClickSound(player);
+        openSellVariantDetail(player, variant, ShopTransactionService.onlySlot(heldSlot), origin);
     }
 
     public void openSearchResults(Player player, String query, int page) {
@@ -52,6 +88,22 @@ public class ShopGuiManager {
 
     public void openSellInventory(Player player) {
         new ShopSellInventoryGui(plugin, this).open(player);
+    }
+
+    /** Sell grid on a given page, optionally narrowed to one material. */
+    public void openSellInventory(Player player, int page, Material filter) {
+        new ShopSellInventoryGui(plugin, this, page, filter).open(player);
+    }
+
+    /** Sell screen for one specific item, drawing from the given inventory slots. */
+    public void openSellVariantDetail(Player player, SellVariant variant,
+                                      IntPredicate slots, SellVariantDetailGui.Origin origin) {
+        new SellVariantDetailGui(plugin, this, variant, slots, origin).open(player);
+    }
+
+    /** The three ways to sell — inventory, held item, or a nearby container. */
+    public void openSellModeChooser(Player player) {
+        new SellModeChooserGui(plugin, this).open(player);
     }
 
     public void openSellAllConfirm(Player player) {

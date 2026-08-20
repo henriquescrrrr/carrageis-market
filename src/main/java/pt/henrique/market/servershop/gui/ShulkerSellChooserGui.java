@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Chooser presented when selling a shulker box that contains items. Offers three
  * options: sell the empty box (contents returned), sell box + contents, or sell
- * the contents only (box kept). Modeled on {@link ShopSellChooserGui}.
+ * the contents only (box kept).
  * <p>
  * The shulker is identified by its <b>player-inventory slot index</b>; the live
  * stack is re-fetched and re-validated on open and on every click, so the chooser

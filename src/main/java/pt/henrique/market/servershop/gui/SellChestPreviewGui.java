@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import pt.henrique.market.Market;
 import pt.henrique.market.config.MessageManager;
 import pt.henrique.market.gui.MarketGui;
-import pt.henrique.market.servershop.service.ChestSellService.SellPreviewEntry;
+import pt.henrique.market.servershop.model.SellVariant;
+import pt.henrique.market.servershop.service.EnchantPriceUtil;
 import pt.henrique.market.util.ItemBuilder;
 import pt.henrique.market.util.SoundUtil;
 import pt.henrique.market.util.TextUtil;
@@ -33,7 +34,7 @@ import java.util.Map;
 public class SellChestPreviewGui implements MarketGui {
 
     private final Market plugin;
-    private final List<SellPreviewEntry> entries;
+    private final List<SellVariant> entries;
     private final Inventory sourceInventory;
     private final Location sourceLocation;
     private Inventory inventory;
@@ -42,7 +43,7 @@ public class SellChestPreviewGui implements MarketGui {
     private static final int SLOT_CONFIRM  = 49;
     private static final int SLOT_CANCEL   = 51;
 
-    public SellChestPreviewGui(Market plugin, List<SellPreviewEntry> entries,
+    public SellChestPreviewGui(Market plugin, List<SellVariant> entries,
                                Inventory sourceInventory, Location sourceLocation) {
         this.plugin = plugin;
         this.entries = entries;
@@ -71,16 +72,21 @@ public class SellChestPreviewGui implements MarketGui {
 
         // ── Rows 0–4: Item entries ──────────────────────────────
         int slot = 0;
-        for (SellPreviewEntry entry : entries) {
+        for (SellVariant entry : entries) {
             if (slot >= 45) break;
             List<String> lore = new ArrayList<>();
-            lore.add("&7Quantity: &f" + entry.quantity());
-            lore.add("&7Price Each: &a" + msg.formatCurrency(entry.pricePerUnit()));
-            lore.add("&7Subtotal: &a" + msg.formatCurrency(entry.totalValue()));
+            lore.add(msg.getRaw(lang, "servershop.lore.variant-amount")
+                    .replace("{amount}", String.valueOf(entry.amount())));
+            lore.add(msg.getRaw(lang, "servershop.lore.variant-unit-price")
+                    .replace("{price}", msg.formatCurrency(entry.unitPrice())));
+            lore.add(msg.getRaw(lang, "servershop.lore.variant-stack-total")
+                    .replace("{total}", msg.formatCurrency(entry.totalValue())));
+            String enchants = EnchantPriceUtil.describeEnchants(entry.template());
+            if (!enchants.isEmpty()) {
+                lore.add(msg.getRaw(lang, "servershop.lore.variant-enchants").replace("{enchants}", enchants));
+            }
 
-            ItemStack display = entry.displayItem().clone();
-            display.setAmount(Math.min(entry.quantity(), 64));
-            inventory.setItem(slot, new ItemBuilder(display)
+            inventory.setItem(slot, new ItemBuilder(entry.createStack(Math.min(entry.amount(), 64)))
                     .name("&f" + entry.displayName())
                     .lore(lore)
                     .build());
@@ -90,9 +96,9 @@ public class SellChestPreviewGui implements MarketGui {
         // ── Row 5: Summary and actions ──────────────────────────
         double grossTotal = 0;
         int totalCount = 0;
-        for (SellPreviewEntry entry : entries) {
+        for (SellVariant entry : entries) {
             grossTotal += entry.totalValue();
-            totalCount += entry.quantity();
+            totalCount += entry.amount();
         }
 
         double taxRate = plugin.getShopPricingService().getSellTaxRate();
@@ -163,7 +169,7 @@ public class SellChestPreviewGui implements MarketGui {
 
         // Daily sell cap — projected worst case, checked before any removal
         double projectedGross = 0;
-        for (SellPreviewEntry entry : entries) projectedGross += entry.totalValue();
+        for (SellVariant entry : entries) projectedGross += entry.totalValue();
         double projectedNet = projectedGross - plugin.getShopPricingService().calculateTax(projectedGross);
         if (projectedNet > 0 && pt.henrique.market.economy.EconomyManager.toCents(projectedNet)
                 > plugin.getShopTransactionService().getRemainingDailyCapCents(player)) {
@@ -178,17 +184,19 @@ public class SellChestPreviewGui implements MarketGui {
         int totalRemoved = 0;
         double totalGross = 0;
 
-        for (SellPreviewEntry entry : entries) {
-            int toRemove = entry.quantity();
-            int removed = removeItemsFromContainer(sourceInventory, entry.itemId(), toRemove);
+        for (SellVariant entry : entries) {
+            ItemStack template = entry.template();
+            // Take only what is still there, and only stacks identical to this entry.
+            int available = plugin.getShopTransactionService().countVariantIn(sourceInventory, template);
+            int removed = Math.min(available, entry.amount());
+            if (removed <= 0) continue;
+            plugin.getShopTransactionService().removeVariantFrom(sourceInventory, template, removed);
             totalRemoved += removed;
-            double entryGross = Math.round(entry.pricePerUnit() * removed * 100.0) / 100.0;
+            double entryGross = Math.round(entry.unitPrice() * removed * 100.0) / 100.0;
             totalGross += entryGross;
-            if (removed > 0) {
-                plugin.getShopTransactionService().logShopSale(player, entry.itemId(), removed,
-                        entry.pricePerUnit(), entryGross,
-                        plugin.getShopPricingService().calculateTax(entryGross));
-            }
+            plugin.getShopTransactionService().logShopSale(player, entry.itemId(), removed,
+                    entry.unitPrice(), entryGross,
+                    plugin.getShopPricingService().calculateTax(entryGross));
         }
 
         if (totalRemoved == 0) {
@@ -229,31 +237,6 @@ public class SellChestPreviewGui implements MarketGui {
                 player.closeInventory();
             });
         });
-    }
-
-    /**
-     * Removes a quantity of items matching the given itemId from a container.
-     *
-     * @return the number of items actually removed
-     */
-    private int removeItemsFromContainer(Inventory containerInv, String itemId, int quantity) {
-        int remaining = quantity;
-        for (int i = 0; i < containerInv.getSize() && remaining > 0; i++) {
-            ItemStack stack = containerInv.getItem(i);
-            if (stack == null || stack.getType().isAir()) continue;
-
-            String stackId = plugin.getShopPriceManager().identifyItem(stack);
-            if (!itemId.equals(stackId)) continue;
-
-            if (stack.getAmount() <= remaining) {
-                remaining -= stack.getAmount();
-                containerInv.setItem(i, null);
-            } else {
-                stack.setAmount(stack.getAmount() - remaining);
-                remaining = 0;
-            }
-        }
-        return quantity - remaining;
     }
 
     private String replace(String text, String key, String value) {

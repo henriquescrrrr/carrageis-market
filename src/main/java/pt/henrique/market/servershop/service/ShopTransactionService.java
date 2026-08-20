@@ -1,15 +1,19 @@
 package pt.henrique.market.servershop.service;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import pt.henrique.market.Market;
 import pt.henrique.market.economy.EconomyManager;
 import pt.henrique.market.hook.ToolModsHook;
+import pt.henrique.market.servershop.model.SellQuote;
+import pt.henrique.market.servershop.model.SellVariant;
 import pt.henrique.market.servershop.model.ShopItem;
 import pt.henrique.market.servershop.model.ShopTransaction;
 import pt.henrique.market.servershop.model.ShopTransaction.ShopTransactionType;
 
 import java.util.HashMap;
+import java.util.function.IntPredicate;
 
 /**
  * Core service that orchestrates server shop buy and sell transactions.
@@ -168,96 +172,6 @@ public class ShopTransactionService {
     }
 
     /**
-     * Processes a sell transaction: player sells items to the server.
-     * Must be called on the main thread (inventory operations).
-     * <p>
-     * The sell price includes enchantment bonuses and durability adjustments.
-     * For items sold from inventory, the <em>first matching stack</em> is used
-     * for durability/enchant calculations (all units valued at the same rate).
-     */
-    public TransactionResult sellItem(Player player, String itemId, int quantity) {
-        debug("sellItem() START: player=" + player.getName() + ", itemId=" + itemId + ", qty=" + quantity);
-
-        int maxQty = plugin.getConfig().getInt("server-shop.max-transaction-quantity", 2304);
-        if (quantity <= 0 || quantity > maxQty) {
-            debug("sellItem() FAIL: invalid quantity " + quantity + " (max=" + maxQty + ")");
-            return TransactionResult.INVALID_QUANTITY;
-        }
-
-        ShopPricingService pricing = plugin.getShopPricingService();
-        if (!pricing.isSellable(itemId)) {
-            debug("sellItem() FAIL: item " + itemId + " is not sellable");
-            return TransactionResult.ITEM_NOT_SELLABLE;
-        }
-
-        double baseSellPrice = plugin.getShopPriceManager().getSellPrice(itemId);
-        debug("sellItem() baseSellPrice=" + baseSellPrice + " for " + itemId);
-        if (baseSellPrice < 0) {
-            debug("sellItem() FAIL: baseSellPrice < 0");
-            return TransactionResult.ITEM_NOT_SELLABLE;
-        }
-
-        ShopItem shopItem = plugin.getShopPriceManager().getShopItem(itemId);
-        if (shopItem == null) {
-            debug("sellItem() FAIL: shopItem is null for " + itemId);
-            return TransactionResult.ITEM_NOT_SELLABLE;
-        }
-
-        int available = countItems(player, shopItem);
-        debug("sellItem() available=" + available + " items in inventory");
-        if (available < quantity) {
-            debug("sellItem() FAIL: not enough items (have=" + available + ", need=" + quantity + ")");
-            return TransactionResult.NOT_ENOUGH_ITEMS;
-        }
-
-        // Compute per-unit sell price with enchant/durability adjustments
-        // Use the first matching stack for durability/enchant info
-        ItemStack representativeStack = findFirstMatchingStack(player, shopItem);
-        debug("sellItem() representativeStack=" + (representativeStack != null ? representativeStack.getType() + " x" + representativeStack.getAmount() : "null"));
-
-        // BuildersDream check — reject creative dream items
-        if (representativeStack != null
-                && plugin.getBuildersDreamHook() != null
-                && plugin.getBuildersDreamHook().isDreamItem(representativeStack)) {
-            debug("sellItem() FAIL: item is a BuildersDream dream item");
-            return TransactionResult.DREAM_ITEM_BLOCKED;
-        }
-
-        double adjustedPricePerUnit = computeAdjustedSellPrice(baseSellPrice, representativeStack);
-        double totalSellPrice = Math.round(adjustedPricePerUnit * quantity * 100.0) / 100.0;
-        debug("sellItem() adjustedPricePerUnit=" + adjustedPricePerUnit + ", totalSellPrice=" + totalSellPrice);
-
-        double tax = pricing.calculateTax(totalSellPrice);
-        double netAmount = totalSellPrice - tax;
-        debug("sellItem() tax=" + tax + ", netAmount=" + netAmount);
-
-        // Daily sell cap — checked before any inventory mutation
-        if (EconomyManager.toCents(netAmount) > getRemainingDailyCapCents(player)) {
-            debug("sellItem() FAIL: daily sell cap reached for " + player.getName());
-            return TransactionResult.DAILY_LIMIT_REACHED;
-        }
-
-        // Remove items first (prevent dupes)
-        if (!removeItems(player, shopItem, quantity)) {
-            debug("sellItem() FAIL: removeItems returned false");
-            return TransactionResult.NOT_ENOUGH_ITEMS;
-        }
-
-        debug("sellItem() depositing " + netAmount + " to player " + player.getName());
-        if (!plugin.getEconomyManager().deposit(player.getUniqueId(), netAmount)) {
-            debug("sellItem() FAIL: economy deposit returned false — REFUNDING items");
-            giveItems(player, shopItem, quantity); // Refund
-            return TransactionResult.ECONOMY_ERROR;
-        }
-
-        debug("sellItem() SUCCESS: sold " + quantity + "x " + itemId + " for net " + netAmount);
-        recordDailySell(player, netAmount);
-        logTransaction(player, itemId, quantity, adjustedPricePerUnit, totalSellPrice, tax, ShopTransactionType.SELL);
-
-        return TransactionResult.SUCCESS;
-    }
-
-    /**
      * Computes the adjusted sell price per unit, applying enchantment bonus
      * and durability reduction.
      *
@@ -266,12 +180,23 @@ public class ShopTransactionService {
      * @return adjusted sell price per unit (double)
      */
     public double computeAdjustedSellPrice(double baseSellPrice, ItemStack stack) {
+        return computeAdjustedSellPrice(baseSellPrice, stack,
+                plugin.getEnchantPriceUtil().isCompositeBookPricing(stack));
+    }
+
+    /**
+     * @param compositeBase {@code true} when {@code baseSellPrice} already contains
+     *                      the value of the item's enchantments (enchanted books
+     *                      priced by summing them), so the enchantment bonus is
+     *                      skipped rather than paid twice
+     */
+    public double computeAdjustedSellPrice(double baseSellPrice, ItemStack stack, boolean compositeBase) {
         if (stack == null) return baseSellPrice;
 
         long baseCents = EconomyManager.toCents(baseSellPrice);
 
-        // Enchantment bonus: +25% of each enchantment's store buy price
-        long enchantBonus = plugin.getEnchantPriceUtil().getEnchantBonusCents(stack);
+        // Enchantment bonus: a percentage of each enchantment's store buy price
+        long enchantBonus = compositeBase ? 0 : plugin.getEnchantPriceUtil().getEnchantBonusCents(stack);
 
         // ToolMods bonus: per-mod sell bonus
         long modBonus = ToolModsHook.getModBonusCents(stack);
@@ -293,8 +218,15 @@ public class ShopTransactionService {
      * @return breakdown record with all components
      */
     public SellPriceBreakdown computeSellBreakdown(double baseSellPrice, ItemStack stack) {
+        return computeSellBreakdown(baseSellPrice, stack,
+                plugin.getEnchantPriceUtil().isCompositeBookPricing(stack));
+    }
+
+    /** @see #computeAdjustedSellPrice(double, ItemStack, boolean) */
+    public SellPriceBreakdown computeSellBreakdown(double baseSellPrice, ItemStack stack, boolean compositeBase) {
         long baseCents = EconomyManager.toCents(baseSellPrice);
-        long enchantBonus = (stack != null) ? plugin.getEnchantPriceUtil().getEnchantBonusCents(stack) : 0;
+        long enchantBonus = (stack != null && !compositeBase)
+                ? plugin.getEnchantPriceUtil().getEnchantBonusCents(stack) : 0;
         long modBonus = (stack != null) ? ToolModsHook.getModBonusCents(stack) : 0;
         long totalBeforeWear = baseCents + enchantBonus + modBonus;
         double durabilityMultiplier = (stack != null) ? DurabilityPriceUtil.getDurabilityMultiplier(stack) : 1.0;
@@ -327,18 +259,174 @@ public class ShopTransactionService {
             double finalSell
     ) {}
 
+    // ══════════════════════════════════════════════════════════════
+    //  Variant-aware selling
+    // ══════════════════════════════════════════════════════════════
+
+    /** The player's 36 storage slots — where the sell GUI grid takes items from. */
+    public static final IntPredicate STORAGE_SLOTS = slot -> slot >= 0 && slot < 36;
+    /** Storage plus worn armour and offhand. */
+    public static final IntPredicate STORAGE_AND_WORN = slot -> slot >= 0 && slot <= 40;
+
+    /** Restricts removal to one exact inventory slot. */
+    public static IntPredicate onlySlot(int slot) {
+        return candidate -> candidate == slot;
+    }
+
     /**
-     * Finds the first matching ItemStack in the player's inventory for a ShopItem.
-     * Used to get a representative stack for durability/enchant pricing.
+     * Sells a specific item variant — the exact item the player picked, not merely
+     * something of the same material.
+     * <p>
+     * The price is re-derived from the variant's own template at execution time, the
+     * removal only takes stacks that are {@link ItemStack#isSimilar similar} to it,
+     * and a failed deposit refunds that same item rather than a plain one of the
+     * same type.
+     *
+     * @param variant  the item to sell, as found by {@link pt.henrique.market.servershop.SellVariantScanner}
+     * @param quantity number of units
+     * @param slots    which inventory slots may be drawn from
      */
-    public ItemStack findFirstMatchingStack(Player player, ShopItem shopItem) {
-        boolean materialOnly = isMaterialOnlyMode();
-        for (ItemStack stack : player.getInventory().getContents()) {
-            if (stack == null) continue;
-            boolean match = materialOnly ? shopItem.matchesMaterialOnly(stack) : shopItem.matches(stack);
-            if (match) return stack;
+    public TransactionResult sellVariant(Player player, SellVariant variant, int quantity, IntPredicate slots) {
+        int maxQty = plugin.getConfig().getInt("server-shop.max-transaction-quantity", 2304);
+        if (quantity <= 0 || quantity > maxQty) {
+            debug("sellVariant() FAIL: invalid quantity " + quantity + " (max=" + maxQty + ")");
+            return TransactionResult.INVALID_QUANTITY;
         }
-        return null;
+
+        ItemStack template = variant.template();
+
+        if (plugin.getBuildersDreamHook() != null && plugin.getBuildersDreamHook().isDreamItem(template)) {
+            debug("sellVariant() FAIL: item is a BuildersDream dream item");
+            return TransactionResult.DREAM_ITEM_BLOCKED;
+        }
+
+        // Re-quote at execution time: the GUI may have been open across a config reload.
+        SellQuote quote = plugin.getShopPricingService().quoteSell(template);
+        if (quote == null) {
+            debug("sellVariant() FAIL: item is no longer sellable");
+            return TransactionResult.ITEM_NOT_SELLABLE;
+        }
+        double pricePerUnit = computeAdjustedSellPrice(quote.baseSell(), template, quote.composite());
+        if (pricePerUnit <= 0) {
+            debug("sellVariant() FAIL: adjusted price is zero for " + quote.itemId());
+            return TransactionResult.ITEM_NOT_SELLABLE;
+        }
+
+        int available = countVariant(player, template, slots);
+        if (available < quantity) {
+            debug("sellVariant() FAIL: not enough items (have=" + available + ", need=" + quantity + ")");
+            return TransactionResult.NOT_ENOUGH_ITEMS;
+        }
+
+        double totalSellPrice = Math.round(pricePerUnit * quantity * 100.0) / 100.0;
+        double tax = plugin.getShopPricingService().calculateTax(totalSellPrice);
+        double netAmount = totalSellPrice - tax;
+
+        // Daily sell cap — checked before any inventory mutation
+        if (EconomyManager.toCents(netAmount) > getRemainingDailyCapCents(player)) {
+            debug("sellVariant() FAIL: daily sell cap reached for " + player.getName());
+            return TransactionResult.DAILY_LIMIT_REACHED;
+        }
+
+        // Remove items first (prevent dupes)
+        if (!removeVariant(player, template, quantity, slots)) {
+            debug("sellVariant() FAIL: removeVariant returned false");
+            return TransactionResult.NOT_ENOUGH_ITEMS;
+        }
+
+        if (!plugin.getEconomyManager().deposit(player.getUniqueId(), netAmount)) {
+            debug("sellVariant() FAIL: economy deposit returned false — REFUNDING items");
+            refundVariant(player, template, quantity);
+            return TransactionResult.ECONOMY_ERROR;
+        }
+
+        debug("sellVariant() SUCCESS: sold " + quantity + "x " + quote.itemId() + " for net " + netAmount);
+        recordDailySell(player, netAmount);
+        logTransaction(player, quote.itemId(), quantity, pricePerUnit, totalSellPrice, tax,
+                ShopTransactionType.SELL);
+        return TransactionResult.SUCCESS;
+    }
+
+    /** Counts units of an exact item variant in the allowed slots. */
+    public int countVariant(Player player, ItemStack template, IntPredicate slots) {
+        int count = 0;
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length; i++) {
+            if (!slots.test(i)) continue;
+            ItemStack stack = contents[i];
+            if (stack != null && template.isSimilar(stack)) count += stack.getAmount();
+        }
+        return count;
+    }
+
+    /** Removes units of an exact item variant from the allowed slots. */
+    private boolean removeVariant(Player player, ItemStack template, int quantity, IntPredicate slots) {
+        int remaining = quantity;
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length && remaining > 0; i++) {
+            if (!slots.test(i)) continue;
+            ItemStack stack = contents[i];
+            if (stack == null || !template.isSimilar(stack)) continue;
+
+            if (stack.getAmount() <= remaining) {
+                remaining -= stack.getAmount();
+                player.getInventory().setItem(i, null);
+            } else {
+                stack.setAmount(stack.getAmount() - remaining);
+                remaining = 0;
+            }
+        }
+        return remaining == 0;
+    }
+
+    /**
+     * Gives back the exact item that was removed. Refunding via the price row would
+     * hand back a plain item and quietly destroy the enchantments.
+     */
+    private void refundVariant(Player player, ItemStack template, int quantity) {
+        int maxStack = Math.max(1, template.getMaxStackSize());
+        int remaining = quantity;
+        while (remaining > 0) {
+            int amount = Math.min(remaining, maxStack);
+            ItemStack copy = template.clone();
+            copy.setAmount(amount);
+            for (ItemStack leftover : player.getInventory().addItem(copy).values()) {
+                player.getWorld().dropItemNaturally(player.getLocation(), leftover);
+            }
+            remaining -= amount;
+        }
+    }
+
+    /**
+     * Removes units of an exact item variant from a container inventory.
+     *
+     * @return true when the full quantity was removed
+     */
+    public boolean removeVariantFrom(Inventory inventory, ItemStack template, int quantity) {
+        int remaining = quantity;
+        for (int i = 0; i < inventory.getSize() && remaining > 0; i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack == null || !template.isSimilar(stack)) continue;
+            if (stack.getAmount() <= remaining) {
+                remaining -= stack.getAmount();
+                inventory.setItem(i, null);
+            } else {
+                stack.setAmount(stack.getAmount() - remaining);
+                inventory.setItem(i, stack);
+                remaining = 0;
+            }
+        }
+        return remaining == 0;
+    }
+
+    /** Counts units of an exact item variant in a container inventory. */
+    public int countVariantIn(Inventory inventory, ItemStack template) {
+        int count = 0;
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack != null && template.isSimilar(stack)) count += stack.getAmount();
+        }
+        return count;
     }
 
     /**
@@ -380,27 +468,6 @@ public class ShopTransactionService {
             }
             remaining -= amount;
         }
-    }
-
-    private boolean removeItems(Player player, ShopItem shopItem, int quantity) {
-        int remaining = quantity;
-        boolean materialOnly = isMaterialOnlyMode();
-        ItemStack[] contents = player.getInventory().getContents();
-        for (int i = 0; i < contents.length && remaining > 0; i++) {
-            ItemStack stack = contents[i];
-            if (stack == null) continue;
-            boolean match = materialOnly ? shopItem.matchesMaterialOnly(stack) : shopItem.matches(stack);
-            if (!match) continue;
-
-            if (stack.getAmount() <= remaining) {
-                remaining -= stack.getAmount();
-                player.getInventory().setItem(i, null);
-            } else {
-                stack.setAmount(stack.getAmount() - remaining);
-                remaining = 0;
-            }
-        }
-        return remaining == 0;
     }
 
     /** Counts items matching a specific ShopItem in the player's inventory. */

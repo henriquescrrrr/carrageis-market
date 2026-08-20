@@ -226,9 +226,20 @@ server-shop:
   # Enchantment sell bonus: selling an enchanted item adds a percentage of each
   # enchantment's store buy price (prices.yml enchant-prices) to the sell value.
   # cap = maximum total bonus per item in currency units (-1 = no cap).
+  # Does not apply to enchanted books, which are priced by the section below.
   enchant-sell-bonus:
     percent: 5.0
     cap: 1000.0
+  # ---- Enchanted books ----
+  enchanted-book:
+    # An enchanted book is worth the SUM of the sell prices of every enchantment
+    # it holds, read from the ENCHANTED_BOOK_<ENCHANT>_<LEVEL> rows in prices.yml
+    # (a level with no row falls back to the highest priced level below it).
+    # A book with Efficiency V + Unbreaking III + Fortune III is therefore worth
+    # all three, not just the first one.
+    # Set to false to price each book by whichever single row it matches — which
+    # means a three-enchantment book sells for the price of one enchantment.
+    sum-enchantments: true
   # Maximum net amount a player can earn from server-shop sells per day
   # (all sell flows: GUI, sell-all, shulker, sell chest). 0 = disabled.
   daily-sell-cap: 25000.0
@@ -241,11 +252,14 @@ server-shop:
 
   # ---- Item Format & Matching ----
   items:
-    # Match mode for selling items:
-    #   MATERIAL_ONLY (default) - any item of the same material counts.
-    #                             e.g. any firework rocket counts regardless of flight duration.
-    #   EXACT - item must match exactly including all components/meta.
-    #           e.g. only firework rockets with flight_duration:3 match that entry.
+    # Which price row an item is charged against:
+    #   MATERIAL_ONLY (default) - the row for its material.
+    #                             e.g. any firework rocket uses the rocket row,
+    #                             regardless of flight duration.
+    #   EXACT - only rows whose components match the item exactly.
+    #           e.g. only rockets with flight_duration:3 use that entry.
+    # This picks the price row, not which items a sale takes: a sale always
+    # removes the exact item shown in the GUI, enchantments and all.
     match-mode: MATERIAL_ONLY
     # If true, the plugin will log warnings for every invalid item in items.yml.
     # If false (default), invalid items are silently skipped.
@@ -271,6 +285,13 @@ sell-inventory:
     # Respects `allow-equipped-selling` — if that is false and this is true,
     # armor items are still skipped.
     include-armor-and-shield: false
+    # Hold back enchanted, renamed and ToolMods-fitted items from bulk sales.
+    # They stay sellable one at a time from the sell grid, which lists them
+    # separately from their plain counterparts. Skipped items are counted and
+    # reported after the sale, never silently dropped.
+    skip-special-gear: true
+    # Also hold back tools and armour that have already taken damage.
+    skip-damaged-gear: false
 
   # "Multi-Select" selling: toggle a selection mode in the Sell Inventory GUI,
   # click several items to select them, pick a percentage, and sell that

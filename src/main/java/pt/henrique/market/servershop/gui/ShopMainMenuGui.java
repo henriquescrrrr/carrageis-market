@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import pt.henrique.market.Market;
 import pt.henrique.market.config.MessageManager;
 import pt.henrique.market.gui.MarketGui;
-import pt.henrique.market.servershop.ShulkerUtil;
 import pt.henrique.market.servershop.model.ShopCategory;
 import pt.henrique.market.util.ItemBuilder;
 import pt.henrique.market.util.SoundUtil;
@@ -167,60 +166,14 @@ public class ShopMainMenuGui implements MarketGui {
     }
 
     private void handleSellHand(Player player) {
-        var heldItem = player.getInventory().getItemInMainHand();
-        if (heldItem.getType().isAir()) {
-            player.sendMessage(plugin.getMessageManager().getPrefixedP(player, "servershop.messages.sell-hand-empty"));
-            SoundUtil.playErrorSound(player);
-            return;
-        }
-        // Reject BuildersDream creative dream items
-        if (plugin.getBuildersDreamHook() != null && plugin.getBuildersDreamHook().isDreamItem(heldItem)) {
-            player.sendMessage(plugin.getMessageManager().getPrefixedP(player, "messages.dream-item-blocked"));
-            SoundUtil.playErrorSound(player);
-            return;
-        }
-        // Shulker box with contents → open the 3-option shulker sell chooser
-        if (plugin.getConfig().getBoolean("sell-inventory.shulker-sell.enabled", true)
-                && ShulkerUtil.isShulkerBox(heldItem) && ShulkerUtil.hasContents(heldItem)) {
-            SoundUtil.playClickSound(player);
-            shopGuiManager.openShulkerSellChooser(player, player.getInventory().getHeldItemSlot());
-            return;
-        }
-        String itemId = plugin.getShopPriceManager().identifyItem(heldItem);
-        if (itemId == null || !plugin.getShopPricingService().isSellable(itemId)) {
-            player.sendMessage(plugin.getMessageManager().getPrefixedP(player, "servershop.messages.sell-hand-not-sellable"));
-            SoundUtil.playErrorSound(player);
-            return;
-        }
-        SoundUtil.playClickSound(player);
-        shopGuiManager.openSellOnlyDetail(player, itemId);
+        shopGuiManager.startSellHand(player, SellVariantDetailGui.Origin.SHOP_MENU);
     }
 
     private void startSearch(Player player) {
         SoundUtil.playClickSound(player);
-        player.closeInventory();
-
-        String searchMode = plugin.getConfig().getString("server-shop.search-mode", "chat");
-
-        if ("sign".equalsIgnoreCase(searchMode)) {
-            // Legacy sign editor mode
-            plugin.getShopSearchSignHandler().openSearchSign(player, (query) -> {
-                if (query == null || query.isBlank()) {
-                    Bukkit.getScheduler().runTask(plugin, () -> shopGuiManager.openMainMenu(player));
-                    return;
-                }
-                Bukkit.getScheduler().runTask(plugin, () -> shopGuiManager.openSearchResults(player, query.trim(), 0));
-            });
-        } else {
-            // Chat-based search (default) — Enter key naturally submits
-            plugin.getShopSearchSignHandler().openChatSearch(player, (query) -> {
-                if (query == null || query.isBlank()) {
-                    Bukkit.getScheduler().runTask(plugin, () -> shopGuiManager.openMainMenu(player));
-                    return;
-                }
-                Bukkit.getScheduler().runTask(plugin, () -> shopGuiManager.openSearchResults(player, query.trim(), 0));
-            });
-        }
+        ShopSearch.prompt(plugin, player,
+                query -> shopGuiManager.openSearchResults(player, query, 0),
+                () -> shopGuiManager.openMainMenu(player));
     }
 
     /**

@@ -516,9 +516,9 @@ servershop:
     search-results: "&8&lRecherche : {query}"
     sell-inventory: "&8&lVendre des Objets"
     sell-only: "&8&lVendre » {item}"
-    sell-chooser: "&8&lOù voulez-vous vendre ?"
     confirm-action: "&8&lConfirmer l'Action"
     sell-all-confirm: "&8&lVendre Tout — Confirmer"
+    sell-mode-chooser: '&8&lComment voulez-vous vendre ?'
 
   buttons:
     shulker-sell-box-only: "&e&lVendre la Boîte Seule"
@@ -556,9 +556,6 @@ servershop:
     quantity-sub-16: "&c-16"
     quantity-sub-32: "&c-32"
     auto-quantity: "&b&lQuantité Auto"
-    sell-to-server: "&a&lVendre au Serveur"
-    sell-to-community: "&e&lVendre sur le Marché"
-    sell-to-auction: "&6&lMettre aux Enchères"
     # Boutons de sélection de packs (1 pack = 1 pile complète)
     pack-info: "&e&lTaille du Pack : {stack_size}"
     pack-add: "&a+{packs} Pile"
@@ -570,6 +567,20 @@ servershop:
     sell-all-info: "&e&lRésumé de la Vente"
     sell-all-empty: "&c&lRien à Vendre"
     sell-chest: "&e&lVendre Coffre"
+    equipped-gear: '&e&lÉquipement Porté'
+    gear-slot-0: 'Casque'
+    gear-slot-1: 'Plastron'
+    gear-slot-2: 'Jambières'
+    gear-slot-3: 'Bottes'
+    gear-slot-4: 'Main secondaire / Bouclier'
+    quantity-info: '&e&lQuantité : &f{quantity}'
+    variant-sell: '&6&lVendre cet objet'
+    sell-page-info: '&e&lVos objets vendables'
+    sell-clear-filter: '&7Tout réafficher'
+    sell-mode-inventory: "&6&lDepuis l'inventaire"
+    sell-mode-hand: "&6&lL'objet dans votre main"
+    sell-mode-container: '&6&lDepuis un conteneur proche'
+    sell-mode-hint: '&e&lTrois façons de vendre'
 
   lore:
     shulker-entry:
@@ -734,16 +745,11 @@ servershop:
     # Lore de l'icône d'action (objet central bas — clic gauche acheter, clic droit vendre)
     action-buy-price: "&aAcheter : &f{price}/unité &7→ Total : &a{total}"
     action-buy-disabled: "&7Acheter : &cDésactivé"
-    action-buy-disabled-sellonly: "&7Acheter : &cMode vente uniquement"
     action-sell-price: "&6Vendre : &f{price}/unité &7→ Net : &a{total}"
     action-sell-disabled: "&7Vendre : &cDésactivé"
     action-hint-buy: "&a▸ Clic gauche pour ACHETER"
     action-hint-sell: "&6▸ Clic droit pour VENDRE"
-    action-hint-sell-only: "&6▸ Clic droit pour VENDRE"
-    action-hint-sell-only-left: "&6▸ Clic gauche pour VENDRE"
     action-confirm-buy: "&a⚠ Clic gauche à nouveau pour confirmer l'achat !"
-    action-confirm-sell: "&6⚠ Clic droit à nouveau pour confirmer la vente !"
-    action-confirm-sell-left: "&6⚠ Clic gauche à nouveau pour confirmer la vente !"
     # Lore du GUI de confirmation Vendre Tout
     sell-all:
       - "&7Vendez TOUS les objets vendables"
@@ -761,34 +767,6 @@ servershop:
     sell-all-info-tax: "&7Taxe : &c-{tax}"
     sell-all-info-net: "&7Vous Recevez : &a{net}"
     sell-all-confirm-hint: "&a⚠ Cliquez pour tout vendre !"
-    sell-chooser-server:
-      - ""
-      - "&7Vendez directement au serveur"
-      - "&7pour un paiement instantané."
-      - ""
-      - "&7Quantité : &f{quantity}"
-      - "&7Prix par objet : &6{price_each}"
-      - "&7Paiement total : &a{total}"
-      - ""
-      - "&aCliquez pour vendre !"
-    sell-chooser-community:
-      - ""
-      - "&7Listez sur le Marché Communautaire"
-      - "&7pour que d'autres joueurs achètent."
-      - ""
-      - "&7Quantité : &f{quantity}"
-      - "&7Vous fixez le prix !"
-      - ""
-      - "&eCliquez pour créer l'annonce !"
-    sell-chooser-auction:
-      - ""
-      - "&7Créez une enchère pour"
-      - "&7que d'autres joueurs enchérissent."
-      - ""
-      - "&7Quantité : &f{quantity}"
-      - "&7Vous fixez le prix de départ !"
-      - ""
-      - "&6Cliquez pour créer l'enchère !"
     confirm-buy-action:
       - ""
       - "&7Êtes-vous sûr de vouloir acheter"
@@ -800,17 +778,58 @@ servershop:
       - "&7Après : &f{remaining}"
       - ""
       - "&aCliquez pour confirmer !"
-    confirm-sell-action:
-      - ""
-      - "&7Êtes-vous sûr de vouloir vendre"
-      - "&f{quantity}x {item}"
-      - "&7pour &6{total}&7 ?"
-      - ""
-      - "&7Prix par objet : &6{price_each}"
-      - "&7Taxe : &c-{tax_amount}"
-      - "&7Vous recevez : &a{net_total}"
-      - ""
-      - "&6Cliquez pour confirmer !"
+    variant-amount: '&7Quantité : &f{amount}'
+    variant-available: '&7Vous avez : &f{available}'
+    variant-unit-price: '&7Prix unitaire : &a{price}'
+    variant-stack-total: '&7Total : &a{total}'
+    variant-enchants: '&7Enchantements : &b{enchants}'
+    variant-click-to-sell: '&eCliquez pour vendre cet objet précis'
+    variant-max-hint: '&7Met la quantité à tout ce que vous avez'
+    variant-total: '&7Vous recevez : &a{total}'
+    variant-sell-line: '&7Vente : &f{quantity}x {item}'
+    variant-gross: '&7Valeur : &f{gross}'
+    variant-tax: '&7Taxe : &c-{tax}'
+    variant-net: '&7Vous recevez : &a{net}'
+    variant-not-enough: "&cVous n'avez que {available} des {quantity} choisis."
+    variant-sell-hint: '&6Cliquez pour vendre'
+    variant-confirm-hint: '&6Cliquez à nouveau pour confirmer'
+    breakdown-header: '&eDétail du prix :'
+    breakdown-base: '  &7Base : &f{base}'
+    breakdown-enchant: '  &7Enchantements : &a+{bonus}'
+    breakdown-enchant-line: '    &8{enchant} : &a{value}'
+    breakdown-mod: '  &7Mod &8{mod}&7 : &a+{value}'
+    breakdown-wear: '  &7Usure : &c-{penalty} &8({description})'
+    breakdown-wear-mending: '  &7Usure : &aaucune, il a Raccommodage'
+    breakdown-final: '  &7Final : &a{final}'
+    sell-page-info: '&7Page &f{page}&7/&f{pages} &8- &f{types}&7 objets différents'
+    sell-filter-active: '&7Affichage limité à : &f{item}'
+    gear-empty: "&7Rien d'équipé"
+    gear-not-sellable: '&7Ceci ne se vend pas au serveur.'
+    gear-click-to-sell: '&eCliquez pour vendre, puis à nouveau pour confirmer'
+    gear-selling-disabled: "&cRetirez-le d'abord pour le vendre."
+    item-detail-sell-note: '&8Les objets enchantés ou usés ont leur propre prix.'
+    sell-all-cancel: '&7Revenir sans vendre.'
+    multi-cancel: '&7Retour au pourcentage.'
+    sell-all-info-protected: '&7Laissés de côté : &f{count} &7enchantés ou renommés'
+    sell-mode-disabled: '&cDésactivé sur ce serveur'
+    sell-mode-inventory:
+      - '&7Tout ce que vous portez et qui a un prix,'
+      - '&7une entrée par objet distinct.'
+      - ''
+      - '&6Cliquez pour parcourir'
+    sell-mode-hand:
+      - '&7Vendez ce que vous tenez en main.'
+      - '&7Une shulker pleine demande quoi en faire.'
+      - ''
+      - '&6Cliquez pour vendre'
+    sell-mode-container:
+      - '&7Cliquez sur un coffre, tonneau, shulker ou'
+      - "&7coffre de l'Ender en 15 secondes pour le vider."
+      - ''
+      - '&6Cliquez pour commencer'
+    sell-mode-hint:
+      - '&7Directement :'
+      - '&f/sell inventory &8- &f/sell hand &8- &f/sell container'
 
   messages:
     shulker-drop-warning: "&e{count} objet(s) ne rentrent pas et vont TOMBER au sol."
@@ -841,7 +860,6 @@ servershop:
     reload-failed: "&cÉchec du rechargement de la configuration de la boutique."
     sell-command-usage: "&eUtilisez /sell pour ouvrir l'interface de vente."
     buy-disabled: "&cCet objet ne peut pas être acheté."
-    buy-disabled-sellonly: "&cL'achat n'est pas disponible en mode vente uniquement."
     sell-disabled: "&cCet objet ne peut pas être vendu."
     sell-all-success: "&aVendu &f{count} &aobjets pour &f{total}&a !"
     sell-all-success-tax: "&aVendu &f{count} &aobjets pour &f{net_total} &a(taxe : &c{tax_amount}&a) !"
@@ -868,6 +886,12 @@ servershop:
     sell-chest-total-lore-net: "&7Tu reçois : &a{net}"
     sell-chest-confirm: "&a&lConfirmer la Vente"
     sell-chest-cancel: "&c&lAnnuler"
+    gear-selling-disabled: "&cL'équipement porté ne se vend pas d'ici. Retirez-le d'abord."
+    gear-confirm-click: "&eCliquez à nouveau sur l'objet porté pour confirmer la vente."
+    sell-pick-variant: '&eVous avez &f{count} &eversions différentes de cet objet. Choisissez laquelle vendre.'
+    daily-sell-cap: '&cVous avez atteint votre limite de vente quotidienne sur la boutique du serveur. Revenez demain !'
+    sell-mode-disabled: '&cCette façon de vendre est désactivée sur ce serveur.'
+    sell-all-protected: '&7Laissés de côté : &f{count} &7objet(s) enchanté(s) ou renommé(s). Vendez-les un par un.'
 
   category-names:
     disabled_op: "Objets Désactivés / OP"

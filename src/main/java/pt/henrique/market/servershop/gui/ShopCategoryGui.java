@@ -134,11 +134,9 @@ public class ShopCategoryGui implements MarketGui {
             }
             case SLOT_SEARCH -> {
                 SoundUtil.playClickSound(player);
-                player.closeInventory();
-                plugin.getShopSearchSignHandler().openSearchSign(player, q -> {
-                    if (q == null || q.isBlank()) { Bukkit.getScheduler().runTask(plugin, () -> shopGuiManager.openCategory(player, category, page)); return; }
-                    Bukkit.getScheduler().runTask(plugin, () -> shopGuiManager.openSearchResults(player, q.trim(), 0));
-                });
+                ShopSearch.prompt(plugin, player,
+                        query -> shopGuiManager.openSearchResults(player, query, 0),
+                        () -> shopGuiManager.openCategory(player, category, page));
                 return;
             }
         }
