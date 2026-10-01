@@ -4,7 +4,7 @@
 [![GitHub License](https://img.shields.io/github/license/henriquescrrrr/carrageis-market)](LICENSE)
 
 A unified, GUI-only **marketplace plugin** for Minecraft Paper/Purpur.
-Shipped as two jars from the same source: `+mc1.21.11` for 1.21.x and `+mc26.2` for 26.2.
+Version 2.2.0 ships two jars from the same source: `+mc26.3` for Minecraft 26.3 and `+mc26.2` for 26.2. On 1.21.x use 2.1.0 (`+mc1.21.11`).
 
 One command (`/market`) opens a **hub GUI** with three main sections:
 **Server Market** — Buy/sell any item from the server at fixed prices (large spread encourages player trading)
@@ -79,8 +79,8 @@ Requirements
 
 | Requirement | Version |
 |-------------|---------|
-| **Server** | Paper 1.21.11+ (or Purpur, Folia-compatible forks) |
-| **Java** | Java 21+ |
+| **Server** | Paper or Purpur 26.3 or 26.2 (2.1.0 for 1.21.x) |
+| **Java** | Java 25 |
 | **Economy** | [MultiBank](https://github.com/henriquescrrrr/carrageis-multibank) |
 
 ### Economy Setup

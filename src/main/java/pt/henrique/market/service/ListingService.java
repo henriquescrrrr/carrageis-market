@@ -53,7 +53,9 @@ public class ListingService {
             return CompletableFuture.completedFuture(-1);
         }
 
-        if (plugin.getConfigManager().isMaterialBlacklisted(item.getType())) {
+        // Last gate before persistence: applies the blacklist to the payload too,
+        // so a banned material cannot enter a listing inside a container.
+        if (!plugin.getTransactionService().validateItem(item).isValid()) {
             return CompletableFuture.completedFuture(-1);
         }
 
@@ -244,17 +246,18 @@ public class ListingService {
                                     Bukkit.getScheduler().runTask(plugin, () -> {
                                         ItemStack item = listing.getItem().clone();
                                         item.setAmount(listing.getAmount());
-                                        ItemStack leftover = InventoryUtil.giveItem(buyer, item);
+                                        List<ItemStack> leftovers = InventoryUtil.giveItemSplit(buyer, item);
 
-                                        if (leftover != null) {
+                                        if (!leftovers.isEmpty()) {
                                             // Couldn't fit in inventory, add to claim storage
-                                            ClaimItem claimItem = new ClaimItem(
-                                                    buyer.getUniqueId(),
-                                                    leftover,
-                                                    ClaimItem.ClaimReason.PURCHASE_FULL_INVENTORY,
-                                                    "Listing #" + listingId
-                                            );
-                                            plugin.getDatabaseManager().addClaimItem(claimItem);
+                                            for (ItemStack leftover : leftovers) {
+                                                plugin.getDatabaseManager().addClaimItem(new ClaimItem(
+                                                        buyer.getUniqueId(),
+                                                        leftover,
+                                                        ClaimItem.ClaimReason.PURCHASE_FULL_INVENTORY,
+                                                        "Listing #" + listingId
+                                                ));
+                                            }
                                             buyer.sendMessage(plugin.getMessageManager().getPrefixedP(buyer, "messages.claim-inventory-full"));
                                         }
                                     });

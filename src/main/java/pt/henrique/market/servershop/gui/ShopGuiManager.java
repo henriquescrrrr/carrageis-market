@@ -5,7 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import pt.henrique.market.Market;
 import pt.henrique.market.servershop.MultiSellSession;
-import pt.henrique.market.servershop.ShulkerUtil;
+import pt.henrique.market.servershop.ContainerItemUtil;
 import pt.henrique.market.servershop.model.SellVariant;
 import pt.henrique.market.servershop.model.ShopCategory;
 import pt.henrique.market.servershop.service.ShopTransactionService;
@@ -66,9 +66,16 @@ public class ShopGuiManager {
 
         int heldSlot = player.getInventory().getHeldItemSlot();
         if (plugin.getConfig().getBoolean("sell-inventory.shulker-sell.enabled", true)
-                && ShulkerUtil.isShulkerBox(held) && ShulkerUtil.hasContents(held)) {
+                && ContainerItemUtil.isShulkerBox(held) && ContainerItemUtil.hasContents(held)) {
             SoundUtil.playClickSound(player);
             openShulkerSellChooser(player, heldSlot);
+            return;
+        }
+        // Any other loaded container is refused: its payload has no quote and would
+        // be removed with the container.
+        if (ContainerItemUtil.isNestingItemWithContents(held)) {
+            player.sendMessage(msg.getPrefixedP(player, "servershop.messages.sell-hand-container-loaded"));
+            SoundUtil.playErrorSound(player);
             return;
         }
 

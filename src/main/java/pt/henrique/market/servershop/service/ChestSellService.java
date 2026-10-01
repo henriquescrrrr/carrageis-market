@@ -10,10 +10,12 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import pt.henrique.market.Market;
 import pt.henrique.market.hook.DeathChestHook;
 import pt.henrique.market.hook.LandClaimHook;
+import pt.henrique.market.servershop.ContainerItemUtil;
 import pt.henrique.market.servershop.SellVariantScanner;
 import pt.henrique.market.servershop.gui.SellChestPreviewGui;
 import pt.henrique.market.servershop.model.SellVariant;
@@ -157,6 +159,13 @@ public class ChestSellService {
         // Scan inventory for sellable items
         List<SellVariant> sellableItems = scanForSellableItems(containerInventory);
 
+        int skippedContainers = countLoadedContainers(containerInventory);
+        if (skippedContainers > 0) {
+            player.sendMessage(plugin.getMessageManager().getPrefixedP(player,
+                    "servershop.messages.sell-chest-skipped-containers",
+                    "count", String.valueOf(skippedContainers)));
+        }
+
         if (sellableItems.isEmpty()) {
             player.sendMessage(plugin.getMessageManager().getPrefixedP(player,
                     "servershop.messages.sell-chest-nothing-to-sell"));
@@ -178,13 +187,24 @@ public class ChestSellService {
      * Grouping is per distinct item, so a chest holding a plain bow next to an
      * enchanted one shows two lines at two prices instead of valuing both at
      * whichever happened to sit in the lower slot.
-     * Excludes: dream items (BuildersDream), items with no sell price.
+     * Excludes: items that hold other items, dream items (BuildersDream), items
+     * with no sell price.
      */
     private List<SellVariant> scanForSellableItems(Inventory inventory) {
-        // Packed shulkers are listed as-is: their own contents are not unpacked here.
+        // The scanner never offers a loaded container: it would be priced as empty
+        // and removed with everything inside it.
         return plugin.getSellVariantScanner()
                 .scanContainer(inventory, SellVariantScanner.Options.showAll(false))
                 .variants();
+    }
+
+    /** Stacks in the container that hold other stacks and were left alone. */
+    private int countLoadedContainers(Inventory inventory) {
+        int count = 0;
+        for (ItemStack item : inventory.getContents()) {
+            if (item != null && ContainerItemUtil.isNestingItemWithContents(item)) count++;
+        }
+        return count;
     }
 
     // ══════════════════════════════════════════════════════════════

@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import pt.henrique.market.Market;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,24 +52,73 @@ public class InventoryUtil {
     }
 
     /**
-     * Gives an item to a player, returning any items that couldn't fit
+     * Splits a stack into legally-sized stacks.
+     * <p>
+     * Since 26.1 an {@link ItemStack} whose count exceeds its max stack size is
+     * treated as empty by the server, so a "give 320 dirt" shortcut built as one
+     * stack hands the player nothing. Anything that multiplies a quantity into a
+     * single stack must route through this first. The input amount is used as the
+     * total; the returned stacks are clones.
+     *
+     * @return one or more stacks, each within its max stack size; empty for air
+     */
+    public static List<ItemStack> splitIntoLegalStacks(ItemStack item) {
+        if (item == null || item.getType().isAir() || item.getAmount() <= 0) {
+            return List.of();
+        }
+
+        int maxStack = Math.max(1, item.getMaxStackSize());
+        if (item.getAmount() <= maxStack) {
+            return List.of(item.clone());
+        }
+
+        List<ItemStack> out = new ArrayList<>();
+        for (int left = item.getAmount(); left > 0; left -= maxStack) {
+            ItemStack part = item.clone();
+            part.setAmount(Math.min(left, maxStack));
+            out.add(part);
+        }
+        return out;
+    }
+
+    /** @return true when the stack's count is within its max stack size. */
+    public static boolean isLegalStack(ItemStack item) {
+        return item == null || item.getType().isAir()
+                || item.getAmount() <= Math.max(1, item.getMaxStackSize());
+    }
+
+    /**
+     * Gives an item to a player, returning any items that couldn't fit.
+     * The item is split into legal stacks first, so an oversized input is handed
+     * over in full instead of resolving to nothing.
      *
      * @param player The player
      * @param item   The item to give
      * @return Items that couldn't fit, or null if all items were added
      */
     public static ItemStack giveItem(Player player, ItemStack item) {
-        if (item == null || item.getType().isAir()) {
-            return null;
+        List<ItemStack> leftovers = giveItemSplit(player, item);
+        return leftovers.isEmpty() ? null : leftovers.get(0);
+    }
+
+    /**
+     * Gives an item to a player as legal stacks.
+     *
+     * @return every stack that did not fit, each within its max stack size
+     */
+    public static List<ItemStack> giveItemSplit(Player player, ItemStack item) {
+        List<ItemStack> parts = splitIntoLegalStacks(item);
+        if (parts.isEmpty()) {
+            return List.of();
         }
 
-        HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(item.clone());
+        HashMap<Integer, ItemStack> leftover =
+                player.getInventory().addItem(parts.toArray(new ItemStack[0]));
 
         if (leftover.isEmpty()) {
-            return null;
+            return List.of();
         }
-
-        return leftover.values().iterator().next();
+        return new ArrayList<>(leftover.values());
     }
 
     /**
@@ -87,7 +137,12 @@ public class InventoryUtil {
         ItemStack toRemove = item.clone();
         toRemove.setAmount(amount);
 
-        HashMap<Integer, ItemStack> notRemoved = player.getInventory().removeItem(toRemove);
+        // Split first: an over-full stack is treated as empty since 26.1, so a
+        // single oversized removal request could take nothing while reporting
+        // success.
+        List<ItemStack> parts = splitIntoLegalStacks(toRemove);
+        HashMap<Integer, ItemStack> notRemoved =
+                player.getInventory().removeItem(parts.toArray(new ItemStack[0]));
 
         return notRemoved.isEmpty();
     }

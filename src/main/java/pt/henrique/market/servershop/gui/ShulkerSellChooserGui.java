@@ -11,7 +11,7 @@ import pt.henrique.market.Market;
 import pt.henrique.market.config.MessageManager;
 import pt.henrique.market.gui.MarketGui;
 import pt.henrique.market.servershop.MaterialUtil;
-import pt.henrique.market.servershop.ShulkerUtil;
+import pt.henrique.market.servershop.ContainerItemUtil;
 import pt.henrique.market.servershop.service.ShulkerSellService;
 import pt.henrique.market.servershop.service.ShulkerSellService.ContentsScan;
 import pt.henrique.market.servershop.service.ShulkerSellService.OptionQuote;
@@ -53,7 +53,7 @@ public class ShulkerSellChooserGui implements MarketGui {
 
     public void open(Player player) {
         ItemStack live = player.getInventory().getItem(playerSlot);
-        if (!ShulkerUtil.isShulkerBox(live) || !ShulkerUtil.hasContents(live)) {
+        if (!ContainerItemUtil.isShulkerBox(live) || !ContainerItemUtil.hasContents(live)) {
             SoundUtil.playErrorSound(player);
             player.sendMessage(plugin.getMessageManager().getPrefixedP(player, "servershop.messages.shulker-gone"));
             shopGuiManager.openSellInventory(player);
@@ -74,7 +74,7 @@ public class ShulkerSellChooserGui implements MarketGui {
         // ── Shulker + summary ────────────────────────────────
         List<String> summary = new ArrayList<>(msg.getList(lang, "servershop.lore.shulker-summary"));
         summary.replaceAll(l -> l
-                .replace("{count}", String.valueOf(ShulkerUtil.countTotalItems(live)))
+                .replace("{count}", String.valueOf(ContainerItemUtil.countTotalItems(live)))
                 .replace("{value}", msg.formatCurrency(service.netOf(scan.grossSellable()))));
         inventory.setItem(SLOT_BOX, new ItemBuilder(live.clone())
                 .name("&f" + MaterialUtil.formatName(live.getType()))
@@ -137,7 +137,7 @@ public class ShulkerSellChooserGui implements MarketGui {
         if (option == null) return;
 
         ItemStack live = player.getInventory().getItem(playerSlot);
-        if (!ShulkerUtil.isShulkerBox(live) || !ShulkerUtil.hasContents(live)) {
+        if (!ContainerItemUtil.isShulkerBox(live) || !ContainerItemUtil.hasContents(live)) {
             SoundUtil.playErrorSound(player);
             player.sendMessage(plugin.getMessageManager().getPrefixedP(player, "servershop.messages.shulker-gone"));
             shopGuiManager.openSellInventory(player);

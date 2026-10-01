@@ -77,9 +77,10 @@ public class ClaimService {
 
                                 // Give item to player on main thread
                                 Bukkit.getScheduler().runTask(plugin, () -> {
-                                    ItemStack leftover = InventoryUtil.giveItem(player, claimItem.getItem());
-                                    if (leftover != null) {
-                                        // This shouldn't happen since we checked space, but just in case
+                                    // Every leftover stack is re-stored, not just the first:
+                                    // an item stored before the split fix can be several
+                                    // stacks wide and must not lose the tail.
+                                    for (ItemStack leftover : InventoryUtil.giveItemSplit(player, claimItem.getItem())) {
                                         plugin.getDatabaseManager().addClaimItem(new ClaimItem(
                                                 player.getUniqueId(),
                                                 leftover,
@@ -120,8 +121,7 @@ public class ClaimService {
                             // leftover to claim storage instead of silently destroying it.
                             final ClaimItem claimed0 = item;
                             Bukkit.getScheduler().runTask(plugin, () -> {
-                                ItemStack leftover = InventoryUtil.giveItem(player, claimed0.getItem());
-                                if (leftover != null) {
+                                for (ItemStack leftover : InventoryUtil.giveItemSplit(player, claimed0.getItem())) {
                                     plugin.getDatabaseManager().addClaimItem(new ClaimItem(
                                             player.getUniqueId(),
                                             leftover,

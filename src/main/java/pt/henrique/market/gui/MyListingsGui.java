@@ -97,7 +97,10 @@ public class MyListingsGui implements MarketGui {
         var msgManager = plugin.getMessageManager();
 
         ItemStack display = listing.getItem().clone();
-        display.setAmount(listing.getAmount());
+        // Display only: a count above the max stack size makes the stack resolve to
+        // empty since 26.1, so the icon would render as nothing. The real amount is
+        // in the lore.
+        display.setAmount(Math.min(listing.getAmount(), Math.max(1, display.getMaxStackSize())));
 
         String expires;
         if (listing.getExpiresAt() != null) {

@@ -3,6 +3,7 @@ package pt.henrique.market.service;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import pt.henrique.market.Market;
+import pt.henrique.market.servershop.ContainerItemUtil;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -22,6 +23,13 @@ public class TransactionService {
     /**
      * Validates an item before it can be listed or auctioned.
      * Checks material blacklist, keywords in name/lore, and other restrictions.
+     * <p>
+     * A player-to-player listing keeps the item intact and its price is set by the
+     * seller, so a loaded container is not refused here the way the server shop
+     * refuses one. What must not happen is a banned material or a banned lore
+     * keyword travelling inside a shulker box, a bundle, a sulfur cube bucket or a
+     * crossbow, so every rule below is applied to the payload as well as to the
+     * container.
      *
      * @param item The item to validate
      * @return ValidationResult with success status and error message if applicable
@@ -29,6 +37,23 @@ public class TransactionService {
     public ValidationResult validateItem(ItemStack item) {
         if (item == null || item.getType().isAir()) {
             return new ValidationResult(false, "invalid-item");
+        }
+
+        ValidationResult own = validateSingleStack(item);
+        if (!own.isValid()) return own;
+
+        for (ItemStack nested : ContainerItemUtil.flattenPayload(item)) {
+            ValidationResult inner = validateSingleStack(nested);
+            if (!inner.isValid()) return inner;
+        }
+
+        return new ValidationResult(true, null);
+    }
+
+    /** Applies the blacklist rules to one stack, ignoring anything it contains. */
+    private ValidationResult validateSingleStack(ItemStack item) {
+        if (item == null || item.getType().isAir()) {
+            return new ValidationResult(true, null);
         }
 
         // Check BuildersDream creative dream items

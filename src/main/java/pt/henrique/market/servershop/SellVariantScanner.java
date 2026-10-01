@@ -34,7 +34,8 @@ public class SellVariantScanner {
     /**
      * What a given scan should leave alone.
      *
-     * @param skipShulkersWithContents  packed shulker boxes, which have their own sell chooser
+     * @param skipShulkersWithContents  kept for callers; any stack holding other stacks is
+     *                                  skipped regardless, see {@link #scan}
      * @param skipProtectedGear         enchanted, renamed or tool-modded items
      * @param skipDamagedGear           anything already worn
      */
@@ -126,6 +127,7 @@ public class SellVariantScanner {
     public SellVariant variantOf(ItemStack stack, int slot) {
         if (stack == null || stack.getType().isAir()) return null;
         if (isDreamItem(stack)) return null;
+        if (ContainerItemUtil.isNestingItemWithContents(stack)) return null;
         SellVariant variant = build(stack);
         if (variant == null) return null;
         variant.add(slot, stack.getAmount());
@@ -149,8 +151,11 @@ public class SellVariantScanner {
             ItemStack stack = contents[slot];
             if (stack == null || stack.getType().isAir()) continue;
             if (isDreamItem(stack)) continue;
-            if (options.skipShulkersWithContents()
-                    && ShulkerUtil.isShulkerBox(stack) && ShulkerUtil.hasContents(stack)) continue;
+            // A stack holding other stacks is priced as its empty shell, and selling it
+            // removes the payload with it. Filled shulker boxes have their own chooser;
+            // bundles, loaded sulfur cube buckets and loaded crossbows have no quote at
+            // all. None of them is ever offered here, whatever the options say.
+            if (ContainerItemUtil.isNestingItemWithContents(stack)) continue;
             if (options.skipProtectedGear() && isProtectedGear(stack)) {
                 protectedItems += stack.getAmount();
                 continue;

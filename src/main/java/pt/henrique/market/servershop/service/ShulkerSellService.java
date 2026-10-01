@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import pt.henrique.market.Market;
 import pt.henrique.market.config.MessageManager;
 import pt.henrique.market.servershop.SellVariantScanner;
-import pt.henrique.market.servershop.ShulkerUtil;
+import pt.henrique.market.servershop.ContainerItemUtil;
 import pt.henrique.market.servershop.model.SellQuote;
 import pt.henrique.market.servershop.model.SellVariant;
 import pt.henrique.market.util.SoundUtil;
@@ -65,7 +65,7 @@ public class ShulkerSellService {
      * next to it.
      */
     public ContentsScan scan(ItemStack shulker) {
-        ItemStack[] contents = ShulkerUtil.getContents(shulker);
+        ItemStack[] contents = ContainerItemUtil.getContents(shulker);
         List<ItemStack> nonSellable = new ArrayList<>();
         for (ItemStack c : contents) {
             if (c == null || c.getType().isAir()) continue;
@@ -97,7 +97,7 @@ public class ShulkerSellService {
         double boxGross = boxGross(shulker);
         return switch (option) {
             case BOX_ONLY -> new OptionQuote(boxGross > 0, boxGross, 0,
-                    netOf(boxGross), ShulkerUtil.countTotalItems(shulker));
+                    netOf(boxGross), ContainerItemUtil.countTotalItems(shulker));
             case BOX_AND_CONTENTS -> {
                 double gross = boxGross + scan.grossSellable();
                 yield new OptionQuote(boxGross > 0, boxGross, scan.grossSellable(),
@@ -116,7 +116,7 @@ public class ShulkerSellService {
     public void execute(Player player, int slot, ShulkerSellOption option) {
         MessageManager msg = plugin.getMessageManager();
         ItemStack live = player.getInventory().getItem(slot);
-        if (!ShulkerUtil.isShulkerBox(live) || !ShulkerUtil.hasContents(live)) {
+        if (!ContainerItemUtil.isShulkerBox(live) || !ContainerItemUtil.hasContents(live)) {
             fail(player, "servershop.messages.shulker-gone");
             return;
         }
@@ -136,7 +136,7 @@ public class ShulkerSellService {
 
         // BOX_ONLY / BOX_AND_CONTENTS return items to the player → check for overflow.
         List<ItemStack> returnables = (option == ShulkerSellOption.BOX_ONLY)
-                ? cloneNonEmpty(ShulkerUtil.getContents(live))
+                ? cloneNonEmpty(ContainerItemUtil.getContents(live))
                 : scan(live).nonSellable();
         ItemStack[] snapshot = cloneArray(player.getInventory().getStorageContents());
         int overflow = probeOverflow(player, slot, returnables, snapshot);
@@ -186,7 +186,7 @@ public class ShulkerSellService {
     private void doBoxSale(Player player, int slot, ShulkerSellOption option, ItemStack original) {
         MessageManager msg = plugin.getMessageManager();
         ItemStack live = player.getInventory().getItem(slot);
-        if (!ShulkerUtil.isShulkerBox(live) || !live.isSimilar(original)) {
+        if (!ContainerItemUtil.isShulkerBox(live) || !live.isSimilar(original)) {
             fail(player, "servershop.messages.shulker-gone");
             return;
         }
@@ -208,7 +208,7 @@ public class ShulkerSellService {
         }
 
         List<ItemStack> returnables = (option == ShulkerSellOption.BOX_ONLY)
-                ? cloneNonEmpty(ShulkerUtil.getContents(live))
+                ? cloneNonEmpty(ContainerItemUtil.getContents(live))
                 : scan.nonSellable();
         ItemStack[] snapshot = cloneArray(player.getInventory().getStorageContents());
 
@@ -252,7 +252,7 @@ public class ShulkerSellService {
     private void doContentsOnly(Player player, int slot, ItemStack original) {
         MessageManager msg = plugin.getMessageManager();
         ItemStack live = player.getInventory().getItem(slot);
-        if (!ShulkerUtil.isShulkerBox(live) || !live.isSimilar(original)) {
+        if (!ContainerItemUtil.isShulkerBox(live) || !live.isSimilar(original)) {
             fail(player, "servershop.messages.shulker-gone");
             return;
         }
@@ -272,14 +272,14 @@ public class ShulkerSellService {
         }
 
         // Rebuild the box's contents keeping only the non-sellable items.
-        ItemStack[] contents = ShulkerUtil.getContents(live);
+        ItemStack[] contents = ContainerItemUtil.getContents(live);
         ItemStack[] kept = new ItemStack[contents.length];
         for (int i = 0; i < contents.length; i++) {
             ItemStack c = contents[i];
             if (c == null || c.getType().isAir()) continue;
             kept[i] = isSellableContent(c) ? null : c;
         }
-        ItemStack newBox = ShulkerUtil.withContents(live, kept);
+        ItemStack newBox = ContainerItemUtil.withContents(live, kept);
         player.getInventory().setItem(slot, newBox);
 
         boolean ok = net <= 0 || plugin.getEconomyManager().deposit(player.getUniqueId(), net);
@@ -326,7 +326,7 @@ public class ShulkerSellService {
     private boolean isSellableContent(ItemStack stack) {
         if (stack == null || stack.getType().isAir()) return false;
         if (plugin.getBuildersDreamHook() != null && plugin.getBuildersDreamHook().isDreamItem(stack)) return false;
-        if (ShulkerUtil.isNestedShulkerWithContents(stack)) return false; // never destroy a packed nested shulker
+        if (ContainerItemUtil.isNestingItemWithContents(stack)) return false; // never destroy a packed nested shulker
         return unitValue(stack) > 0;
     }
 
@@ -339,11 +339,11 @@ public class ShulkerSellService {
     }
 
     private double boxGross(ItemStack shulker) {
-        return unitValue(ShulkerUtil.emptiedClone(shulker));
+        return unitValue(ContainerItemUtil.emptiedClone(shulker));
     }
 
     private String boxId(ItemStack shulker) {
-        SellQuote quote = plugin.getShopPricingService().quoteSell(ShulkerUtil.emptiedClone(shulker));
+        SellQuote quote = plugin.getShopPricingService().quoteSell(ContainerItemUtil.emptiedClone(shulker));
         return quote != null ? quote.itemId() : null;
     }
 

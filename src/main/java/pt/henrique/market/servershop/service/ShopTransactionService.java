@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import pt.henrique.market.Market;
 import pt.henrique.market.economy.EconomyManager;
 import pt.henrique.market.hook.ToolModsHook;
+import pt.henrique.market.servershop.ContainerItemUtil;
 import pt.henrique.market.servershop.model.SellQuote;
 import pt.henrique.market.servershop.model.SellVariant;
 import pt.henrique.market.servershop.model.ShopItem;
@@ -148,7 +149,7 @@ public class ShopTransactionService {
         boolean dropOnFull = plugin.getConfig().getString("server-shop.full-inventory-action", "drop").equalsIgnoreCase("drop");
         if (!dropOnFull) {
             int emptySlots = countEmptySlots(player);
-            int maxStack = shopItem.getBaseMaterial().getMaxStackSize();
+            int maxStack = Math.max(1, shopItem.createItemStack(1).getMaxStackSize());
             int slotsNeeded = (int) Math.ceil((double) quantity / maxStack);
             if (emptySlots < slotsNeeded) {
                 debug("buyItem() FAIL: inventory full (empty=" + emptySlots + ", needed=" + slotsNeeded + ")");
@@ -295,6 +296,14 @@ public class ShopTransactionService {
 
         ItemStack template = variant.template();
 
+        // A stack that holds other stacks is priced as its empty shell, so selling it
+        // here would pay for the box and delete what is inside. Filled shulker boxes
+        // go through the shulker chooser instead; everything else is refused.
+        if (ContainerItemUtil.isNestingItemWithContents(template)) {
+            debug("sellVariant() FAIL: item holds other items");
+            return TransactionResult.ITEM_NOT_SELLABLE;
+        }
+
         if (plugin.getBuildersDreamHook() != null && plugin.getBuildersDreamHook().isDreamItem(template)) {
             debug("sellVariant() FAIL: item is a BuildersDream dream item");
             return TransactionResult.DREAM_ITEM_BLOCKED;
@@ -430,6 +439,22 @@ public class ShopTransactionService {
     }
 
     /**
+     * Whether a slot may take part in a server-shop sell for this item.
+     * <p>
+     * A stack that holds other stacks is never a candidate, in either match mode.
+     * In {@code MATERIAL_ONLY} an empty shulker box, bundle or sulfur cube bucket
+     * shares its item id with a loaded one, so without this test selling an empty
+     * container removes a loaded one from an earlier slot and destroys its payload.
+     * In {@code EXACT} mode {@link ShopItem#matches} already refuses loaded
+     * containers, and this test keeps the two modes in agreement.
+     */
+    private boolean isSellCandidate(ItemStack stack, ShopItem shopItem) {
+        if (stack == null || stack.getType().isAir()) return false;
+        if (ContainerItemUtil.isNestingItemWithContents(stack)) return false;
+        return isMaterialOnlyMode() ? shopItem.matchesMaterialOnly(stack) : shopItem.matches(stack);
+    }
+
+    /**
      * Finds a specific ItemStack in the player's inventory for a given slot index.
      */
     public ItemStack getStackAtSlot(Player player, int slot) {
@@ -456,8 +481,15 @@ public class ShopTransactionService {
         plugin.getDatabaseManager().logShopTransaction(record);
     }
 
+    /**
+     * Hands {@code quantity} units to the player, always as legally-sized stacks.
+     * Since 26.1 a stack whose count exceeds its max stack size resolves to empty,
+     * so a bulk payout built as one oversized stack gives the player nothing.
+     * The per-item max stack size comes from a real stack rather than from the
+     * material, because a component template can lower it.
+     */
     private void giveItems(Player player, ShopItem shopItem, int quantity) {
-        int maxStack = shopItem.getBaseMaterial().getMaxStackSize();
+        int maxStack = Math.max(1, shopItem.createItemStack(1).getMaxStackSize());
         int remaining = quantity;
         while (remaining > 0) {
             int amount = Math.min(remaining, maxStack);
@@ -473,11 +505,8 @@ public class ShopTransactionService {
     /** Counts items matching a specific ShopItem in the player's inventory. */
     public int countItems(Player player, ShopItem shopItem) {
         int count = 0;
-        boolean materialOnly = isMaterialOnlyMode();
         for (ItemStack stack : player.getInventory().getContents()) {
-            if (stack == null) continue;
-            boolean match = materialOnly ? shopItem.matchesMaterialOnly(stack) : shopItem.matches(stack);
-            if (!match) continue;
+            if (!isSellCandidate(stack, shopItem)) continue;
             count += stack.getAmount();
         }
         return count;

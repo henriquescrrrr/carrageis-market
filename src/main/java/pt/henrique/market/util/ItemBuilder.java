@@ -38,8 +38,20 @@ public class ItemBuilder {
     /**
      * Creates a new ItemBuilder from an existing ItemStack
      */
+    /**
+     * Wraps an existing stack as a GUI icon.
+     * <p>
+     * The count is clamped to the item's max stack size. Builder output only ever
+     * goes into plugin GUI inventories, never to a player, and since 26.1 an
+     * over-full stack resolves to empty, which would render the icon as a blank
+     * slot. Real quantities are shown in the lore.
+     */
     public ItemBuilder(ItemStack item) {
         this.item = item.clone();
+        int maxStack = Math.max(1, this.item.getMaxStackSize());
+        if (this.item.getAmount() > maxStack) {
+            this.item.setAmount(maxStack);
+        }
         this.meta = this.item.getItemMeta();
     }
 
@@ -115,7 +127,7 @@ public class ItemBuilder {
      * Sets the item amount
      */
     public ItemBuilder amount(int amount) {
-        item.setAmount(Math.min(64, Math.max(1, amount)));
+        item.setAmount(Math.min(Math.max(1, item.getMaxStackSize()), Math.max(1, amount)));
         return this;
     }
 

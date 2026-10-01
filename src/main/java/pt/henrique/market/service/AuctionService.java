@@ -54,7 +54,9 @@ public class AuctionService {
             return CompletableFuture.completedFuture(-1);
         }
 
-        if (plugin.getConfigManager().isMaterialBlacklisted(item.getType())) {
+        // Last gate before persistence: applies the blacklist to the payload too,
+        // so a banned material cannot enter an auction inside a container.
+        if (!plugin.getTransactionService().validateItem(item).isValid()) {
             return CompletableFuture.completedFuture(-1);
         }
 

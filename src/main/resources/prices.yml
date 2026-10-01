@@ -251,6 +251,11 @@ enchant-prices:
 
 overrides:
 
+  ABANDONED_CAMP_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
   ACACIA_BOAT:
     buy-price: 4.5
     sell-price: 1.12
@@ -566,6 +571,15 @@ overrides:
   BLACK_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  BLACK_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  BLACK_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  BLACK_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   BLACK_DYE:
     buy-price: 1.5
     sell-price: 0.38
@@ -589,6 +603,12 @@ overrides:
     sell-price: 1.5
   BLACK_WOOL:
     buy-price: 7
+    sell-price: 1.75
+  BLACK_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  BLACK_WOOL_STAIRS:
+    buy-price: 7.0
     sell-price: 1.75
   BLADE_POTTERY_SHERD:
     buy-price: 80.0
@@ -626,6 +646,15 @@ overrides:
   BLUE_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  BLUE_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  BLUE_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  BLUE_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   BLUE_DYE:
     buy-price: 1.5
     sell-price: 0.38
@@ -659,6 +688,12 @@ overrides:
   BLUE_WOOL:
     buy-price: 7
     sell-price: 1.75
+  BLUE_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  BLUE_WOOL_STAIRS:
+    buy-price: 7.0
+    sell-price: 1.75
   BOGGED_SPAWN_EGG:
     buy-price: 700.0
     sell-price: 297.5
@@ -682,7 +717,7 @@ overrides:
     sell-price: 7.5
   BORDURE_INDENTED_BANNER_PATTERN:
     buy-price: 60.0
-    sell-price: 25.5
+    sell-price: 2.93
   BOW:
     buy-price: 30.0
     sell-price: 7.5
@@ -712,7 +747,7 @@ overrides:
     sell-price: 34.0
   BREWING_STAND:
     buy-price: 150.0
-    sell-price: 63.75
+    sell-price: 40.95
   BRICK:
     buy-price: 6.0
     sell-price: 1.5
@@ -749,6 +784,15 @@ overrides:
   BROWN_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  BROWN_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  BROWN_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  BROWN_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   BROWN_DYE:
     buy-price: 1.5
     sell-price: 0.38
@@ -782,6 +826,12 @@ overrides:
   BROWN_WOOL:
     buy-price: 7
     sell-price: 1.75
+  BROWN_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  BROWN_WOOL_STAIRS:
+    buy-price: 7.0
+    sell-price: 1.75
   BRUSH:
     buy-price: 18.0
     sell-price: 7.65
@@ -800,6 +850,26 @@ overrides:
   BUNDLE:
     buy-price: 15
     sell-price: 3.75
+  BURIED_ANCIENT_CITY_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
+  BURIED_MINESHAFT_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
+  BURIED_TREASURE_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
+  BURIED_TRIAL_CHAMBERS_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
   BURN_POTTERY_SHERD:
     buy-price: 80.0
     sell-price: 34.0
@@ -944,18 +1014,21 @@ overrides:
   CHISELED_BOOKSHELF:
     buy-price: 35.0
     sell-price: 8.75
+  CHISELED_CINNABAR:
+    buy-price: 9.0
+    sell-price: 1.95
   CHISELED_COPPER:
     buy-price: 43.0
     sell-price: 10.75
   CHISELED_DEEPSLATE:
     buy-price: 8.0
-    sell-price: 2.0
+    sell-price: 0.98
   CHISELED_NETHER_BRICKS:
     buy-price: 12.0
     sell-price: 5.1
   CHISELED_POLISHED_BLACKSTONE:
     buy-price: 10.0
-    sell-price: 4.25
+    sell-price: 2.6
   CHISELED_QUARTZ_BLOCK:
     buy-price: 68.0
     sell-price: 28.9
@@ -971,6 +1044,9 @@ overrides:
   CHISELED_STONE_BRICKS:
     buy-price: 6.0
     sell-price: 1.5
+  CHISELED_SULFUR:
+    buy-price: 6.0
+    sell-price: 0.75
   CHISELED_TUFF:
     buy-price: 5.0
     sell-price: 1.62
@@ -986,6 +1062,30 @@ overrides:
   CHORUS_PLANT:
     buy-price: 8.0
     sell-price: 3.4
+  CINNABAR:
+    buy-price: 6.0
+    sell-price: 1.95
+  CINNABAR_BRICKS:
+    buy-price: 8.0
+    sell-price: 1.95
+  CINNABAR_BRICK_SLAB:
+    buy-price: 4.0
+    sell-price: 0.97
+  CINNABAR_BRICK_STAIRS:
+    buy-price: 8.0
+    sell-price: 1.95
+  CINNABAR_BRICK_WALL:
+    buy-price: 8.0
+    sell-price: 1.95
+  CINNABAR_SLAB:
+    buy-price: 3.0
+    sell-price: 0.97
+  CINNABAR_STAIRS:
+    buy-price: 6.0
+    sell-price: 1.95
+  CINNABAR_WALL:
+    buy-price: 6.0
+    sell-price: 1.95
   CLAY:
     buy-price: 12.0
     sell-price: 3.9
@@ -1310,6 +1410,15 @@ overrides:
   CYAN_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  CYAN_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  CYAN_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  CYAN_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   CYAN_DYE:
     buy-price: 2
     sell-price: 0.5
@@ -1333,6 +1442,12 @@ overrides:
     sell-price: 1.5
   CYAN_WOOL:
     buy-price: 7
+    sell-price: 1.75
+  CYAN_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  CYAN_WOOL_STAIRS:
+    buy-price: 7.0
     sell-price: 1.75
   DAMAGED_ANVIL:
     buy-price: 50.0
@@ -1511,6 +1626,16 @@ overrides:
   DEEPSLATE_TILE_WALL:
     buy-price: 6.0
     sell-price: 1.5
+  DESERT_PYRAMID_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
+  DESERT_VILLAGE_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
   DETECTOR_RAIL:
     buy-price: 22.0
     sell-price: 5.5
@@ -1552,7 +1677,7 @@ overrides:
     sell-price: 1540.0
   DIAMOND_SHOVEL:
     buy-price: 2800.0
-    sell-price: 1540.0
+    sell-price: 585.65
   DIAMOND_SPEAR:
     buy-price: 1000.0
     sell-price: 550.0
@@ -2131,7 +2256,7 @@ overrides:
     sell-price: 0.65
   FIELD_MASONED_BANNER_PATTERN:
     buy-price: 60.0
-    sell-price: 25.5
+    sell-price: 7.48
   FIREFLY_BUSH:
     buy-price: 8.0
     sell-price: 2.6
@@ -2179,7 +2304,7 @@ overrides:
     sell-price: 0.98
   FLOWER_BANNER_PATTERN:
     buy-price: 60.0
-    sell-price: 25.5
+    sell-price: 2.93
   FLOWER_POT:
     buy-price: 5.0
     sell-price: 1.62
@@ -2276,6 +2401,9 @@ overrides:
   GOLDEN_CHESTPLATE:
     buy-price: 800.0
     sell-price: 200.0
+  GOLDEN_DANDELION:
+    buy-price: 20.0
+    sell-price: 5.0
   GOLDEN_HELMET:
     buy-price: 500.0
     sell-price: 125.0
@@ -2354,6 +2482,15 @@ overrides:
   GRAY_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  GRAY_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  GRAY_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  GRAY_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   GRAY_DYE:
     buy-price: 2
     sell-price: 0.5
@@ -2378,6 +2515,12 @@ overrides:
   GRAY_WOOL:
     buy-price: 7
     sell-price: 1.75
+  GRAY_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  GRAY_WOOL_STAIRS:
+    buy-price: 7.0
+    sell-price: 1.75
   GREEN_BANNER:
     buy-price: 10
     sell-price: 2.5
@@ -2399,6 +2542,15 @@ overrides:
   GREEN_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  GREEN_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  GREEN_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  GREEN_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   GREEN_DYE:
     buy-price: 2
     sell-price: 0.5
@@ -2423,9 +2575,15 @@ overrides:
   GREEN_WOOL:
     buy-price: 7
     sell-price: 1.75
+  GREEN_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  GREEN_WOOL_STAIRS:
+    buy-price: 7.0
+    sell-price: 1.75
   GRINDSTONE:
     buy-price: 22.0
-    sell-price: 5.5
+    sell-price: 3.41
   GUARDIAN_SPAWN_EGG:
     buy-price: 800.0
     sell-price: 340.0
@@ -2633,6 +2791,11 @@ overrides:
   JUNGLE_PRESSURE_PLATE:
     buy-price: 1.5
     sell-price: 0.38
+  JUNGLE_PYRAMID_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
   JUNGLE_SAPLING:
     buy-price: 3.0
     sell-price: 0.75
@@ -2738,6 +2901,15 @@ overrides:
   LIGHT_BLUE_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  LIGHT_BLUE_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  LIGHT_BLUE_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  LIGHT_BLUE_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   LIGHT_BLUE_DYE:
     buy-price: 1.5
     sell-price: 0.38
@@ -2762,6 +2934,12 @@ overrides:
   LIGHT_BLUE_WOOL:
     buy-price: 7
     sell-price: 1.75
+  LIGHT_BLUE_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  LIGHT_BLUE_WOOL_STAIRS:
+    buy-price: 7.0
+    sell-price: 1.75
   LIGHT_GRAY_BANNER:
     buy-price: 10
     sell-price: 2.5
@@ -2783,6 +2961,15 @@ overrides:
   LIGHT_GRAY_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  LIGHT_GRAY_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  LIGHT_GRAY_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  LIGHT_GRAY_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   LIGHT_GRAY_DYE:
     buy-price: 1.5
     sell-price: 0.38
@@ -2806,6 +2993,12 @@ overrides:
     sell-price: 1.5
   LIGHT_GRAY_WOOL:
     buy-price: 7
+    sell-price: 1.75
+  LIGHT_GRAY_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  LIGHT_GRAY_WOOL_STAIRS:
+    buy-price: 7.0
     sell-price: 1.75
   LIGHT_WEIGHTED_PRESSURE_PLATE:
     buy-price: 50.0
@@ -2840,6 +3033,15 @@ overrides:
   LIME_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  LIME_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  LIME_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  LIME_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   LIME_DYE:
     buy-price: 2
     sell-price: 0.5
@@ -2863,6 +3065,12 @@ overrides:
     sell-price: 1.5
   LIME_WOOL:
     buy-price: 7
+    sell-price: 1.75
+  LIME_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  LIME_WOOL_STAIRS:
+    buy-price: 7.0
     sell-price: 1.75
   LINGERING_POTION_AWKWARD:
     buy-price: 24
@@ -3007,7 +3215,7 @@ overrides:
     sell-price: 212.5
   LODESTONE:
     buy-price: 450.0
-    sell-price: 191.25
+    sell-price: 53.95
   LODESTONE_COMPASS:
     buy-price: 120.0
     sell-price: 51.0
@@ -3038,6 +3246,15 @@ overrides:
   MAGENTA_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  MAGENTA_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  MAGENTA_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  MAGENTA_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   MAGENTA_DYE:
     buy-price: 2
     sell-price: 0.5
@@ -3061,6 +3278,12 @@ overrides:
     sell-price: 1.5
   MAGENTA_WOOL:
     buy-price: 7
+    sell-price: 1.75
+  MAGENTA_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  MAGENTA_WOOL_STAIRS:
+    buy-price: 7.0
     sell-price: 1.75
   MAGMA_BLOCK:
     buy-price: 10.0
@@ -3230,6 +3453,9 @@ overrides:
   MUSIC_DISC_BLOCKS:
     buy-price: 200.0
     sell-price: 85.0
+  MUSIC_DISC_BOUNCE:
+    buy-price: 500.0
+    sell-price: 275.0
   MUSIC_DISC_CAT:
     buy-price: 200.0
     sell-price: 85.0
@@ -3289,7 +3515,7 @@ overrides:
     sell-price: 2.6
   NAME_TAG:
     buy-price: 150.0
-    sell-price: 63.75
+    sell-price: 2.27
   NAUTILUS_SHELL:
     buy-price: 160.0
     sell-price: 88.0
@@ -3349,7 +3575,7 @@ overrides:
     sell-price: 0.19
   NETHER_BRICK:
     buy-price: 5.0
-    sell-price: 1.62
+    sell-price: 0.49
   NETHER_BRICKS:
     buy-price: 8.0
     sell-price: 3.4
@@ -3446,6 +3672,11 @@ overrides:
   OBSIDIAN:
     buy-price: 80.0
     sell-price: 34.0
+  OCEAN_MONUMENT_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
   OCELOT_SPAWN_EGG:
     buy-price: 450.0
     sell-price: 191.25
@@ -3485,6 +3716,15 @@ overrides:
   ORANGE_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  ORANGE_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  ORANGE_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  ORANGE_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   ORANGE_DYE:
     buy-price: 1.5
     sell-price: 0.38
@@ -3494,6 +3734,9 @@ overrides:
   ORANGE_HARNESS:
     buy-price: 25
     sell-price: 6.25
+  ORANGE_POPLAR_LEAVES:
+    buy-price: 1.0
+    sell-price: 0.25
   ORANGE_SHULKER_BOX:
     buy-price: 450
     sell-price: 247.5
@@ -3511,6 +3754,12 @@ overrides:
     sell-price: 0.98
   ORANGE_WOOL:
     buy-price: 7
+    sell-price: 1.75
+  ORANGE_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  ORANGE_WOOL_STAIRS:
+    buy-price: 7.0
     sell-price: 1.75
   OXEYE_DAISY:
     buy-price: 3.0
@@ -3698,6 +3947,15 @@ overrides:
   PINK_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  PINK_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  PINK_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  PINK_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   PINK_DYE:
     buy-price: 1.5
     sell-price: 0.38
@@ -3728,6 +3986,12 @@ overrides:
   PINK_WOOL:
     buy-price: 7
     sell-price: 1.75
+  PINK_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  PINK_WOOL_STAIRS:
+    buy-price: 7.0
+    sell-price: 1.75
   PISTON:
     buy-price: 40.0
     sell-price: 10.0
@@ -3737,6 +4001,11 @@ overrides:
   PITCHER_POD:
     buy-price: 25.0
     sell-price: 10.62
+  PLAINS_VILLAGE_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
   PLENTY_POTTERY_SHERD:
     buy-price: 80.0
     sell-price: 34.0
@@ -3794,6 +4063,18 @@ overrides:
   POLISHED_BLACKSTONE_WALL:
     buy-price: 6.0
     sell-price: 2.55
+  POLISHED_CINNABAR:
+    buy-price: 7.0
+    sell-price: 1.95
+  POLISHED_CINNABAR_SLAB:
+    buy-price: 3.5
+    sell-price: 0.97
+  POLISHED_CINNABAR_STAIRS:
+    buy-price: 7.0
+    sell-price: 1.95
+  POLISHED_CINNABAR_WALL:
+    buy-price: 7.0
+    sell-price: 1.95
   POLISHED_DEEPSLATE:
     buy-price: 4.0
     sell-price: 1.0
@@ -3824,6 +4105,18 @@ overrides:
   POLISHED_GRANITE_STAIRS:
     buy-price: 3.5
     sell-price: 1.14
+  POLISHED_SULFUR:
+    buy-price: 4.0
+    sell-price: 0.75
+  POLISHED_SULFUR_SLAB:
+    buy-price: 2.0
+    sell-price: 0.37
+  POLISHED_SULFUR_STAIRS:
+    buy-price: 4.0
+    sell-price: 0.75
+  POLISHED_SULFUR_WALL:
+    buy-price: 4.0
+    sell-price: 0.75
   POLISHED_TUFF:
     buy-price: 5.0
     sell-price: 1.62
@@ -3836,6 +4129,57 @@ overrides:
   POLISHED_TUFF_WALL:
     buy-price: 5.0
     sell-price: 1.62
+  POPLAR_BOAT:
+    buy-price: 5.4
+    sell-price: 1.35
+  POPLAR_BUTTON:
+    buy-price: 2.4
+    sell-price: 0.6
+  POPLAR_CHEST_BOAT:
+    buy-price: 10.4
+    sell-price: 2.6
+  POPLAR_DOOR:
+    buy-price: 3.4
+    sell-price: 0.85
+  POPLAR_FENCE:
+    buy-price: 3.4
+    sell-price: 0.85
+  POPLAR_FENCE_GATE:
+    buy-price: 4.4
+    sell-price: 1.1
+  POPLAR_HANGING_SIGN:
+    buy-price: 4.4
+    sell-price: 1.1
+  POPLAR_LOG:
+    buy-price: 8.0
+    sell-price: 2.0
+  POPLAR_PLANKS:
+    buy-price: 2.4
+    sell-price: 0.6
+  POPLAR_PRESSURE_PLATE:
+    buy-price: 2.4
+    sell-price: 0.6
+  POPLAR_SAPLING:
+    buy-price: 3.0
+    sell-price: 0.75
+  POPLAR_SHELF:
+    buy-price: 6.0
+    sell-price: 1.5
+  POPLAR_SIGN:
+    buy-price: 3.4
+    sell-price: 0.85
+  POPLAR_SLAB:
+    buy-price: 1.2
+    sell-price: 0.3
+  POPLAR_STAIRS:
+    buy-price: 2.4
+    sell-price: 0.6
+  POPLAR_TRAPDOOR:
+    buy-price: 3.4
+    sell-price: 0.85
+  POPLAR_WOOD:
+    buy-price: 8.0
+    sell-price: 2.0
   POPPED_CHORUS_FRUIT:
     buy-price: 15.0
     sell-price: 3.75
@@ -3848,6 +4192,9 @@ overrides:
   POTATO:
     buy-price: 3.0
     sell-price: 0.75
+  POTENT_SULFUR:
+    buy-price: 27.0
+    sell-price: 6.75
   POTION_AWKWARD:
     buy-price: 10
     sell-price: 1.25
@@ -4061,6 +4408,15 @@ overrides:
   PURPLE_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  PURPLE_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  PURPLE_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  PURPLE_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   PURPLE_DYE:
     buy-price: 2.5
     sell-price: 0.62
@@ -4084,6 +4440,12 @@ overrides:
     sell-price: 1.5
   PURPLE_WOOL:
     buy-price: 7
+    sell-price: 1.75
+  PURPLE_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  PURPLE_WOOL_STAIRS:
+    buy-price: 7.0
     sell-price: 1.75
   PURPUR_BLOCK:
     buy-price: 15.0
@@ -4196,6 +4558,15 @@ overrides:
   RED_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  RED_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  RED_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  RED_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   RED_DYE:
     buy-price: 1
     sell-price: 0.25
@@ -4223,6 +4594,9 @@ overrides:
   RED_NETHER_BRICK_WALL:
     buy-price: 12.0
     sell-price: 5.1
+  RED_POPLAR_LEAVES:
+    buy-price: 1.0
+    sell-price: 0.25
   RED_SAND:
     buy-price: 5.0
     sell-price: 1.62
@@ -4238,6 +4612,9 @@ overrides:
   RED_SANDSTONE_WALL:
     buy-price: 6.0
     sell-price: 1.95
+  RED_SHRUB:
+    buy-price: 3.0
+    sell-price: 0.98
   RED_SHULKER_BOX:
     buy-price: 450
     sell-price: 247.5
@@ -4255,6 +4632,12 @@ overrides:
     sell-price: 0.98
   RED_WOOL:
     buy-price: 7
+    sell-price: 1.75
+  RED_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  RED_WOOL_STAIRS:
+    buy-price: 7.0
     sell-price: 1.75
   REPEATER:
     buy-price: 22.0
@@ -4297,7 +4680,7 @@ overrides:
     sell-price: 0.38
   SADDLE:
     buy-price: 220.0
-    sell-price: 93.5
+    sell-price: 42.25
   SALMON:
     buy-price: 4.0
     sell-price: 1.0
@@ -4322,6 +4705,11 @@ overrides:
   SANDSTONE_WALL:
     buy-price: 4.0
     sell-price: 1.3
+  SAVANNA_VILLAGE_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
   SCAFFOLDING:
     buy-price: 4.0
     sell-price: 1.0
@@ -4367,6 +4755,9 @@ overrides:
   SHEEP_SPAWN_EGG:
     buy-price: 300.0
     sell-price: 127.5
+  SHELF_MUSHROOM:
+    buy-price: 5.0
+    sell-price: 1.25
   SHELTER_POTTERY_SHERD:
     buy-price: 80.0
     sell-price: 34.0
@@ -4490,6 +4881,11 @@ overrides:
   SNOWBALL:
     buy-price: 0.5
     sell-price: 0.12
+  SNOWY_VILLAGE_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
   SNOW_BLOCK:
     buy-price: 4.0
     sell-price: 1.0
@@ -4774,13 +5170,16 @@ overrides:
     sell-price: 0.31
   STONE_SPEAR:
     buy-price: 12.0
-    sell-price: 3.0
+    sell-price: 1.3
   STONE_STAIRS:
     buy-price: 2.5
     sell-price: 0.62
   STONE_SWORD:
     buy-price: 6.0
     sell-price: 1.5
+  STRAW_BED:
+    buy-price: 11.25
+    sell-price: 2.81
   STRAY_SPAWN_EGG:
     buy-price: 550.0
     sell-price: 233.75
@@ -4847,6 +5246,12 @@ overrides:
   STRIPPED_PALE_OAK_WOOD:
     buy-price: 9.0
     sell-price: 2.25
+  STRIPPED_POPLAR_LOG:
+    buy-price: 9.0
+    sell-price: 2.25
+  STRIPPED_POPLAR_WOOD:
+    buy-price: 9.0
+    sell-price: 2.25
   STRIPPED_SPRUCE_LOG:
     buy-price: 6.0
     sell-price: 1.5
@@ -4865,6 +5270,43 @@ overrides:
   SUGAR_CANE:
     buy-price: 3.0
     sell-price: 0.75
+  SULFUR:
+    buy-price: 3.0
+    sell-price: 0.75
+  SULFUR_BRICKS:
+    buy-price: 5.0
+    sell-price: 0.75
+  SULFUR_BRICK_SLAB:
+    buy-price: 2.5
+    sell-price: 0.37
+  SULFUR_BRICK_STAIRS:
+    buy-price: 5.0
+    sell-price: 0.75
+  SULFUR_BRICK_WALL:
+    buy-price: 5.0
+    sell-price: 0.75
+  SULFUR_CUBE_BUCKET:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
+  SULFUR_CUBE_SPAWN_EGG:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
+  SULFUR_SLAB:
+    buy-price: 1.5
+    sell-price: 0.37
+  SULFUR_SPIKE:
+    buy-price: 4.0
+    sell-price: 1.0
+  SULFUR_STAIRS:
+    buy-price: 3.0
+    sell-price: 0.75
+  SULFUR_WALL:
+    buy-price: 3.0
+    sell-price: 0.75
   SUNFLOWER:
     buy-price: 4.0
     sell-price: 1.3
@@ -4877,6 +5319,11 @@ overrides:
   SUSPICIOUS_STEW:
     buy-price: 10.0
     sell-price: 2.5
+  SWAMP_HUT_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
   SWEET_BERRIES:
     buy-price: 3.0
     sell-price: 0.75
@@ -4886,6 +5333,11 @@ overrides:
   TADPOLE_SPAWN_EGG:
     buy-price: 250.0
     sell-price: 106.25
+  TAIGA_VILLAGE_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
   TALL_DRY_GRASS:
     buy-price: 2.0
     sell-price: 0.65
@@ -5147,6 +5599,11 @@ overrides:
   WARD_ARMOR_TRIM_SMITHING_TEMPLATE:
     buy-price: 350.0
     sell-price: 148.75
+  WARM_OCEAN_RUINS_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
   WARPED_BUTTON:
     buy-price: 2.0
     sell-price: 0.5
@@ -5483,6 +5940,15 @@ overrides:
   WHITE_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  WHITE_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  WHITE_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  WHITE_CUSHION:
+    buy-price: 7.5
+    sell-price: 1.88
   WHITE_DYE:
     buy-price: 1
     sell-price: 0.25
@@ -5509,6 +5975,12 @@ overrides:
     sell-price: 0.98
   WHITE_WOOL:
     buy-price: 5
+    sell-price: 1.25
+  WHITE_WOOL_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  WHITE_WOOL_STAIRS:
+    buy-price: 5.0
     sell-price: 1.25
   WILDFLOWERS:
     buy-price: 3.0
@@ -5558,6 +6030,11 @@ overrides:
   WOODEN_SWORD:
     buy-price: 3.0
     sell-price: 0.75
+  WOODLAND_MANSION_MAP:
+    buy-price: 0
+    sell-price: 0
+    buy-enabled: false
+    sell-enabled: false
   WRITABLE_BOOK:
     buy-price: 12.0
     sell-price: 3.0
@@ -5585,6 +6062,15 @@ overrides:
   YELLOW_CONCRETE_POWDER:
     buy-price: 4
     sell-price: 1.01
+  YELLOW_CONCRETE_SLAB:
+    buy-price: 2.5
+    sell-price: 0.63
+  YELLOW_CONCRETE_STAIRS:
+    buy-price: 5.0
+    sell-price: 1.25
+  YELLOW_CUSHION:
+    buy-price: 10.5
+    sell-price: 2.63
   YELLOW_DYE:
     buy-price: 1
     sell-price: 0.25
@@ -5594,6 +6080,9 @@ overrides:
   YELLOW_HARNESS:
     buy-price: 25
     sell-price: 6.25
+  YELLOW_POPLAR_LEAVES:
+    buy-price: 1.0
+    sell-price: 0.25
   YELLOW_SHULKER_BOX:
     buy-price: 450
     sell-price: 247.5
@@ -5608,6 +6097,12 @@ overrides:
     sell-price: 1.5
   YELLOW_WOOL:
     buy-price: 7
+    sell-price: 1.75
+  YELLOW_WOOL_SLAB:
+    buy-price: 3.5
+    sell-price: 0.88
+  YELLOW_WOOL_STAIRS:
+    buy-price: 7.0
     sell-price: 1.75
   ZOGLIN_SPAWN_EGG:
     buy-price: 900.0

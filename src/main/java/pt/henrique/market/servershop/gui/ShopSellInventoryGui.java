@@ -12,7 +12,7 @@ import pt.henrique.market.config.MessageManager;
 import pt.henrique.market.gui.MarketGui;
 import pt.henrique.market.servershop.MultiSellSession;
 import pt.henrique.market.servershop.SellVariantScanner;
-import pt.henrique.market.servershop.ShulkerUtil;
+import pt.henrique.market.servershop.ContainerItemUtil;
 import pt.henrique.market.servershop.model.SellVariant;
 import pt.henrique.market.servershop.service.EnchantPriceUtil;
 import pt.henrique.market.servershop.service.ShopTransactionService;
@@ -133,7 +133,7 @@ public class ShopSellInventoryGui implements MarketGui {
                 ItemStack stack = storage[i];
                 if (stack == null || stack.getType().isAir()) continue;
                 if (plugin.getBuildersDreamHook() != null && plugin.getBuildersDreamHook().isDreamItem(stack)) continue;
-                if (!ShulkerUtil.isShulkerBox(stack) || !ShulkerUtil.hasContents(stack)) continue;
+                if (!ContainerItemUtil.isShulkerBox(stack) || !ContainerItemUtil.hasContents(stack)) continue;
                 if (filter != null && stack.getType() != filter) continue;
                 all.add(new ShulkerEntry(i, stack.clone()));
             }
@@ -280,7 +280,7 @@ public class ShopSellInventoryGui implements MarketGui {
         double netValue = svc.netOf(svc.scan(shulker).grossSellable());
         List<String> lore = new ArrayList<>(msg.getList(lang, "servershop.lore.shulker-entry"));
         lore.replaceAll(l -> l
-                .replace("{count}", String.valueOf(ShulkerUtil.countTotalItems(shulker)))
+                .replace("{count}", String.valueOf(ContainerItemUtil.countTotalItems(shulker)))
                 .replace("{value}", msg.formatCurrency(netValue)));
         inventory.setItem(slot, new ItemBuilder(shulker.clone())
                 .name("&f" + pt.henrique.market.servershop.MaterialUtil.formatName(shulker.getType()))

@@ -8,6 +8,7 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
 import org.bukkit.Registry;
+import pt.henrique.market.servershop.ContainerItemUtil;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -175,6 +176,10 @@ public class ShopItem {
     /**
      * Creates an ItemStack representing this ShopItem with proper metadata.
      * Returns a BARRIER item if the material is not a valid inventory item.
+     * <p>
+     * The amount is clamped to the item's max stack size: since 26.1 an
+     * over-full stack resolves to empty, so callers that want more than one
+     * stack must ask for several stacks.
      */
     public ItemStack createItemStack(int amount) {
         if (!baseMaterial.isItem() || baseMaterial.isAir()) {
@@ -184,11 +189,11 @@ public class ShopItem {
         // COMPONENT type: clone the template stack
         if (type == ItemType.COMPONENT && templateStack != null) {
             ItemStack stack = templateStack.clone();
-            stack.setAmount(amount);
+            stack.setAmount(clampAmount(amount, stack.getMaxStackSize()));
             return stack;
         }
 
-        ItemStack stack = new ItemStack(baseMaterial, amount);
+        ItemStack stack = new ItemStack(baseMaterial, clampAmount(amount, baseMaterial.getMaxStackSize()));
 
         switch (type) {
             case ENCHANTED_BOOK -> {
@@ -247,7 +252,19 @@ public class ShopItem {
         return stack.getType() == baseMaterial;
     }
 
+    private static int clampAmount(int amount, int maxStackSize) {
+        return Math.max(1, Math.min(amount, Math.max(1, maxStackSize)));
+    }
+
+    /**
+     * Meta that makes a stack something other than the plain material.
+     * <p>
+     * A loaded shulker box, bundle, sulfur cube bucket or crossbow has no display
+     * name, no lore and no enchantments, so without the nesting test a full
+     * container would compare equal to an empty one even in EXACT match mode.
+     */
     private static boolean hasSignificantMeta(ItemStack stack) {
+        if (ContainerItemUtil.isNestingItemWithContents(stack)) return true;
         if (!stack.hasItemMeta()) return false;
         var meta = stack.getItemMeta();
         return meta.hasDisplayName() || meta.hasLore() || meta.hasEnchants();

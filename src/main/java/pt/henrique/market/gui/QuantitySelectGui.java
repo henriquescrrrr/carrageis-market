@@ -112,9 +112,10 @@ public class QuantitySelectGui implements MarketGui {
                 )
                 .build());
 
-        // Item preview
+        // Item preview. Clamped: a count above the max stack size renders as an
+        // empty slot since 26.1. The chosen quantity is shown in the lore.
         ItemStack displayItem = selectedItem.clone();
-        displayItem.setAmount(currentQuantity);
+        displayItem.setAmount(Math.min(currentQuantity, Math.max(1, displayItem.getMaxStackSize())));
         inventory.setItem(ITEM_DISPLAY_SLOT, new ItemBuilder(displayItem)
                 .addLore(java.util.List.of(
                         "",
@@ -211,7 +212,7 @@ public class QuantitySelectGui implements MarketGui {
 
         // Update item display amount
         ItemStack displayItem = selectedItem.clone();
-        displayItem.setAmount(Math.min(currentQuantity, 64));
+        displayItem.setAmount(Math.min(currentQuantity, Math.max(1, displayItem.getMaxStackSize())));
         inventory.setItem(ITEM_DISPLAY_SLOT, new ItemBuilder(displayItem)
                 .addLore(java.util.List.of(
                         "",

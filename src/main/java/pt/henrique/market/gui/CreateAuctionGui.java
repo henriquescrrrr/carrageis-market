@@ -390,8 +390,7 @@ public class CreateAuctionGui implements MarketGui {
                     guiManager.openMainMenu(player);
                 } else {
                     // Failed — return the reserved item and allow the player to retry.
-                    ItemStack refund = InventoryUtil.giveItem(player, auctionItem);
-                    if (refund != null) {
+                    for (ItemStack refund : InventoryUtil.giveItemSplit(player, auctionItem)) {
                         player.getWorld().dropItemNaturally(player.getLocation(), refund);
                     }
                     submitting = false;
